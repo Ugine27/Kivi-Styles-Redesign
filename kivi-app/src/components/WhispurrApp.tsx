@@ -1,0 +1,475 @@
+import { useState, useEffect } from 'react';
+import { Cat, PanelLeftClose, PanelLeft, Home, BookOpen, Zap, Palette, Clock, FileText, X, Mic, Pencil, ArrowLeft, CheckCircle2, Circle } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+
+export default function WhispurrApp({ mode }: { mode?: string }) {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [activeTab, setActiveTab] = useState('Home');
+  const [selectedStyle, setSelectedStyle] = useState<any>(null);
+  const [selectedPreset, setSelectedPreset] = useState<number>(2);
+  const [customRules, setCustomRules] = useState<Record<string, string>>({});
+  
+  useEffect(() => {
+    if (mode === 'Notes') {
+      setActiveTab('Notes');
+      setSelectedStyle(null);
+    }
+  }, [mode]);
+
+  // Dictionary State
+  const [dictItems, setDictItems] = useState([
+    { id: 1, spoken: 'Kivi', correct: 'WhisPURR' },
+    { id: 2, spoken: 'Ree-act', correct: 'React' },
+    { id: 3, spoken: 'Type scrip', correct: 'TypeScript' },
+  ]);
+  const [spokenInput, setSpokenInput] = useState('');
+  const [correctInput, setCorrectInput] = useState('');
+  const [isDictListening, setIsDictListening] = useState(false);
+
+  const startDictListening = () => {
+    if (!('webkitSpeechRecognition' in window)) return;
+    const recognition = new (window as any).webkitSpeechRecognition();
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    
+    recognition.onstart = () => setIsDictListening(true);
+    
+    recognition.onresult = (event: any) => {
+      const transcript = event.results[0][0].transcript;
+      if (activeTab === 'Dictionary') {
+        setSpokenInput(transcript);
+      } else if (activeTab === 'Shortcuts') {
+        setTriggerInput(transcript);
+      }
+    };
+    
+    recognition.onend = () => setIsDictListening(false);
+    
+    recognition.start();
+  };
+
+  const addDictItem = () => {
+    if (spokenInput && correctInput) {
+      setDictItems([...dictItems, { id: Date.now(), spoken: spokenInput, correct: correctInput }]);
+      setSpokenInput('');
+      setCorrectInput('');
+    }
+  };
+
+  // Shortcuts State
+  const [shortcutItems, setShortcutItems] = useState([
+    { id: 1, trigger: 'my address', expansion: '123 Developer Way, Tech District, CA 94105' },
+    { id: 2, trigger: 'my signoff', expansion: 'Warm Regards,\nRaghav\nRoll No: 42' },
+  ]);
+  const [triggerInput, setTriggerInput] = useState('');
+  const [expansionInput, setExpansionInput] = useState('');
+
+  const addShortcutItem = () => {
+    if (triggerInput && expansionInput) {
+      setShortcutItems([...shortcutItems, { id: Date.now(), trigger: triggerInput, expansion: expansionInput }]);
+      setTriggerInput('');
+      setExpansionInput('');
+    }
+  };
+
+  const editShortcutItem = (item: any) => {
+    setTriggerInput(item.trigger);
+    setExpansionInput(item.expansion);
+    setShortcutItems(shortcutItems.filter(i => i.id !== item.id));
+  };
+  
+  const timeSavedWeekHrs = 15; 
+  let whispurrIcon = '😴';
+  let whispurrStage = 'Kitten';
+  let animationClass = 'animate-pulse';
+  
+  if (timeSavedWeekHrs >= 2 && timeSavedWeekHrs < 5) {
+    whispurrIcon = '🥱';
+    whispurrStage = 'Waking Up';
+    animationClass = 'animate-[bounce_3s_infinite]';
+  } else if (timeSavedWeekHrs >= 5 && timeSavedWeekHrs < 12) {
+    whispurrIcon = '🐱';
+    whispurrStage = 'Active Kat';
+    animationClass = 'animate-bounce';
+  } else if (timeSavedWeekHrs >= 12) {
+    whispurrIcon = '😻';
+    whispurrStage = 'Zoomies';
+    animationClass = 'animate-[spin_1s_infinite]';
+  }
+
+  // Animation variants
+  const tabVariants = {
+    initial: { opacity: 0, y: 15, scale: 0.98, filter: 'blur(4px)' },
+    animate: { opacity: 1, y: 0, scale: 1, filter: 'blur(0px)', transition: { duration: 0.3, ease: 'easeOut' } },
+    exit: { opacity: 0, y: -15, scale: 0.98, filter: 'blur(4px)', transition: { duration: 0.2, ease: 'easeIn' } }
+  };
+
+  // Glassmorphism classes
+  const glassPanel = "bg-[#0f0f0f] shadow-lg border border-white/[0.08] rounded-3xl";
+  const glassInput = "bg-black/20 border border-white/10 rounded-2xl p-4 text-white outline-none focus:border-orange-500/50 focus:bg-black/40 transition-all text-sm";
+  const glassButton = "bg-orange-500/90 hover:bg-orange-400 text-black font-bold px-8 py-3 rounded-2xl transition-all shadow-[0_0_15px_rgba(249,115,22,0.2)] hover:shadow-[0_0_25px_rgba(249,115,22,0.4)] text-sm";
+
+  return (
+    <div className="h-screen w-full bg-black text-white flex font-sans overflow-hidden">
+      
+      {/* Sidebar */}
+      <motion.div 
+        animate={{ width: isSidebarOpen ? 260 : 80 }}
+        transition={{ type: 'spring', stiffness: 400, damping: 35 }}
+        className="h-full bg-white/[0.01] border-r border-white/5 flex flex-col whitespace-nowrap overflow-hidden shrink-0 relative z-20 shadow-[4px_0_24px_rgba(0,0,0,0.5)]"
+      >
+        <div className={`h-16 flex items-center border-b border-white/5 relative shrink-0 transition-all ${isSidebarOpen ? 'px-6' : 'justify-center'}`}>
+          <motion.div animate={{ opacity: isSidebarOpen ? 1 : 0, width: isSidebarOpen ? 'auto' : 0 }} className="flex items-center gap-3 overflow-hidden">
+            <div className="w-8 h-8 rounded-lg bg-orange-500/20 flex items-center justify-center border border-orange-500/30 shrink-0">
+              <Cat className="w-5 h-5 text-orange-400" />
+            </div>
+            <span className="font-bold text-lg tracking-wide text-orange-50">WhisPURR</span>
+          </motion.div>
+          <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className={`text-white/40 hover:text-white transition-colors shrink-0 ${isSidebarOpen ? 'absolute right-4 z-10' : ''}`}>
+            {isSidebarOpen ? <PanelLeftClose className="w-5 h-5" /> : <PanelLeft className="w-5 h-5" />}
+          </button>
+        </div>
+        
+        <div className="flex-1 py-6 flex flex-col gap-2">
+          <div onClick={() => {setActiveTab('Home'); setSelectedStyle(null);}} className={`flex items-center gap-4 py-3 rounded-xl cursor-pointer transition-all ${isSidebarOpen ? 'px-4 mx-4' : 'justify-center mx-4'} ${activeTab === 'Home' ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20 shadow-sm' : 'text-white/50 hover:bg-white/5 hover:text-white'}`}>
+            <Home className="w-5 h-5 shrink-0" />
+            <motion.div animate={{ opacity: isSidebarOpen ? 1 : 0, width: isSidebarOpen ? 'auto' : 0 }} className="text-base font-medium">Home</motion.div>
+          </div>
+          
+          <motion.div animate={{ opacity: isSidebarOpen ? 1 : 0 }} className={`mt-6 mb-2 text-xs font-bold text-white/30 uppercase tracking-widest h-5 transition-all ${isSidebarOpen ? 'px-8' : 'px-0 text-center w-full'}`}>
+            Customize
+          </motion.div>
+          
+          {[
+            { name: 'Dictionary', icon: BookOpen },
+            { name: 'Shortcuts', icon: Zap },
+            { name: 'Styles', icon: Palette },
+            { name: 'Notes', icon: FileText },
+          ].map((tab) => (
+            <div key={tab.name} onClick={() => {setActiveTab(tab.name); setSelectedStyle(null);}} className={`flex items-center gap-4 py-3 rounded-xl cursor-pointer transition-all ${isSidebarOpen ? 'px-4 mx-4' : 'justify-center mx-4'} ${activeTab === tab.name ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20 shadow-sm' : 'text-white/50 hover:bg-white/5 hover:text-white'}`}>
+              <tab.icon className="w-5 h-5 shrink-0" />
+              <motion.div animate={{ opacity: isSidebarOpen ? 1 : 0, width: isSidebarOpen ? 'auto' : 0 }} className="text-base font-medium">{tab.name}</motion.div>
+            </div>
+          ))}
+        </div>
+      </motion.div>
+
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col overflow-hidden relative">
+        <div className="h-14 border-b border-white/5 flex items-center px-8 shrink-0 bg-[#050505] z-10">
+          <div className="font-medium text-white/40 flex items-center gap-2 text-sm">
+            <span className="text-white/20">App</span> / <span className="text-orange-200/70">{activeTab}</span>
+          </div>
+        </div>
+
+        <div className="flex-1 p-4 flex gap-4 overflow-hidden relative">
+          <AnimatePresence mode="wait">
+            
+            {activeTab === 'Home' && (
+              <motion.div key="home" variants={tabVariants} initial="initial" animate="animate" exit="exit" className="flex-1 flex gap-4 w-full h-full">
+                <div className="flex-1 flex flex-col gap-6">
+                  <div className="px-2">
+                    <h1 className="text-3xl font-bold tracking-tight mb-2 text-white">Good afternoon, User.</h1>
+                    <p className="text-white/50 text-sm">Your invisible translation layer is active and standing by.</p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-6">
+                     <div className={`${glassPanel} p-6 flex flex-col`}>
+                       <div className="text-white/40 mb-3 font-medium flex items-center justify-between text-sm">
+                          Top Mode <span className="text-xs bg-white/10 px-3 py-1 rounded-full text-white/70">This Week</span>
+                       </div>
+                       <div className="text-2xl font-bold text-white mb-1">Professional</div>
+                       <div className="text-sm text-white/30 mb-4">Native Script</div>
+                       <div className="h-2 w-full bg-white/10 rounded-full overflow-hidden mt-auto">
+                          <div className="h-full w-[70%] bg-orange-400"></div>
+                       </div>
+                     </div>
+                     <div className={`${glassPanel} p-6 flex flex-col`}>
+                       <div className="text-white/40 mb-3 font-medium flex items-center justify-between text-sm">
+                          Time Saved <span className="text-xs bg-white/10 px-3 py-1 rounded-full text-white/70">Today</span>
+                       </div>
+                       <div className="text-3xl font-bold text-white mb-1">1h 14m</div>
+                       <div className="text-orange-400 text-sm font-medium mt-auto">+12% from yesterday</div>
+                     </div>
+                  </div>
+                </div>
+
+                <div className={`w-[320px] ${glassPanel} bg-black/40 p-6 flex flex-col relative overflow-hidden`}>
+                  <div className="w-full flex-1 min-h-[160px] rounded-2xl bg-black/60 mb-8 relative shadow-inner border border-white/5 flex flex-col items-center justify-center group overflow-hidden">
+                     <div className="absolute inset-0 bg-orange-500/10 blur-2xl rounded-full scale-150 group-hover:scale-110 transition-transform duration-1000"></div>
+                     <div className={`text-7xl relative z-10 ${animationClass} drop-shadow-[0_0_15px_rgba(249,115,22,0.4)]`}>
+                       {whispurrIcon}
+                     </div>
+                     <div className="absolute bottom-4 left-0 right-0 text-center z-10">
+                       <span className="text-orange-300 font-bold tracking-widest text-xs uppercase bg-black/60 px-4 py-1.5 rounded-full border border-orange-500/20 backdrop-blur-md">
+                         Stage: {whispurrStage}
+                       </span>
+                     </div>
+                  </div>
+                  <h3 className="text-lg font-bold text-orange-50 mb-4 text-center border-b border-white/10 pb-3">Today's Impact</h3>
+                  <div className="flex flex-col gap-4 items-center">
+                    <div className="flex flex-col items-center justify-center p-4 w-full rounded-2xl bg-orange-500/10 border border-orange-500/20 shadow-[0_0_20px_rgba(249,115,22,0.05)]">
+                      <div className="text-xs text-orange-100/70 mb-1 uppercase tracking-wider font-semibold">Time Saved Today</div>
+                      <div className="font-bold text-4xl text-orange-400">1h 42m</div>
+                      <div className="text-xs text-orange-200/40 mt-2">Weekly Total: {timeSavedWeekHrs} Hours</div>
+                    </div>
+                    <div className="flex w-full gap-3">
+                      <div className="flex-1 flex flex-col items-center gap-2 p-3 rounded-xl bg-white/5 border border-white/5">
+                        <Clock className="w-5 h-5 text-white/30" />
+                        <div className="text-center">
+                          <div className="font-bold text-sm text-white">24m</div>
+                          <div className="text-[10px] text-white/40 uppercase">Dictating</div>
+                        </div>
+                      </div>
+                      <div className="flex-1 flex flex-col items-center gap-2 p-3 rounded-xl bg-white/5 border border-white/5">
+                        <FileText className="w-5 h-5 text-white/30" />
+                        <div className="text-center">
+                          <div className="font-bold text-sm text-white">3.4k</div>
+                          <div className="text-[10px] text-white/40 uppercase">Words</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {activeTab === 'Dictionary' && (
+              <motion.div key="dict" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`flex-1 flex flex-col gap-6 p-8 overflow-y-auto w-full h-full ${glassPanel}`}>
+                <div className="px-2">
+                  <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
+                    <BookOpen className="text-orange-400 w-8 h-8" />
+                    Dictionary
+                  </h1>
+                  <p className="text-white/40 text-sm">Teach Kat terms that often get misspelled due to accents or jargon.</p>
+                </div>
+                <div className="flex gap-4 p-5 rounded-2xl bg-white/5 border border-white/10 items-end shadow-lg">
+                  <div className="flex-1">
+                    <label className="block text-xs font-bold text-white/40 mb-2 uppercase tracking-wider">When I say...</label>
+                    <div className="relative">
+                      <input type="text" placeholder="e.g. Ty-scrip" value={spokenInput} onChange={(e) => setSpokenInput(e.target.value)} className={`${glassInput} w-full pr-12`} />
+                      <button onClick={startDictListening} title="Speak" className={`absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-lg transition-colors ${isDictListening ? 'bg-orange-500/20 text-orange-400 animate-pulse' : 'text-white/30 hover:bg-white/10 hover:text-white'}`}>
+                        <Mic className="w-5 h-5" />
+                      </button>
+                    </div>
+                  </div>
+                  <div className="flex-1">
+                    <label className="block text-xs font-bold text-white/40 mb-2 uppercase tracking-wider">It actually means...</label>
+                    <input type="text" placeholder="e.g. TypeScript" value={correctInput} onChange={(e) => setCorrectInput(e.target.value)} className={`${glassInput} w-full`} />
+                  </div>
+                  <button onClick={addDictItem} className={`${glassButton} h-[52px]`}>Teach</button>
+                </div>
+                <div className="flex-1 flex flex-col gap-3 mt-4">
+                  <div className="grid grid-cols-2 px-6 py-2 text-xs font-bold text-white/30 uppercase tracking-widest border-b border-white/5">
+                    <div>What you speak</div>
+                    <div>What it means</div>
+                  </div>
+                  <AnimatePresence>
+                    {dictItems.map(item => (
+                      <motion.div key={item.id} layout initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }} className="grid grid-cols-2 px-6 py-4 rounded-xl bg-white/[0.02] border border-white/5 hover:bg-white/10 hover:border-white/10 transition-colors group items-center text-sm shadow-sm">
+                        <div className="font-medium text-white/70">{item.spoken}</div>
+                        <div className="flex justify-between items-center">
+                          <span className="font-bold text-orange-300">{item.correct}</span>
+                          <button onClick={() => setDictItems(dictItems.filter(i => i.id !== item.id))} className="opacity-0 group-hover:opacity-100 text-white/30 hover:text-red-400 transition-all p-2">
+                            <X className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+                  {dictItems.length === 0 && <div className="text-center text-white/30 py-12 italic text-sm">Your Kat's dictionary is empty.</div>}
+                </div>
+              </motion.div>
+            )}
+
+            {activeTab === 'Shortcuts' && (
+              <motion.div key="shortcuts" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`flex-1 flex flex-col gap-6 p-8 overflow-y-auto w-full h-full ${glassPanel}`}>
+                <div className="px-2">
+                  <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
+                    <Zap className="text-orange-400 w-8 h-8" />
+                    Shortcuts
+                  </h1>
+                  <p className="text-white/40 text-sm">Automatically expand quick voice triggers into long-form templates.</p>
+                </div>
+                <div className="flex gap-4 p-5 rounded-2xl bg-white/5 border border-white/10 shadow-lg">
+                  <div className="w-1/3">
+                    <label className="block text-xs font-bold text-white/40 mb-2 uppercase tracking-wider">When I say...</label>
+                    <div className="relative">
+                      <input type="text" placeholder="e.g. my address" value={triggerInput} onChange={(e) => setTriggerInput(e.target.value)} className={`${glassInput} w-full pr-12`} />
+                      <button onClick={startDictListening} className={`absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-lg transition-colors ${isDictListening ? 'bg-orange-500/20 text-orange-400 animate-pulse' : 'text-white/30 hover:bg-white/10 hover:text-white'}`}>
+                        <Mic className="w-5 h-5" />
+                      </button>
+                    </div>
+                  </div>
+                  <div className="flex-1 flex flex-col">
+                    <label className="block text-xs font-bold text-white/40 mb-2 uppercase tracking-wider">Expand it to...</label>
+                    <textarea placeholder="e.g. 123 Main St..." value={expansionInput} onChange={(e) => setExpansionInput(e.target.value)} rows={2} className={`${glassInput} w-full resize-none`} />
+                  </div>
+                  <div className="flex items-end">
+                    <button onClick={addShortcutItem} className={`${glassButton} h-[52px] shrink-0`}>Teach</button>
+                  </div>
+                </div>
+                <div className="flex-1 flex flex-col gap-3 mt-4">
+                  <div className="grid grid-cols-3 px-6 py-2 text-xs font-bold text-white/30 uppercase tracking-widest border-b border-white/5">
+                    <div className="col-span-1">Voice Trigger</div>
+                    <div className="col-span-2">Expanded Output</div>
+                  </div>
+                  <AnimatePresence>
+                    {shortcutItems.map(item => (
+                      <motion.div key={item.id} layout initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }} className="grid grid-cols-3 px-6 py-4 rounded-xl bg-white/[0.02] border border-white/5 hover:bg-white/10 hover:border-white/10 transition-colors group items-start gap-6 text-sm shadow-sm">
+                        <div className="font-medium text-white/70 col-span-1 mt-1.5">"{item.trigger}"</div>
+                        <div className="col-span-2 flex justify-between items-start gap-4">
+                          <div className="text-orange-200/80 whitespace-pre-wrap font-mono text-sm bg-black/30 p-4 rounded-lg flex-1 border border-white/5">{item.expansion}</div>
+                          <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all shrink-0 mt-2">
+                            <button onClick={() => editShortcutItem(item)} className="text-white/30 hover:text-orange-400 p-2"><Pencil className="w-4 h-4" /></button>
+                            <button onClick={() => setShortcutItems(shortcutItems.filter(i => i.id !== item.id))} className="text-white/30 hover:text-red-400 p-2"><X className="w-4 h-4" /></button>
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+                  {shortcutItems.length === 0 && <div className="text-center text-white/30 py-12 italic text-sm">No voice macros configured yet.</div>}
+                </div>
+              </motion.div>
+            )}
+
+            {activeTab === 'Notes' && (
+              <motion.div key="notes" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`flex-1 flex flex-col gap-6 p-8 w-full h-full ${glassPanel}`}>
+                <div className="px-2">
+                  <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
+                    <FileText className="text-orange-400 w-8 h-8" />
+                    Notes
+                  </h1>
+                  <p className="text-white/40 text-sm">Your dictated thoughts, structured and summarized automatically by WhisPURR.</p>
+                </div>
+                <div className="flex-1 flex flex-col mt-2 bg-[#050505] rounded-2xl border border-white/5 p-8 overflow-y-auto shadow-inner">
+                    <div className="text-center text-white/30 py-24 italic text-sm">No notes captured yet. Hold Alt and speak while in Notes mode to begin.</div>
+                </div>
+              </motion.div>
+            )}
+
+            {activeTab === 'Styles' && (
+              <motion.div key="styles" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`flex-1 flex flex-col gap-6 p-8 overflow-y-auto w-full h-full ${glassPanel}`}>
+                {!selectedStyle ? (
+                  <>
+                    <div className="px-2">
+                      <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
+                        <Palette className="text-orange-400 w-8 h-8" />
+                        Output Styles
+                      </h1>
+                      <p className="text-white/40 text-sm">Manage AI translation contexts available in your scroll wheel.</p>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-2">
+                      {[
+  { name: 'Work Messaging', desc: 'For professional chats like Slack or Teams.', color: 'bg-blue-500', presets: [{ degree: 1, name: 'Quick Ping', desc: 'A quick, casual ping to a coworker.', example: '"Hey, sent you the PR."' }, { degree: 2, name: 'Standard', desc: 'Clear, concise professional message.', example: '"Hi team, the deployment is complete."' }, { degree: 3, name: 'Executive', desc: 'Highly polished, formal tone.', example: '"Good morning. Please review the attached quarterly metrics."' }]},
+  { name: 'Personal Messaging', desc: 'For iMessage, WhatsApp with friends.', color: 'bg-pink-500', presets: [{ degree: 1, name: 'Verbatim', desc: 'Raw, unedited casual text.', example: '"yo let\'s grab food."' }, { degree: 2, name: 'Standard', desc: 'Cleaned up casual messaging.', example: '"Hey, let\'s get some food later!"' }, { degree: 3, name: 'Polite', desc: 'Extremely polite, for elders.', example: '"Hello, I hope you are having a wonderful day. Shall we get food?"' }]},
+  { name: 'Email', desc: 'For composing professional emails.', color: 'bg-green-500', presets: [{ degree: 1, name: 'Brief Reply', desc: 'Quick one-liner email response.', example: '"Thanks, looks good to me."' }, { degree: 2, name: 'Standard', desc: 'Professional email structure.', example: '"Hi John,\n\nThanks for sending this over. I will review it today.\n\nBest,\nRaghav"' }, { degree: 3, name: 'Formal', desc: 'Strict corporate email with sign-offs.', example: '"Dear Mr. Smith,\n\nI am writing to formally approve the request.\n\nSincerely,\nRaghav"' }]},
+  { name: 'Developer', desc: 'For tickets, PRs, and docs.', color: 'bg-orange-500', presets: [{ degree: 1, name: 'Bullets', desc: 'Simple technical bullet points.', example: '- Fixed memory leak\n- Updated dependencies' }, { degree: 2, name: 'Ticket', desc: 'Structured Jira/PR format.', example: '### Changes\n* Fixed memory leak in Auth handler.\n\n### Testing\n* Ran unit tests.' }, { degree: 3, name: 'Architecture', desc: 'Complex systems architecture docs.', example: '"The system utilizes a distributed Pub/Sub queue to ensure high availability across microservices."' }]},
+  { name: 'Prompting', desc: 'For communicating with LLMs.', color: 'bg-purple-500', presets: [{ degree: 1, name: 'Simple', desc: 'Basic instruction.', example: 'Write a python script to sort an array.' }, { degree: 2, name: 'Multi-step', desc: 'Structured chain of thought prompt.', example: 'Step 1: Analyze the data.\nStep 2: Output a summary.\nStep 3: Provide recommendations.' }, { degree: 3, name: 'System Context', desc: 'Rigorous system constraints.', example: '"You are an expert system. You MUST output exclusively in valid JSON format adhering to the following schema..."' }]},
+  { name: 'Other Apps', desc: 'General purpose text dictation.', color: 'bg-gray-500', presets: [{ degree: 1, name: 'Raw', desc: 'Verbatim transcription.', example: 'Just testing the mic out here.' }, { degree: 2, name: 'Clean', desc: 'Grammar corrected text.', example: 'I am just testing the microphone here.' }, { degree: 3, name: 'Polished', desc: 'Highly articulate phrasing.', example: '"I am currently conducting a test of the audio input device."' }]}
+].map(style => (
+                        <div 
+                          key={style.name} 
+                          onClick={() => setSelectedStyle(style)}
+                          className="flex gap-4 p-6 rounded-2xl bg-white/[0.02] border border-white/5 hover:bg-white/10 hover:border-white/10 transition-colors cursor-pointer group shadow-sm"
+                        >
+                          <div className="w-12 h-12 rounded-xl bg-black/40 flex items-center justify-center border border-white/5 shrink-0 group-hover:bg-black/60 transition-colors">
+                            <div className={`w-3.5 h-3.5 rounded-full ${style.color} shadow-[0_0_12px_currentColor] opacity-80 group-hover:opacity-100 transition-opacity`}></div>
+                          </div>
+                          <div>
+                            <div className="font-bold text-white mb-1 group-hover:text-orange-400 transition-colors text-lg">{style.name}</div>
+                            <div className="text-sm text-white/40">{style.desc}</div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                ) : (
+                  <motion.div key="preset-view" initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} className="flex flex-col gap-4 h-full">
+                    <div className="flex items-center gap-4 border-b border-white/5 pb-4 px-2">
+                      <button 
+                        onClick={() => setSelectedStyle(null)}
+                        className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-white/50 hover:text-white transition-colors"
+                      >
+                        <ArrowLeft className="w-5 h-5" />
+                      </button>
+                      <div>
+                        <h2 className="text-2xl font-bold text-white flex items-center gap-3">
+                          <div className={`w-3 h-3 rounded-full ${selectedStyle.color} shadow-[0_0_12px_currentColor]`}></div>
+                          {selectedStyle.name}
+                        </h2>
+                        <p className="text-white/40 text-sm mt-0.5">{selectedStyle.desc}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex-1 flex flex-col gap-4">
+                      <div>
+                        <h3 className="text-xs font-bold text-white/30 uppercase tracking-widest mb-3 px-2">Output Script</h3>
+                        <div className="flex gap-4">
+                          {selectedStyle.presets.map((preset: any) => (
+                            <div 
+                              key={preset.degree} 
+                              onClick={() => setSelectedPreset(preset.degree)}
+                              className={`flex-1 flex flex-col rounded-2xl bg-white/[0.02] border p-4 relative overflow-hidden group cursor-pointer shadow-md transition-all ${
+                                selectedPreset === preset.degree ? 'border-orange-500 bg-orange-500/5' : 'border-white/5 hover:border-orange-500/30 hover:bg-white/5'
+                              }`}
+                            >
+                              <div className={`absolute top-0 left-0 w-full h-1 transition-opacity ${
+                                selectedPreset === preset.degree ? 'opacity-100' : 'opacity-0 group-hover:opacity-50'
+                              } ${preset.degree === 1 ? 'bg-orange-300' : 'bg-orange-500'}`}></div>
+                              
+                              <div className={`text-orange-500/50 font-black text-5xl absolute -right-3 -top-3 transition-opacity pointer-events-none ${
+                                selectedPreset === preset.degree ? 'opacity-40' : 'opacity-10 group-hover:opacity-20'
+                              }`}>
+                                {preset.degree}
+                              </div>
+                              
+                              <div className="flex items-center gap-3 mb-2 z-10">
+                                {selectedPreset === preset.degree ? (
+                                  <CheckCircle2 className="w-5 h-5 text-orange-500 shrink-0" />
+                                ) : (
+                                  <Circle className="w-5 h-5 text-white/20 group-hover:text-white/40 shrink-0" />
+                                )}
+                                <div className="font-bold text-white text-lg">{preset.name}</div>
+                              </div>
+                              
+                              <p className="text-white/50 text-sm z-10 leading-relaxed mb-4 min-h-[40px]">{preset.desc}</p>
+                              
+                              <div className="mt-auto z-10 pt-4 border-t border-white/5">
+                                <div className="text-[10px] font-bold text-white/30 uppercase tracking-widest mb-2">Example Output</div>
+                                <div className="bg-black/40 rounded-xl p-4 border border-white/5 text-sm text-white/60 italic leading-relaxed whitespace-pre-wrap font-serif min-h-[50px] shadow-inner">
+                                  {preset.example}
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Custom Rules Section positioned directly under presets */}
+                      <div className="mt-2 bg-[#050505] p-3 rounded-2xl border border-white/5 flex flex-col gap-2 shadow-inner">
+                        <div className="flex items-center gap-2">
+                          <Zap className="w-4 h-4 text-orange-500" />
+                          <h3 className="text-xs font-bold text-orange-200/50 uppercase tracking-widest">
+                            Custom Rules for {selectedStyle.name}
+                          </h3>
+                        </div>
+                        <p className="text-sm text-white/40">Instruct the AI to consistently apply specific formatting rules every time this mode is used.</p>
+                        <textarea 
+                          placeholder={`E.g. "Always start with 'Hi Team'" or "Never use emojis"...`}
+                          value={customRules[selectedStyle.name] || ''}
+                          onChange={(e) => setCustomRules({...customRules, [selectedStyle.name]: e.target.value})}
+                          className={`${glassInput} w-full resize-none min-h-[50px] mt-1`}
+                        />
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
+    </div>
+  );
+}

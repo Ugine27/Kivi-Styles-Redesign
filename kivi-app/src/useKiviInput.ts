@@ -1,22 +1,22 @@
 import { useState, useEffect, useRef } from 'react';
 import { transformText } from './transformEngine';
 
-export type Mode = 'PULSE' | 'LEGO' | 'FLOW';
-export const MODES: Mode[] = ['PULSE', 'LEGO', 'FLOW'];
+export type Mode = 'Work Messaging' | 'Personal Messaging' | 'Email' | 'Developer' | 'Prompting' | 'Other Apps' | 'Casual' | 'Professional' | 'Concise' | 'Meeting Notes';
+export const MODES: Mode[] = ['Work Messaging', 'Personal Messaging', 'Email', 'Developer', 'Prompting', 'Other Apps'];
 
 export function useKiviInput() {
   const [isAltPressed, setIsAltPressed] = useState(false);
   const [isScrolling, setIsScrolling] = useState(false);
   const [hudPos, setHudPos] = useState({ x: window.innerWidth / 2, y: window.innerHeight / 2 });
-  const [mode, setMode] = useState<Mode>('PULSE');
+  const [mode, setMode] = useState<Mode>('Personal Messaging');
   const [degree, setDegree] = useState(2);
   const [transcript, setTranscript] = useState('');
   const [translatedText, setTranslatedText] = useState('');
   
   const [isLoading, setIsLoading] = useState(false);
   
-  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const debounceRef = useRef<NodeJS.Timeout | null>(null);
+  const scrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const recognitionRef = useRef<any>(null);
 
   // Initialize Web Speech API
@@ -132,6 +132,19 @@ export function useKiviInput() {
     };
   }, [isAltPressed, isScrolling, mode]);
 
+  const toggleListening = () => {
+    if (isAltPressed) {
+      setIsAltPressed(false);
+      setIsScrolling(false);
+      try { recognitionRef.current?.stop(); } catch (err) {}
+    } else {
+      setIsAltPressed(true);
+      setTranscript('');
+      setTranslatedText('');
+      try { recognitionRef.current?.start(); } catch (err) {}
+    }
+  };
+
   // Debounced Gemini API Call
   useEffect(() => {
     if (!transcript.trim()) {
@@ -154,5 +167,5 @@ export function useKiviInput() {
     };
   }, [transcript, mode, degree]);
 
-  return { isAltPressed, isScrolling, isLoading, hudPos, mode, degree, transcript, translatedText };
+  return { isAltPressed, isScrolling, isLoading, hudPos, mode, setMode, degree, setDegree, transcript, translatedText, toggleListening };
 }

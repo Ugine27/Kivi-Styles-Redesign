@@ -1,23 +1,23 @@
-# Kivi: The Invisible Translation Layer
+# WhisPURR (Kivi) - The Invisible Translation Layer
 
-Kivi is an ambient, invisible OS-level AI translation layer that sits between your unstructured human speech and structured digital output, completely eliminating the "editing tax."
+Kivi (affectionately known as WhisPURR) is an ambient, frictionless OS-level AI translation layer that sits between your unstructured human speech and structured digital output, completely eliminating the "editing tax."
 
-This repository contains the **MockOS Prototype**, a web-based React (Vite) application that perfectly simulates how Kivi operates on a desktop environment. 
+This repository contains the **MockOS Prototype**, a beautifully designed web-based React (Vite) application that perfectly simulates how Kivi operates natively on a desktop environment.
 
-## Features
-- **Global Keyboard Hook**: Hold `Alt` anywhere in the OS to instantly activate the Kivi mic.
-- **Mode Selector HUD**: Scroll or use Up/Down arrows to toggle between PULSE, LEGO, and FLOW modes.
-- **Effort Dial**: Use Left/Right arrows to scale the prompt complexity from 1 to 3 degrees.
-- **Native Web Speech**: Captures live voice dictation natively in your browser.
-- **Gemini Flash Engine**: Rewrites and styles your speech in real-time.
+## 🌟 Key Features
+- **Premium Editorial Typography**: A gorgeous, magazine-quality dark-mode UI driven by the Editorial font family.
+- **First-Launch Onboarding**: A full-screen, 11-slide interactive tutorial guiding users through the Kivi interaction paradigm and Styles Survey.
+- **Radial Control Strip**: A non-linear, organic floating desktop UI. The central Kivi Cat expands on hover to reveal Styles, App Context, and Note-taking tools.
+- **6 Semantic Modes**: Instantly style your speech for Work Messaging, Personal Messaging, Email, Developer, Prompting, or Other Apps.
+- **Script Controls**: Seamlessly toggle between Native script and Romanized transliteration.
+- **Native Web Speech & Gemini Engine**: Captures live voice dictation natively in your browser and rewrites it in real-time using `gemini-3.7-flash`.
 
-## Prerequisites
-*Note: The architecture pivoted from a local Python backend to a frictionless React frontend. You do not need Python or a `requirements.txt`. All dependencies are managed via Node.js.*
+## 🛠 Prerequisites
 
 - [Node.js](https://nodejs.org/) (v18+)
 - A Google Gemini API Key
 
-## Installation & Setup
+## 🚀 Installation & Setup
 
 1. **Clone the repository:**
    ```bash
@@ -41,13 +41,13 @@ This repository contains the **MockOS Prototype**, a web-based React (Vite) appl
    npm run dev
    ```
 
-5. **Experience the MockOS:**
+5. **Experience the Prototype:**
    Open [http://localhost:5173/](http://localhost:5173/) in your browser.
-   - **Enter OS Mode**: Click anywhere on the desktop to enter Fullscreen.
-   - **Activate Kivi**: Hold `Alt` and speak into your microphone.
-   - **Tweak the Engine**: While holding `Alt`, scroll your mouse wheel or press arrow keys to interact with the Mode Selector HUD.
-   - **Drop Text**: Release `Alt` to watch Kivi instantly drop perfectly formatted text into your active app.
+   - **First Launch**: Experience the onboarding survey and tutorial.
+   - **Desktop Integration**: Interact with the Radial Kivi Cat at the bottom of the screen.
+   - **Activate Kivi**: Hold `Alt` and speak into your microphone to simulate the global OS hook.
+   - **Customize**: Double-click the Cat to open the expansive Styles Dashboard.
 
-## Documentation
-- [Plan](docs/Plan.md) - The core philosophy and architectural plan.
-- [Runner](docs/Runner.md) - Chronological timelog of the prototype's development.
+## 📚 Documentation
+- [Plan](docs/Plan.md) - The core philosophy, current architecture, and future roadmap.
+- [Runner](docs/Runner.md) - Chronological timelog of the prototype's development and design pivots.
