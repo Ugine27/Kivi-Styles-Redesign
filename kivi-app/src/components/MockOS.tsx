@@ -1,19 +1,31 @@
-import React, { useState, useEffect } from 'react';
-import { Mail, Terminal, Sparkles, X, Minimize2, Maximize2, Minus, Wifi, Bird } from 'lucide-react';
+import { useState, useEffect, memo } from 'react';
+import { Mail, Terminal, Sparkles, X, Minus, Wifi, Cat, Type, FileText } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import WhispurrApp from './WhispurrApp';
 
-type AppType = 'email' | 'vscode' | 'ai' | 'kivi' | null;
+type AppType = 'email' | 'vscode' | 'ai' | 'whispurr' | null;
 
-export default function MockOS({ activeText }: { activeText: string }) {
+const MockOS = memo(({ activeText, mode, setMode, degree, setDegree, isAltPressed, isLoading, toggleListening }: { activeText: string, mode?: string, setMode?: any, degree?: number, setDegree?: any, isAltPressed?: boolean, isLoading?: boolean, toggleListening?: any }) => {
   const [openApp, setOpenApp] = useState<AppType>(null);
   const [isStartMenuOpen, setIsStartMenuOpen] = useState(false);
   
+  // Floating Strip State
+  const [isHovered, setIsHovered] = useState(false);
+  const [activePopup, setActivePopup] = useState<'styles' | null>(null);
+
   // Local state for native typing
   const [emailText, setEmailText] = useState('');
   const [vscodeText, setVscodeText] = useState('');
   const [aiText, setAiText] = useState('');
 
-  // Append Kivi's translated text to the currently open app
+  // Auto open Notes (from the Alt+Scroll workflow)
+  useEffect(() => {
+    if (mode === 'Notes' && !isAltPressed) {
+      setOpenApp('whispurr');
+    }
+  }, [mode, isAltPressed]);
+
+  // Append whispurr's translated text to the currently open app
   useEffect(() => {
     if (activeText && openApp) {
       if (openApp === 'email') setEmailText(prev => prev + (prev ? '\n' : '') + activeText);
@@ -22,132 +34,67 @@ export default function MockOS({ activeText }: { activeText: string }) {
     }
   }, [activeText, openApp]);
 
+  const CurrentAppIcon = () => {
+    if (openApp === 'email') return <Mail className="w-4 h-4 text-blue-300" />;
+    if (openApp === 'vscode') return <Terminal className="w-4 h-4 text-blue-500" />;
+    if (openApp === 'ai') return <Sparkles className="w-4 h-4 text-purple-300" />;
+    if (openApp === 'whispurr') return <Cat className="w-4 h-4 text-orange-400" />;
+    return <div className="w-4 h-4 border border-white/20 rounded-sm border-dashed" />;
+  };
+
   return (
     <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop')] bg-cover bg-center">
-      {/* Dark overlay for contrast */}
       <div className="absolute inset-0 bg-black/20" />
 
-      {/* Desktop Icons - Top Left */}
-      <div className="absolute top-4 left-4 flex flex-col gap-6 p-4 z-10">
-        
-        {/* Email Icon */}
-        <div 
-          onClick={() => setOpenApp('email')}
-          className="flex flex-col items-center gap-1 cursor-pointer group"
-        >
-          <div className="w-12 h-12 rounded-lg bg-blue-500/20 backdrop-blur-sm border border-white/20 flex items-center justify-center group-hover:bg-blue-500/40 transition-colors">
-            <Mail className="w-6 h-6 text-blue-100" />
-          </div>
-          <span className="text-white text-xs font-medium drop-shadow-md bg-black/20 px-1 rounded">Outlook</span>
-        </div>
-
-        {/* VS Code Icon */}
-        <div 
-          onClick={() => setOpenApp('vscode')}
-          className="flex flex-col items-center gap-1 cursor-pointer group"
-        >
-          <div className="w-12 h-12 rounded-lg bg-sky-600/20 backdrop-blur-sm border border-white/20 flex items-center justify-center group-hover:bg-sky-600/40 transition-colors">
-            <Terminal className="w-6 h-6 text-sky-200" />
-          </div>
-          <span className="text-white text-xs font-medium drop-shadow-md bg-black/20 px-1 rounded">VS Code</span>
-        </div>
-
-        {/* Antigravity AI Icon */}
-        <div 
-          onClick={() => setOpenApp('ai')}
-          className="flex flex-col items-center gap-1 cursor-pointer group"
-        >
-          <div className="w-12 h-12 rounded-lg bg-purple-600/20 backdrop-blur-sm border border-white/20 flex items-center justify-center group-hover:bg-purple-600/40 transition-colors">
-            <Sparkles className="w-6 h-6 text-purple-200" />
-          </div>
-          <span className="text-white text-xs font-medium drop-shadow-md bg-black/20 px-1 rounded">Antigravity</span>
-        </div>
-
-        {/* Kivi App Icon */}
-        <div 
-          onClick={() => setOpenApp('kivi')}
-          className="flex flex-col items-center gap-1 cursor-pointer group"
-        >
-          <div className="w-12 h-12 rounded-lg bg-emerald-500/20 backdrop-blur-sm border border-white/20 flex items-center justify-center group-hover:bg-emerald-500/40 transition-colors">
-            <Bird className="w-6 h-6 text-emerald-200" />
-          </div>
-          <span className="text-white text-xs font-medium drop-shadow-md bg-black/20 px-1 rounded">Kivi Settings</span>
-        </div>
-        
-      </div>
-
-      {/* Glassmorphism Start Menu */}
-      <AnimatePresence>
-        {isStartMenuOpen && (
-          <motion.div 
-            initial={{ opacity: 0, y: 20, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            transition={{ type: "spring", stiffness: 400, damping: 25 }}
-            className="absolute bottom-16 left-1/2 -translate-x-1/2 w-[600px] h-[450px] bg-black/50 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-2xl z-[60] flex flex-col p-6"
-          >
-            {/* Search Bar */}
-            <div className="w-full bg-black/30 border border-white/10 rounded-full px-4 py-3 mb-8 flex items-center text-white/50 shadow-inner">
-              <span className="text-sm">Search for apps, settings, and documents</span>
-            </div>
-            
-            <h3 className="text-white text-sm font-semibold mb-4 pl-2">Pinned</h3>
-            <div className="grid grid-cols-5 gap-6 pl-2">
-              <div className="flex flex-col items-center gap-3 cursor-pointer hover:bg-white/10 p-3 rounded-xl transition-all" onClick={() => { setOpenApp('email'); setIsStartMenuOpen(false); }}>
-                <Mail className="w-8 h-8 text-blue-400 drop-shadow-md" />
-                <span className="text-white text-xs">Outlook</span>
-              </div>
-              <div className="flex flex-col items-center gap-3 cursor-pointer hover:bg-white/10 p-3 rounded-xl transition-all" onClick={() => { setOpenApp('vscode'); setIsStartMenuOpen(false); }}>
-                <Terminal className="w-8 h-8 text-sky-400 drop-shadow-md" />
-                <span className="text-white text-xs">VS Code</span>
-              </div>
-              <div className="flex flex-col items-center gap-3 cursor-pointer hover:bg-white/10 p-3 rounded-xl transition-all" onClick={() => { setOpenApp('ai'); setIsStartMenuOpen(false); }}>
-                <Sparkles className="w-8 h-8 text-purple-400 drop-shadow-md" />
-                <span className="text-white text-xs">Antigravity</span>
-              </div>
-              <div className="flex flex-col items-center gap-3 cursor-pointer hover:bg-white/10 p-3 rounded-xl transition-all" onClick={() => { setOpenApp('kivi'); setIsStartMenuOpen(false); }}>
-                <div className="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center border border-emerald-500/30">
-                  <Bird className="w-5 h-5 text-emerald-400 drop-shadow-md" />
-                </div>
-                <span className="text-white text-xs">Kivi Settings</span>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Windows 11 Taskbar Mock */}
-      <div className="absolute bottom-0 left-0 right-0 h-12 bg-black/40 backdrop-blur-xl border-t border-white/10 flex items-center justify-between px-4 z-[70]">
-         
-         {/* Left Spacer */}
-         <div className="w-48"></div>
-
-         {/* Center: Start and Apps */}
-         <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-4">
+      {/* Taskbar */}
+      <div className="absolute bottom-0 left-0 right-0 h-12 bg-black/40 backdrop-blur-xl border-t border-white/5 flex items-center justify-between px-4 z-50">
+         <div className="w-48">
             <div 
-              onClick={() => setIsStartMenuOpen(!isStartMenuOpen)}
-              className="w-8 h-8 rounded bg-blue-500/80 flex items-center justify-center shadow-[0_0_15px_rgba(59,130,246,0.5)] cursor-pointer hover:bg-blue-400 transition-colors"
+               className="w-10 h-10 hover:bg-white/10 rounded-lg flex items-center justify-center cursor-pointer transition-colors"
+               onClick={() => setIsStartMenuOpen(!isStartMenuOpen)}
             >
-               <div className="grid grid-cols-2 gap-0.5 w-4 h-4">
-                  <div className="bg-white rounded-sm"></div>
-                  <div className="bg-white rounded-sm"></div>
-                  <div className="bg-white rounded-sm"></div>
-                  <div className="bg-white rounded-sm"></div>
+               <div className="grid grid-cols-2 gap-0.5">
+                  <div className="w-2.5 h-2.5 bg-blue-500 rounded-sm" />
+                  <div className="w-2.5 h-2.5 bg-blue-500 rounded-sm" />
+                  <div className="w-2.5 h-2.5 bg-blue-500 rounded-sm" />
+                  <div className="w-2.5 h-2.5 bg-blue-500 rounded-sm" />
                </div>
             </div>
             
-            {/* Taskbar Indicators */}
+            <AnimatePresence>
+               {isStartMenuOpen && (
+                  <motion.div 
+                     initial={{ opacity: 0, y: 20 }}
+                     animate={{ opacity: 1, y: 0 }}
+                     exit={{ opacity: 0, y: 20 }}
+                     className="absolute bottom-14 left-4 w-64 glass-dark rounded-xl border border-white/10 p-4 shadow-2xl flex flex-col gap-2"
+                  >
+                     <div className="text-white/50 text-xs font-bold uppercase tracking-wider mb-2">Pinned Apps</div>
+                     <div className="flex items-center gap-3 text-white hover:bg-white/10 p-2 rounded cursor-pointer" onClick={() => {setOpenApp('whispurr'); setIsStartMenuOpen(false);}}>
+                        <Cat className="w-5 h-5 text-orange-400" />
+                        <span className="font-medium text-sm">WhisPURR Settings</span>
+                     </div>
+                     <div className="flex items-center gap-3 text-white hover:bg-white/10 p-2 rounded cursor-pointer" onClick={() => {setOpenApp('ai'); setIsStartMenuOpen(false);}}>
+                        <Sparkles className="w-5 h-5 text-purple-400" />
+                        <span className="font-medium text-sm">Antigravity AI</span>
+                     </div>
+                  </motion.div>
+               )}
+            </AnimatePresence>
+         </div>
+
+         <div className="flex items-center gap-2">
             <div 
                onClick={() => openApp !== 'email' && setOpenApp('email')}
                className={`w-8 h-8 rounded flex items-center justify-center cursor-pointer transition-colors ${openApp === 'email' ? 'bg-white/10 border-b-2 border-blue-400' : 'hover:bg-white/10'}`}
             >
-               <Mail className="w-5 h-5 text-white" />
+               <Mail className="w-5 h-5 text-blue-300" />
             </div>
             <div 
                onClick={() => openApp !== 'vscode' && setOpenApp('vscode')}
-               className={`w-8 h-8 rounded flex items-center justify-center cursor-pointer transition-colors ${openApp === 'vscode' ? 'bg-white/10 border-b-2 border-blue-400' : 'hover:bg-white/10'}`}
+               className={`w-8 h-8 rounded flex items-center justify-center cursor-pointer transition-colors ${openApp === 'vscode' ? 'bg-white/10 border-b-2 border-blue-600' : 'hover:bg-white/10'}`}
             >
-               <Terminal className="w-5 h-5 text-sky-300" />
+               <Terminal className="w-5 h-5 text-blue-500" />
             </div>
             <div 
                onClick={() => openApp !== 'ai' && setOpenApp('ai')}
@@ -156,14 +103,13 @@ export default function MockOS({ activeText }: { activeText: string }) {
                <Sparkles className="w-5 h-5 text-purple-300" />
             </div>
             <div 
-               onClick={() => openApp !== 'kivi' && setOpenApp('kivi')}
-               className={`w-8 h-8 rounded flex items-center justify-center cursor-pointer transition-colors ${openApp === 'kivi' ? 'bg-white/10 border-b-2 border-emerald-400' : 'hover:bg-white/10'}`}
+               onClick={() => openApp !== 'whispurr' && setOpenApp('whispurr')}
+               className={`w-8 h-8 rounded flex items-center justify-center cursor-pointer transition-colors ${openApp === 'whispurr' ? 'bg-white/10 border-b-2 border-orange-400' : 'hover:bg-white/10'}`}
             >
-               <Bird className="w-5 h-5 text-emerald-400" />
+               <Cat className="w-5 h-5 text-orange-400" />
             </div>
          </div>
 
-         {/* Right: System Tray */}
          <div className="flex items-center gap-3 text-white w-48 justify-end cursor-pointer hover:bg-white/10 px-2 py-1 rounded transition-colors">
             <Wifi className="w-4 h-4" />
             <div className="flex flex-col items-end leading-tight text-xs font-medium">
@@ -171,6 +117,114 @@ export default function MockOS({ activeText }: { activeText: string }) {
                <span>9/3/2026</span>
             </div>
          </div>
+      </div>
+
+            {/* NEW RADIAL KIVI CONTROL STRIP */}
+      <div 
+        className={`absolute bottom-8 left-1/2 -translate-x-1/2 z-[60] w-72 h-72 flex items-center justify-center rounded-full ${isHovered ? 'pointer-events-auto' : 'pointer-events-none'}`}
+        onMouseLeave={() => { setIsHovered(false); setActivePopup(null); }}
+      >
+        <div 
+          className="relative w-32 h-32 flex items-center justify-center rounded-full pointer-events-auto"
+          onMouseEnter={() => setIsHovered(true)}
+        >
+          {/* Subtle Hover Glow Backdrop */}
+          <AnimatePresence>
+            {isHovered && (
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.5 }}
+                className="absolute inset-[-20px] bg-white/[0.02] rounded-full backdrop-blur-md border border-white/5 shadow-2xl"
+              />
+            )}
+          </AnimatePresence>
+
+          {/* Central Cat */}
+          <div 
+            onClick={(e) => { 
+              if (e.detail === 1 && toggleListening) toggleListening(); 
+              if (e.detail === 2) setOpenApp('whispurr'); 
+            }}
+            className={`w-14 h-14 rounded-full flex items-center justify-center cursor-pointer transition-all duration-500 shadow-2xl relative z-10 ${
+              isAltPressed || isLoading 
+                ? 'bg-black/90 border border-white/20 shadow-[0_0_20px_rgba(255,255,255,0.15)] scale-110'
+                : 'bg-gradient-to-br from-[#2a2a2a] to-[#111] hover:from-[#333] hover:to-[#1a1a1a] border border-white/10 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]'
+            }`}
+          >
+            <Cat className={`text-gray-300 transition-all duration-500 ${
+              isLoading ? 'w-6 h-6 animate-pulse text-white' : (isAltPressed ? 'w-6 h-6 text-white' : 'w-5 h-5 opacity-80')
+            }`} />
+          </div>
+
+          <AnimatePresence>
+            {isHovered && (
+              <>
+                {/* App Icon Satellite (Top Left) */}
+                <motion.div 
+                  initial={{ opacity: 0, x: 0, y: 0, scale: 0.5 }}
+                  animate={{ opacity: 1, x: -60, y: -30, scale: 1 }}
+                  exit={{ opacity: 0, x: 0, y: 0, scale: 0.5 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 25, delay: 0 }}
+                  className="absolute w-9 h-9 rounded-full bg-[#1e1e1e] border border-white/10 shadow-xl flex items-center justify-center z-20"
+                >
+                  <CurrentAppIcon />
+                </motion.div>
+                
+                {/* Styles Satellite (Top Center) */}
+                <motion.div 
+                  initial={{ opacity: 0, x: 0, y: 0, scale: 0.5 }}
+                  animate={{ opacity: 1, x: 0, y: -65, scale: 1 }}
+                  exit={{ opacity: 0, x: 0, y: 0, scale: 0.5 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 25, delay: 0.05 }}
+                  onClick={() => setActivePopup(activePopup === 'styles' ? null : 'styles')}
+                  className={`absolute w-9 h-9 rounded-full border shadow-xl flex items-center justify-center cursor-pointer transition-colors z-20 ${
+                    activePopup === 'styles' ? 'bg-white/20 border-white/30 text-white' : 'bg-[#1e1e1e] border-white/10 text-white/60 hover:bg-white/15 hover:text-white'
+                  }`}
+                >
+                  <Type className="w-4 h-4" />
+                  
+                  <AnimatePresence>
+                    {activePopup === 'styles' && (
+                      <motion.div 
+                        initial={{ opacity: 0, scale: 0.9, y: 10 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.9, y: 10 }}
+                        className="absolute bottom-full mb-4 left-1/2 -translate-x-1/2 bg-[#1A1A1A]/95 backdrop-blur-3xl border border-white/10 rounded-2xl p-2 w-40 shadow-2xl flex flex-col gap-1 z-30"
+                      >
+                        {(['Casual', 'Professional', 'Concise'] as const).map(s => (
+                          <div 
+                            key={s}
+                            onClick={(e) => { e.stopPropagation(); if(setMode) setMode(s as any); setActivePopup(null); }}
+                            className={`px-3 py-2 text-sm rounded-xl cursor-pointer flex items-center gap-2 transition-colors ${mode === s ? 'bg-white/10 text-white font-medium' : 'text-white/50 hover:bg-white/5 hover:text-white'}`}
+                          >
+                            {s}
+                          </div>
+                        ))}
+                        <div className="flex bg-white/5 p-1 rounded-lg mt-1 border border-white/5">
+                          <div onClick={(e) => { e.stopPropagation(); if(setDegree) setDegree(1); setActivePopup(null); }} className={`flex-1 text-center text-xs py-1.5 rounded-md cursor-pointer transition-colors ${degree === 1 ? 'bg-white/20 text-white shadow-sm' : 'text-white/40 hover:text-white/70'}`}>Roman</div>
+                          <div onClick={(e) => { e.stopPropagation(); if(setDegree) setDegree(2); setActivePopup(null); }} className={`flex-1 text-center text-xs py-1.5 rounded-md cursor-pointer transition-colors ${degree === 2 ? 'bg-white/20 text-white shadow-sm' : 'text-white/40 hover:text-white/70'}`}>Native</div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
+
+                {/* Meeting Notes Satellite (Top Right) */}
+                <motion.div 
+                  initial={{ opacity: 0, x: 0, y: 0, scale: 0.5 }}
+                  animate={{ opacity: 1, x: 60, y: -30, scale: 1 }}
+                  exit={{ opacity: 0, x: 0, y: 0, scale: 0.5 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 25, delay: 0.1 }}
+                  onClick={() => { if(setMode) setMode('Meeting Notes' as any); if(toggleListening) toggleListening(); }}
+                  className="absolute w-9 h-9 rounded-full bg-[#1e1e1e] border border-white/10 shadow-xl flex items-center justify-center cursor-pointer hover:bg-white/15 text-white/60 hover:text-white transition-colors z-20"
+                >
+                  <FileText className="w-4 h-4" />
+                </motion.div>
+              </>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
 
       {/* FULL SCREEN APPS */}
@@ -181,16 +235,16 @@ export default function MockOS({ activeText }: { activeText: string }) {
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.95, opacity: 0 }}
             transition={{ type: "spring", stiffness: 300, damping: 25 }}
-            className="absolute inset-0 z-40 bg-neutral-900 flex flex-col"
+            className="absolute inset-0 z-40 bg-[#1e1e1e] flex flex-col"
             style={{ height: 'calc(100vh - 48px)' }}
           >
             {/* Standard Window Title Bar */}
-            <div className="h-10 bg-black/60 flex items-center justify-between px-4 select-none">
+            <div className="h-10 bg-black/40 flex items-center justify-between px-4 select-none">
               <div className="flex items-center gap-2 text-white/70 text-xs font-medium">
                 {openApp === 'email' && <><Mail className="w-4 h-4"/> Outlook</>}
                 {openApp === 'vscode' && <><Terminal className="w-4 h-4"/> VS Code</>}
                 {openApp === 'ai' && <><Sparkles className="w-4 h-4"/> Antigravity Canvas</>}
-                {openApp === 'kivi' && <><Bird className="w-4 h-4 text-emerald-400"/> Kivi Control Panel</>}
+                {openApp === 'whispurr' && <><Cat className="w-4 h-4 text-orange-400"/> Kivi Dashboard</>}
               </div>
               <div className="flex items-center gap-4 text-white/50">
                 <Minus 
@@ -220,7 +274,7 @@ export default function MockOS({ activeText }: { activeText: string }) {
                       <p className="mb-4">Hi Team,</p>
                       <p className="mb-4">Just wanted to provide a quick update on the latest deployment. Everything is looking stable.</p>
                       <textarea 
-                        className="flex-1 w-full bg-transparent resize-none outline-none text-emerald-700 font-medium placeholder-gray-400"
+                        className="flex-1 w-full bg-transparent resize-none outline-none text-orange-700 font-medium placeholder-gray-400"
                         placeholder="Type your message here..."
                         value={emailText}
                         onChange={e => setEmailText(e.target.value)}
@@ -287,62 +341,13 @@ export default function MockOS({ activeText }: { activeText: string }) {
                 </div>
               )}
 
-              {openApp === 'kivi' && (
-                <div className="flex flex-col h-full bg-[#0a0a0a] text-white p-12">
-                  <div className="max-w-4xl mx-auto w-full h-full flex flex-col">
-                    <h1 className="text-3xl font-bold flex items-center gap-4 mb-8 text-emerald-50">
-                      <div className="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center border border-emerald-500/30">
-                        <Bird className="w-7 h-7 text-emerald-400" /> 
-                      </div>
-                      Kivi Control Panel
-                    </h1>
-                    
-                    <div className="flex-1 border border-white/10 rounded-2xl bg-black/40 backdrop-blur-xl p-8 shadow-2xl">
-                      <div className="flex items-center gap-3 mb-6">
-                        <div className="w-3 h-3 rounded-full bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.8)] animate-pulse"></div>
-                        <h2 className="text-xl font-semibold text-emerald-50">Translation Layer Active</h2>
-                      </div>
-                      
-                      <p className="text-white/50 mb-10 text-lg leading-relaxed">
-                        Kivi is currently running seamlessly as an invisible translation overlay on your system. 
-                        It has hooked into your global keyboard events. Simply hold <kbd className="px-2 py-1 mx-1 bg-white/10 rounded border border-white/20 text-white">Alt</kbd> in any application to dictate and drop formatted text.
-                      </p>
-                      
-                      <div className="space-y-4">
-                        <div className="flex justify-between items-center p-5 border border-white/10 rounded-xl bg-white/5 hover:bg-white/10 transition-colors cursor-default">
-                          <div>
-                            <div className="font-medium text-white mb-1">Microphone Input</div>
-                            <div className="text-sm text-white/50">Listening via built-in Web Speech API</div>
-                          </div>
-                          <div className="w-12 h-6 bg-emerald-500 rounded-full relative cursor-pointer"><div className="absolute right-1 top-1 w-4 h-4 bg-white rounded-full"></div></div>
-                        </div>
-                        
-                        <div className="flex justify-between items-center p-5 border border-white/10 rounded-xl bg-white/5 hover:bg-white/10 transition-colors cursor-default">
-                          <div>
-                            <div className="font-medium text-white mb-1">Neural Engine</div>
-                            <div className="text-sm text-white/50">Gemini 3.7 Flash Architecture</div>
-                          </div>
-                          <div className="text-emerald-400 text-sm font-medium tracking-wide uppercase flex items-center gap-2">
-                            <Wifi className="w-4 h-4" /> Connected
-                          </div>
-                        </div>
-                        
-                        <div className="flex justify-between items-center p-5 border border-white/10 rounded-xl bg-white/5 hover:bg-white/10 transition-colors cursor-default">
-                          <div>
-                            <div className="font-medium text-white mb-1">Auto-Drop Integration</div>
-                            <div className="text-sm text-white/50">Directly injects output into focused inputs</div>
-                          </div>
-                          <div className="w-12 h-6 bg-emerald-500 rounded-full relative cursor-pointer"><div className="absolute right-1 top-1 w-4 h-4 bg-white rounded-full"></div></div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
+              {openApp === 'whispurr' && <WhispurrApp mode={mode} />}
             </div>
           </motion.div>
         )}
       </AnimatePresence>
     </div>
   );
-}
+});
+
+export default MockOS;

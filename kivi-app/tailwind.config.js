@@ -5,7 +5,12 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        sans: ['"Editorial New"', 'Editorial', 'Newsreader', 'serif'],
+        serif: ['"Editorial New"', 'Editorial', 'Newsreader', 'serif'],
+      }
+    },
   },
   plugins: [],
 }
