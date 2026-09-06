@@ -93,20 +93,22 @@ function renderSlideContent(index: number, onComplete: () => void) {
   switch (index) {
     case 0:
       return (
-        <div className="flex flex-col items-center justify-center -mt-8 max-w-4xl text-center">
+        <div className="flex flex-col items-start justify-center -mt-8 max-w-4xl text-left">
           <h1 className="text-7xl font-serif font-medium tracking-tight mb-8">
             Meet <span className="relative z-10 before:content-[''] before:absolute before:inset-x-0 before:bottom-2 before:h-4 before:bg-[#d7ccc8] before:-z-10">WhisPURR.</span>
           </h1>
-          <p className="text-3xl text-[#3e2723] font-serif italic mb-8">
-            Your thoughts, seamlessly translated into work.
-          </p>
-          <p className="text-xl text-[#3e2723]/70 font-sans mb-10 leading-relaxed max-w-3xl">
-            Kivi stays quietly in the background as you move between contexts. Speak naturally, and it adapts your words to where you are — so you spend less time switching, rephrasing, and managing AI.
-          </p>
-          <p className="text-2xl text-[#3e2723] font-serif font-bold italic mb-12">
-            Fast. Flexible. Quietly there.
-          </p>
-          <div className="w-32 h-32 bg-[#3e2723] rounded-full flex items-center justify-center shadow-[0_0_80px_rgba(141,110,99,0.3)]">
+          <div className="border-l-4 border-[#8d6e63]/30 pl-8 ml-2">
+            <p className="text-3xl text-[#3e2723] font-serif italic mb-6">
+              Your thoughts, seamlessly translated into work.
+            </p>
+            <p className="text-xl text-[#3e2723]/70 font-sans mb-6 leading-relaxed">
+              WhisPURR stays quietly in the background as you move between contexts. Speak naturally, and it adapts your words to where you are — so you spend less time switching, rephrasing, and managing AI.
+            </p>
+            <p className="text-2xl text-[#3e2723] font-serif font-bold italic">
+              Fast. Flexible. Quietly there.
+            </p>
+          </div>
+          <div className="mt-16 self-center w-32 h-32 bg-[#3e2723] rounded-full flex items-center justify-center shadow-[0_0_80px_rgba(141,110,99,0.3)]">
             <Cat size={48} className="text-[#f4ece1]/90" />
           </div>
         </div>
