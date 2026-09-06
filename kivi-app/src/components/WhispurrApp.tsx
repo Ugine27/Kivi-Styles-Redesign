@@ -12,6 +12,8 @@ export default function WhispurrApp({ mode }: { mode?: string }) {
   const [selectedPreset, setSelectedPreset] = useState<number>(2);
   const [customRules, setCustomRules] = useState<Record<string, string>>({});
   const [currentTheme, setCurrentTheme] = useState('coffee');
+  const [adaptEnabled, setAdaptEnabled] = useState(true);
+  const [moodsEnabled, setMoodsEnabled] = useState(false);
   
   useEffect(() => {
     if (mode === 'Notes') {
@@ -398,122 +400,43 @@ export default function WhispurrApp({ mode }: { mode?: string }) {
 
             {activeTab === 'Context' && (
               <motion.div key="context" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col gap-6 p-8 overflow-y-auto ${glassPanel}`}>
-                {!selectedStyle ? (
-                  <>
-                    <div className="px-2">
-                      <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
-                        <Palette className="text-orange-400 w-8 h-8" />
-                        Context
-                      </h1>
-                      <p className="text-white/40 text-sm">Context decides how your words land. Set your Moods and Rules for each app!</p>
-                    </div>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-2">
-                      {[
-  { name: 'Work Messaging', desc: 'For professional chats like Slack or Teams.', color: 'bg-blue-500', presets: [{ degree: 1, name: 'Quick Ping', desc: 'A quick, casual ping to a coworker.', example: '"Hey, sent you the PR."' }, { degree: 2, name: 'Standard', desc: 'Clear, concise professional message.', example: '"Hi team, the deployment is complete."' }, { degree: 3, name: 'Executive', desc: 'Highly polished, formal tone.', example: '"Good morning. Please review the attached quarterly metrics."' }]},
-  { name: 'Personal Messaging', desc: 'For iMessage, WhatsApp with friends.', color: 'bg-pink-500', presets: [{ degree: 1, name: 'Verbatim', desc: 'Raw, unedited casual text.', example: '"yo let\'s grab food."' }, { degree: 2, name: 'Standard', desc: 'Cleaned up casual messaging.', example: '"Hey, let\'s get some food later!"' }, { degree: 3, name: 'Polite', desc: 'Extremely polite, for elders.', example: '"Hello, I hope you are having a wonderful day. Shall we get food?"' }]},
-  { name: 'Email', desc: 'For composing professional emails.', color: 'bg-green-500', presets: [{ degree: 1, name: 'Brief Reply', desc: 'Quick one-liner email response.', example: '"Thanks, looks good to me."' }, { degree: 2, name: 'Standard', desc: 'Professional email structure.', example: '"Hi John,\n\nThanks for sending this over. I will review it today.\n\nBest,\nRaghav"' }, { degree: 3, name: 'Formal', desc: 'Strict corporate email with sign-offs.', example: '"Dear Mr. Smith,\n\nI am writing to formally approve the request.\n\nSincerely,\nRaghav"' }]},
-  { name: 'Developer', desc: 'For tickets, PRs, and docs.', color: 'bg-orange-500', presets: [{ degree: 1, name: 'Bullets', desc: 'Simple technical bullet points.', example: '- Fixed memory leak\n- Updated dependencies' }, { degree: 2, name: 'Ticket', desc: 'Structured Jira/PR format.', example: '### Changes\n* Fixed memory leak in Auth handler.\n\n### Testing\n* Ran unit tests.' }, { degree: 3, name: 'Architecture', desc: 'Complex systems architecture docs.', example: '"The system utilizes a distributed Pub/Sub queue to ensure high availability across microservices."' }]},
-  { name: 'Prompting', desc: 'For communicating with LLMs.', color: 'bg-purple-500', presets: [{ degree: 1, name: 'Simple', desc: 'Basic instruction.', example: 'Write a python script to sort an array.' }, { degree: 2, name: 'Multi-step', desc: 'Structured chain of thought prompt.', example: 'Step 1: Analyze the data.\nStep 2: Output a summary.\nStep 3: Provide recommendations.' }, { degree: 3, name: 'System Context', desc: 'Rigorous system constraints.', example: '"You are an expert system. You MUST output exclusively in valid JSON format adhering to the following schema..."' }]},
-  { name: 'Other Apps', desc: 'General purpose text dictation.', color: 'bg-gray-500', presets: [{ degree: 1, name: 'Raw', desc: 'Verbatim transcription.', example: 'Just testing the mic out here.' }, { degree: 2, name: 'Clean', desc: 'Grammar corrected text.', example: 'I am just testing the microphone here.' }, { degree: 3, name: 'Polished', desc: 'Highly articulate phrasing.', example: '"I am currently conducting a test of the audio input device."' }]}
-].map(style => (
-                        <div 
-                          key={style.name} 
-                          onClick={() => setSelectedStyle(style)}
-                          className="flex gap-4 p-6 rounded-2xl bg-white/[0.02] border border-white/5 hover:bg-white/10 hover:border-white/10 transition-colors cursor-pointer group shadow-sm"
-                        >
-                          <div className="w-12 h-12 rounded-xl bg-black/40 flex items-center justify-center border border-white/5 shrink-0 group-hover:bg-black/60 transition-colors">
-                            <div className={`w-3.5 h-3.5 rounded-full ${style.color} shadow-[0_0_12px_currentColor] opacity-80 group-hover:opacity-100 transition-opacity`}></div>
-                          </div>
-                          <div>
-                            <div className="font-bold text-white mb-1 group-hover:text-orange-400 transition-colors text-lg">{style.name}</div>
-                            <div className="text-sm text-white/40">{style.desc}</div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </>
-                ) : (
-                  <motion.div key="preset-view" initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} className="flex flex-col gap-4 h-full">
-                    <div className="flex items-center gap-4 border-b border-white/5 pb-4 px-2">
-                      <button 
-                        onClick={() => setSelectedStyle(null)}
-                        className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-white/50 hover:text-white transition-colors"
-                      >
-                        <ArrowLeft className="w-5 h-5" />
-                      </button>
-                      <div>
-                        <h2 className="text-2xl font-bold text-white flex items-center gap-3">
-                          <div className={`w-3 h-3 rounded-full ${selectedStyle.color} shadow-[0_0_12px_currentColor]`}></div>
-                          {selectedStyle.name}
-                        </h2>
-                        <p className="text-white/40 text-sm mt-0.5">{selectedStyle.desc}</p>
-                      </div>
-                    </div>
-
-                    <div className="flex-1 flex flex-col gap-4">
-                      <div>
-                        <h3 className="text-xs font-bold text-white/30 uppercase tracking-widest mb-3 px-2">Output Script</h3>
-                        <div className="flex gap-4">
-                          {selectedStyle.presets.map((preset: any) => (
-                            <div 
-                              key={preset.degree} 
-                              onClick={() => setSelectedPreset(preset.degree)}
-                              className={`flex-1 flex flex-col rounded-2xl bg-white/[0.02] border p-4 relative overflow-hidden group cursor-pointer shadow-md transition-all ${
-                                selectedPreset === preset.degree ? 'border-orange-500 bg-orange-500/5' : 'border-white/5 hover:border-orange-500/30 hover:bg-white/5'
-                              }`}
-                            >
-                              <div className={`absolute top-0 left-0 w-full h-1 transition-opacity ${
-                                selectedPreset === preset.degree ? 'opacity-100' : 'opacity-0 group-hover:opacity-50'
-                              } ${preset.degree === 1 ? 'bg-orange-300' : 'bg-orange-500'}`}></div>
-                              
-                              <div className={`text-orange-500/50 font-black text-5xl absolute -right-3 -top-3 transition-opacity pointer-events-none ${
-                                selectedPreset === preset.degree ? 'opacity-40' : 'opacity-10 group-hover:opacity-20'
-                              }`}>
-                                {preset.degree}
-                              </div>
-                              
-                              <div className="flex items-center gap-3 mb-2 z-10">
-                                {selectedPreset === preset.degree ? (
-                                  <CheckCircle2 className="w-5 h-5 text-orange-500 shrink-0" />
-                                ) : (
-                                  <Circle className="w-5 h-5 text-white/20 group-hover:text-white/40 shrink-0" />
-                                )}
-                                <div className="font-bold text-white text-lg">{preset.name}</div>
-                              </div>
-                              
-                              <p className="text-white/50 text-sm z-10 leading-relaxed mb-4 min-h-[40px]">{preset.desc}</p>
-                              
-                              <div className="mt-auto z-10 pt-4 border-t border-white/5">
-                                <div className="text-[10px] font-bold text-white/30 uppercase tracking-widest mb-2">Example Output</div>
-                                <div className="bg-black/40 rounded-xl p-4 border border-white/5 text-sm text-white/60 italic leading-relaxed whitespace-pre-wrap font-serif min-h-[50px] shadow-inner">
-                                  {preset.example}
-                                </div>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Custom Rules Section positioned directly under presets */}
-                      <div className="mt-2 bg-[#050505] p-3 rounded-2xl border border-white/5 flex flex-col gap-2 shadow-inner">
-                        <div className="flex items-center gap-2">
-                          <Zap className="w-4 h-4 text-orange-500" />
-                          <h3 className="text-xs font-bold text-orange-200/50 uppercase tracking-widest">
-                            Custom Rules for {selectedStyle.name}
-                          </h3>
-                        </div>
-                        <p className="text-sm text-white/40">Instruct the AI to consistently apply specific formatting rules every time this mode is used.</p>
-                        <textarea 
-                          placeholder={`E.g. "Always start with 'Hi Team'" or "Never use emojis"...`}
-                          value={customRules[selectedStyle.name] || ''}
-                          onChange={(e) => setCustomRules({...customRules, [selectedStyle.name]: e.target.value})}
-                          className={`${glassInput} w-full resize-none min-h-[50px] mt-1`}
-                        />
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
+                <div className="px-2">
+                  <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
+                    <Palette className="text-orange-400 w-8 h-8" />
+                    Context
+                  </h1>
+                  <p className="text-white/40 text-sm">Context decides how your words land. Set your Moods and Rules for each app!</p>
+                </div>
+                
+                <div className="flex flex-col gap-4 mt-2 px-2">
+                   {/* Adapt Toggle */}
+                   <div className="flex items-center justify-between p-6 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-orange-500/20 hover:bg-orange-500/5 transition-all shadow-sm group">
+                     <div className="flex flex-col gap-1 pr-8">
+                       <span className="text-lg font-bold text-white group-hover:text-orange-400 transition-colors">Adapt</span>
+                       <span className="text-sm text-white/40 leading-relaxed">WhisPURR adapts your tone by detecting the App you are currently using!</span>
+                     </div>
+                     <button 
+                        onClick={() => setAdaptEnabled(!adaptEnabled)}
+                        className={`relative inline-flex h-7 w-14 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${adaptEnabled ? 'bg-orange-500' : 'bg-white/10'}`}
+                     >
+                        <span className={`pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${adaptEnabled ? 'translate-x-7' : 'translate-x-0'}`} />
+                     </button>
+                   </div>
+                   
+                   {/* Moods Toggle */}
+                   <div className="flex items-center justify-between p-6 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-orange-500/20 hover:bg-orange-500/5 transition-all shadow-sm group">
+                     <div className="flex flex-col gap-1 pr-8">
+                       <span className="text-lg font-bold text-white group-hover:text-orange-400 transition-colors">Moods</span>
+                       <span className="text-sm text-white/40 leading-relaxed">WhisPURR aptly adds Emojis based on your tone!</span>
+                     </div>
+                     <button 
+                        onClick={() => setMoodsEnabled(!moodsEnabled)}
+                        className={`relative inline-flex h-7 w-14 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${moodsEnabled ? 'bg-orange-500' : 'bg-white/10'}`}
+                     >
+                        <span className={`pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${moodsEnabled ? 'translate-x-7' : 'translate-x-0'}`} />
+                     </button>
+                   </div>
+                </div>
               </motion.div>
             )}
           
