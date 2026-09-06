@@ -282,7 +282,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
           </button>
         </div>
         
-        <div className="flex-1 py-6 flex flex-col gap-2">
+        <div className="flex-1 py-6 flex flex-col gap-2 overflow-y-auto custom-scrollbar">
           <div onClick={() => {setActiveTab('Home'); }} className={`flex items-center gap-4 py-3 rounded-xl cursor-pointer transition-all ${isSidebarOpen ? 'px-4 mx-4' : 'justify-center mx-4'} ${activeTab === 'Home' ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20 shadow-sm' : 'text-white/50 hover:bg-white/5 hover:text-white'}`}>
             <Home className="w-5 h-5 shrink-0" />
             <motion.div animate={{ opacity: isSidebarOpen ? 1 : 0, width: isSidebarOpen ? 'auto' : 0 }} className="text-base font-medium">Home</motion.div>
@@ -293,7 +293,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
             <motion.div animate={{ opacity: isSidebarOpen ? 1 : 0, width: isSidebarOpen ? 'auto' : 0 }} className="text-base font-medium">History</motion.div>
           </div>
 
-          <motion.div animate={{ opacity: isSidebarOpen ? 1 : 0 }} className={`mt-6 mb-2 text-xs font-bold text-white/30 uppercase tracking-widest h-5 transition-all ${isSidebarOpen ? 'px-8' : 'px-0 text-center w-full'}`}>
+          <motion.div animate={{ opacity: isSidebarOpen ? 1 : 0 }} className={`mt-6 mb-2 text-xs font-bold text-white/30 uppercase tracking-widest h-5 transition-all ${isSidebarOpen ? 'px-8' : 'px-0 text-center w-full shrink-0'}`}>
             Customize
           </motion.div>
           
@@ -305,60 +305,61 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
           ].map((tab) => (
             <div key={tab.name} onClick={() => {
               setActiveTab(tab.name);
-            }} className={`flex items-center gap-4 py-3 rounded-xl cursor-pointer transition-all ${isSidebarOpen ? 'px-4 mx-4' : 'justify-center mx-4'} ${activeTab === tab.name ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20 shadow-sm' : 'text-white/50 hover:bg-white/5 hover:text-white'}`}>
+            }} className={`flex items-center gap-4 py-3 rounded-xl cursor-pointer transition-all shrink-0 ${isSidebarOpen ? 'px-4 mx-4' : 'justify-center mx-4'} ${activeTab === tab.name ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20 shadow-sm' : 'text-white/50 hover:bg-white/5 hover:text-white'}`}>
               <tab.icon className="w-5 h-5 shrink-0" />
               <motion.div animate={{ opacity: isSidebarOpen ? 1 : 0, width: isSidebarOpen ? 'auto' : 0 }} className="text-base font-medium">{tab.name}</motion.div>
             </div>
           ))}
+        </div>
         
-          <div className="mt-auto mb-4 w-full px-4 flex flex-col gap-2">
-            <div 
-              onClick={() => setIsSettingsOpen(!isSettingsOpen)} 
-              className={`flex items-center gap-3 py-3 px-3 rounded-xl cursor-pointer transition-all ${isSettingsOpen ? 'bg-white/10 shadow-inner' : 'hover:bg-white/5'} ${!isSidebarOpen && 'justify-center'}`}
-            >
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-[#8d6e63] to-[#d7ccc8] flex items-center justify-center shrink-0 border border-[#5d4037]/50 overflow-hidden shadow-inner">
-                <User className="w-5 h-5 text-[#3e2723]" strokeWidth={2.5} />
+        {/* Sticky Bottom Profile Section */}
+        <div className="mb-6 w-full px-4 flex flex-col gap-2 shrink-0 border-t border-white/5 pt-4">
+          <div 
+            onClick={() => setIsSettingsOpen(!isSettingsOpen)} 
+            className={`flex items-center gap-3 py-3 px-3 rounded-xl cursor-pointer transition-all ${isSettingsOpen ? 'bg-white/10 shadow-inner' : 'hover:bg-white/5'} ${!isSidebarOpen && 'justify-center'}`}
+          >
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-[#8d6e63] to-[#d7ccc8] flex items-center justify-center shrink-0 border border-[#5d4037]/50 overflow-hidden shadow-inner">
+              <User className="w-5 h-5 text-[#3e2723]" strokeWidth={2.5} />
+            </div>
+            <motion.div animate={{ opacity: isSidebarOpen ? 1 : 0, width: isSidebarOpen ? 'auto' : 0 }} className="flex flex-col justify-center overflow-hidden">
+              <span className="text-sm font-medium text-white">Mr.Kat</span>
+            </motion.div>
+          </div>
+
+          {/* Cat Facts Button with Popup */}
+          <div className="relative">
+            <div onClick={() => {
+              if (!showCatFactPopup) {
+                setCurrentCatFact(CAT_FACTS[Math.floor(Math.random() * CAT_FACTS.length)]);
+              }
+              setShowCatFactPopup(!showCatFactPopup);
+            }} className={`flex items-center gap-3 py-3 px-3 rounded-xl cursor-pointer transition-all ${showCatFactPopup ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20 shadow-sm' : 'text-white/50 hover:bg-white/5 hover:text-white'} ${!isSidebarOpen && 'justify-center'}`}>
+              <div className="w-8 h-8 flex items-center justify-center shrink-0">
+                <Info className="w-5 h-5" />
               </div>
-              <motion.div animate={{ opacity: isSidebarOpen ? 1 : 0, width: isSidebarOpen ? 'auto' : 0 }} className="flex flex-col justify-center overflow-hidden">
-                <span className="text-sm font-medium text-white">Mr.Kat</span>
+              <motion.div animate={{ opacity: isSidebarOpen ? 1 : 0, width: isSidebarOpen ? 'auto' : 0 }} className="flex flex-col justify-center overflow-hidden whitespace-nowrap">
+                <span className="text-sm font-medium">Cat Facts</span>
               </motion.div>
             </div>
 
-            {/* Cat Facts Button with Popup */}
-            <div className="relative">
-              <div onClick={() => {
-                if (!showCatFactPopup) {
-                  setCurrentCatFact(CAT_FACTS[Math.floor(Math.random() * CAT_FACTS.length)]);
-                }
-                setShowCatFactPopup(!showCatFactPopup);
-              }} className={`flex items-center gap-3 py-3 px-3 rounded-xl cursor-pointer transition-all ${showCatFactPopup ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20 shadow-sm' : 'text-white/50 hover:bg-white/5 hover:text-white'} ${!isSidebarOpen && 'justify-center'}`}>
-                <div className="w-8 h-8 flex items-center justify-center shrink-0">
-                  <Info className="w-5 h-5" />
-                </div>
-                <motion.div animate={{ opacity: isSidebarOpen ? 1 : 0, width: isSidebarOpen ? 'auto' : 0 }} className="flex flex-col justify-center overflow-hidden whitespace-nowrap">
-                  <span className="text-sm font-medium">Cat Facts</span>
+            <AnimatePresence>
+              {showCatFactPopup && (
+                <motion.div 
+                  initial={{ opacity: 0, x: -10, y: 10 }}
+                  animate={{ opacity: 1, x: 0, y: 0 }}
+                  exit={{ opacity: 0, x: -10, y: 10 }}
+                  className={`fixed bottom-8 ${isSidebarOpen ? 'left-[280px]' : 'left-[100px]'} w-80 p-6 rounded-2xl bg-[#1e1e1e]/95 backdrop-blur-xl border border-orange-500/40 shadow-[0_0_40px_rgba(0,0,0,0.8)] z-[9999] pointer-events-none whitespace-normal`}
+                >
+                  <div className="flex items-center gap-2 mb-3 text-orange-400">
+                    <Sparkles className="w-5 h-5" />
+                    <span className="text-sm font-bold uppercase tracking-wider">Did you know?</span>
+                  </div>
+                  <p className="text-[15px] text-white/90 leading-relaxed italic font-medium">
+                    "{currentCatFact}"
+                  </p>
                 </motion.div>
-              </div>
-
-              <AnimatePresence>
-                {showCatFactPopup && (
-                  <motion.div 
-                    initial={{ opacity: 0, x: -10, y: 10 }}
-                    animate={{ opacity: 1, x: 0, y: 0 }}
-                    exit={{ opacity: 0, x: -10, y: 10 }}
-                    className={`fixed bottom-8 ${isSidebarOpen ? 'left-[280px]' : 'left-[100px]'} w-80 p-6 rounded-2xl bg-[#1e1e1e]/95 backdrop-blur-xl border border-orange-500/40 shadow-[0_0_40px_rgba(0,0,0,0.8)] z-[9999] pointer-events-none whitespace-normal`}
-                  >
-                    <div className="flex items-center gap-2 mb-3 text-orange-400">
-                      <Sparkles className="w-5 h-5" />
-                      <span className="text-sm font-bold uppercase tracking-wider">Did you know?</span>
-                    </div>
-                    <p className="text-[15px] text-white/90 leading-relaxed italic font-medium">
-                      "{currentCatFact}"
-                    </p>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
       </motion.div>
