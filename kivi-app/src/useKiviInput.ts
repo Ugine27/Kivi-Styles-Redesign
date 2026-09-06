@@ -1,16 +1,16 @@
 import { useState, useEffect, useRef } from 'react';
 import { transformText } from './transformEngine';
 
-export type Mode = 'Professional' | 'Casual' | 'Concise' | 'Warm' | 'Technical' | 'Meeting Notes' | string;
-export const MODES: Mode[] = ['Professional', 'Casual', 'Concise', 'Warm', 'Technical'];
+export type Mode = 'Formal' | 'Casual' | 'Developer' | 'Prompts' | string;
+export const MODES: Mode[] = ['Formal', 'Casual', 'Developer', 'Prompts'];
 
 export function useKiviInput() {
   const [isAltPressed, setIsAltPressed] = useState(false);
   const [mode, setModeState] = useState<Mode>(() => {
     try {
-      return (localStorage.getItem('whispurr_mode') as Mode) || 'Professional';
+      return (localStorage.getItem('whispurr_mode') as Mode) || 'Formal';
     } catch (e) {
-      return 'Professional';
+      return 'Formal';
     }
   });
   const [degree, setDegreeState] = useState<number>(() => {

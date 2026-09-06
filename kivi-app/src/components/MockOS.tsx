@@ -1,10 +1,20 @@
 import { useState, useEffect, memo } from 'react';
-import { Mail, Terminal, Sparkles, X, Minus, Wifi, Cat, Type, FileText } from 'lucide-react';
+import { Mail, Terminal, Sparkles, X, Minus, Wifi, Cat, Type, FileText, Mic, Pencil, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import WhispurrApp from './WhispurrApp';
 import KiviCatIcon from './KiviCatIcon';
 
 type AppType = 'email' | 'vscode' | 'ai' | 'whispurr' | null;
+
+let globalMouseX = typeof window !== 'undefined' ? window.innerWidth / 2 : 0;
+let globalMouseY = typeof window !== 'undefined' ? window.innerHeight / 2 : 0;
+
+if (typeof window !== 'undefined') {
+  window.addEventListener('mousemove', (e) => {
+    globalMouseX = e.clientX;
+    globalMouseY = e.clientY;
+  });
+}
 
 const MockOS = memo(({ activeText, mode, setMode, degree, setDegree, isAltPressed, isLoading, toggleListening }: { activeText: string, mode?: string, setMode?: any, degree?: number, setDegree?: any, isAltPressed?: boolean, isLoading?: boolean, toggleListening?: any }) => {
   const [openApp, setOpenApp] = useState<AppType>(null);
@@ -39,7 +49,88 @@ const MockOS = memo(({ activeText, mode, setMode, degree, setDegree, isAltPresse
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  const [activePopup, setActivePopup] = useState<'styles' | null>(null);
+  const [activePopup, setActivePopup] = useState<'styles' | 'scratchpad' | null>(null);
+  const [scratchPadText, setScratchPadText] = useState("");
+
+  const [showModeHud, setShowModeHud] = useState(false);
+  const [hudPosition, setHudPosition] = useState({ x: 0, y: 0 });
+  
+  // Alt+Scroll or Alt+Arrow to change mode
+  useEffect(() => {
+    if (!isAltPressed) return;
+    
+    const MODES = ['Formal', 'Casual', 'Developer', 'Prompts'];
+    
+    const cycleMode = (direction: 1 | -1, overrideX?: number, overrideY?: number) => {
+      if (!setMode) return;
+      
+      setMode((prev: string) => {
+        const currentIndex = MODES.indexOf(prev) >= 0 ? MODES.indexOf(prev) : 0;
+        let nextIndex = direction > 0 ? currentIndex + 1 : currentIndex - 1;
+        
+        if (nextIndex < 0) nextIndex = MODES.length - 1;
+        if (nextIndex >= MODES.length) nextIndex = 0;
+        
+        return MODES[nextIndex];
+      });
+      
+      const currentX = overrideX !== undefined ? overrideX : globalMouseX;
+      const currentY = overrideY !== undefined ? overrideY : globalMouseY;
+
+      let rawX = currentX + 20;
+      let rawY = currentY - 100;
+      
+      const hudWidth = 160;
+      const hudHeight = 220;
+      
+      if (rawX + hudWidth > window.innerWidth) {
+        rawX = currentX - hudWidth - 20;
+      }
+      
+      if (rawY < 20) rawY = 20;
+      if (rawY + hudHeight > window.innerHeight) {
+        rawY = window.innerHeight - hudHeight - 20;
+      }
+      
+      setHudPosition({ x: rawX, y: rawY });
+      setShowModeHud(true);
+    };
+
+    const handleWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      cycleMode(e.deltaY > 0 ? 1 : -1, e.clientX, e.clientY);
+    };
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        cycleMode(1);
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        cycleMode(-1);
+      }
+    };
+    
+    window.addEventListener('wheel', handleWheel, { passive: false });
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('wheel', handleWheel);
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isAltPressed, setMode]);
+
+  // Auto-hide HUD or hide on Alt release
+  useEffect(() => {
+    if (!isAltPressed) {
+      setShowModeHud(false);
+      return;
+    }
+    
+    if (showModeHud) {
+      const timer = setTimeout(() => setShowModeHud(false), 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [showModeHud, mode, isAltPressed]);
 
   // Local state for native typing
   const [emailText, setEmailText] = useState('');
@@ -53,14 +144,18 @@ const MockOS = memo(({ activeText, mode, setMode, degree, setDegree, isAltPresse
     }
   }, [mode, isAltPressed]);
 
-  // Append whispurr's translated text to the currently open app
+  // Append whispurr's translated text to the currently open app or popup
   useEffect(() => {
-    if (activeText && openApp) {
-      if (openApp === 'email') setEmailText(prev => prev + (prev ? '\n' : '') + activeText);
-      if (openApp === 'vscode') setVscodeText(prev => prev + (prev ? '\n' : '') + activeText);
-      if (openApp === 'ai') setAiText(prev => prev + (prev ? ' ' : '') + activeText);
+    if (activeText) {
+      if (activePopup === 'scratchpad') {
+        setScratchPadText(prev => prev + (prev ? '\n' : '') + activeText);
+      } else if (openApp) {
+        if (openApp === 'email') setEmailText(prev => prev + (prev ? '\n' : '') + activeText);
+        if (openApp === 'vscode') setVscodeText(prev => prev + (prev ? '\n' : '') + activeText);
+        if (openApp === 'ai') setAiText(prev => prev + (prev ? ' ' : '') + activeText);
+      }
     }
-  }, [activeText, openApp]);
+  }, [activeText, openApp, activePopup]);
 
   const CurrentAppIcon = () => {
     if (openApp === 'email') return <Mail className="w-4 h-4 text-blue-300" />;
@@ -149,30 +244,50 @@ const MockOS = memo(({ activeText, mode, setMode, degree, setDegree, isAltPresse
         </div>
       )}
 
+      {/* ALT+SCROLL MODE HUD */}
+      <AnimatePresence>
+        {showModeHud && (
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9, filter: 'blur(10px)' }}
+            transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+            className="fixed z-[100] flex flex-col items-stretch justify-center p-3 w-[160px] bg-[#E8D5B5]/40 backdrop-blur-3xl border border-[#8D6E63]/30 rounded-2xl shadow-[0_15px_50px_rgba(62,39,35,0.25)] pointer-events-none"
+            style={{ left: hudPosition.x, top: hudPosition.y }}
+          >
+            <div className="flex flex-col gap-1.5">
+              {['Formal', 'Casual', 'Developer', 'Prompts'].map((m) => (
+                <div key={m} className={`px-4 py-2 text-center rounded-xl transition-all duration-300 font-bold ${mode === m ? 'bg-[#5D4037] text-[#E8D5B5] scale-105 shadow-lg border border-[#3E2723]/30' : 'text-[#8D6E63] scale-95 border border-transparent'}`}>
+                  {m}
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
             {/* NEW RADIAL KIVI CONTROL STRIP */}
-        {openApp !== 'whispurr' && (
           <motion.div 
             initial={{ y: 50, opacity: 0 }}
             animate={{ 
-              y: (isAltPressed || isLoading || !!activeText) ? -40 : 50, 
-              opacity: (isAltPressed || isLoading || !!activeText) ? 1 : 0 
+              y: (isAltPressed || isLoading || !!activeText) ? 0 : 50, 
+              opacity: 1 
             }}
             transition={{ type: 'spring', stiffness: 350, damping: 25 }}
-            className={`absolute bottom-[-64px] left-1/2 -translate-x-1/2 z-[80] w-64 h-64 flex items-center justify-center rounded-full pointer-events-none`}
+            className={`absolute bottom-0 left-[41.5%] -translate-x-1/2 z-[80] w-64 h-64 flex items-center justify-center rounded-full pointer-events-none`}
             onMouseLeave={() => { setIsHovered(false); setActivePopup(null); }}
           >
             <div 
-              className={`relative w-32 h-32 flex items-center justify-center rounded-full ${(isAltPressed || isLoading || !!activeText) ? 'pointer-events-auto' : 'pointer-events-none'}`}
-              onMouseEnter={() => setIsHovered(true)}
+              className={`relative w-32 h-32 flex items-center justify-center rounded-full pointer-events-auto`}
             >
             {/* Subtle Hover Glow Backdrop */}
             <AnimatePresence>
-              {isHovered && (
+              {isHovered && !(isAltPressed || isLoading || !!activeText) && (
                 <motion.div 
                   initial={{ opacity: 0, scale: 0.5 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.5 }}
-                  className="absolute inset-[-20px] bg-white/[0.02] rounded-full backdrop-blur-md border border-white/5 shadow-2xl"
+                  className="absolute top-[-20px] left-[-20px] right-[-20px] bottom-1/2 bg-white/[0.02] rounded-t-full backdrop-blur-md border border-white/5 border-b-0 shadow-2xl origin-bottom"
                 />
               )}
             </AnimatePresence>
@@ -180,35 +295,78 @@ const MockOS = memo(({ activeText, mode, setMode, degree, setDegree, isAltPresse
             {/* Central Cat */}
             <div 
               onClick={(e) => { 
+                if (!(isAltPressed || isLoading || !!activeText)) {
+                  setIsHovered(prev => !prev);
+                  if (activePopup) setActivePopup(null);
+                  return;
+                }
                 if (e.detail === 1 && toggleListening) toggleListening(); 
-                if (e.detail === 2) setOpenApp(prev => prev === 'whispurr' ? null : 'whispurr'); 
               }}
-              className={`w-12 h-12 rounded-full flex items-center justify-center cursor-pointer transition-all duration-500 shadow-2xl relative z-10 overflow-hidden border-2 ${
-                isAltPressed || isLoading 
-                  ? 'border-[#8d6e63] shadow-[0_0_30px_rgba(141,110,99,0.5)] scale-110'
-                  : 'border-white/10 shadow-[0_0_15px_rgba(0,0,0,0.5)]'
+              className={`flex items-center justify-center cursor-pointer transition-all duration-500 shadow-2xl relative z-10 overflow-hidden ${
+                (isAltPressed || isLoading || !!activeText)
+                  ? `w-12 h-12 rounded-full border-2 ${isAltPressed || isLoading ? 'border-[#8d6e63] shadow-[0_0_30px_rgba(141,110,99,0.5)] scale-110' : 'border-white/10 shadow-[0_0_15px_rgba(0,0,0,0.5)]'}`
+                  : 'px-3 py-0.5 rounded-md bg-black/60 border border-white/10 text-white/50 text-xs font-mono hover:text-white hover:bg-black/80'
               }`}
             >
-              <KiviCatIcon className={`w-full h-full object-cover transition-all duration-500 ${
-                isLoading ? 'animate-pulse opacity-100' : (isAltPressed ? 'opacity-100' : 'opacity-80 hover:opacity-100')
-              }`} />
+              {(isAltPressed || isLoading || !!activeText) ? (
+                <KiviCatIcon className={`w-full h-full object-cover transition-all duration-500 ${
+                  isLoading ? 'animate-pulse opacity-100' : 'opacity-100'
+                }`} />
+              ) : (
+                <span>^-^</span>
+              )}
             </div>
 
             <AnimatePresence>
-              {isHovered && (
+              {isHovered && !(isAltPressed || isLoading || !!activeText) && (
                 <>
-                  {/* App Icon Satellite (Top Left) */}
+                  {/* ScratchPad Satellite (Top Left) */}
                   <motion.div 
                     initial={{ opacity: 0, x: 0, y: 0, scale: 0.5 }}
                     animate={{ opacity: 1, x: -60, y: -30, scale: 1 }}
                     exit={{ opacity: 0, x: 0, y: 0, scale: 0.5 }}
                     transition={{ type: "spring", stiffness: 400, damping: 25, delay: 0 }}
-                    className="absolute w-9 h-9 rounded-full bg-[#1e1e1e] border border-white/10 shadow-xl flex items-center justify-center z-20"
+                    onClick={() => setActivePopup(activePopup === 'scratchpad' ? null : 'scratchpad')}
+                    className={`absolute w-9 h-9 rounded-full border shadow-xl flex items-center justify-center cursor-pointer transition-colors z-20 ${
+                      activePopup === 'scratchpad' ? 'bg-white/20 border-white/30 text-white' : 'bg-[#1e1e1e] border-white/10 text-white/60 hover:bg-white/15 hover:text-white'
+                    }`}
                   >
-                    <CurrentAppIcon />
+                    <Pencil className="w-4 h-4" />
+
+                    <AnimatePresence>
+                      {activePopup === 'scratchpad' && (
+                        <motion.div 
+                          initial={{ opacity: 0, scale: 0.9, y: 10 }}
+                          animate={{ opacity: 1, scale: 1, y: 0 }}
+                          exit={{ opacity: 0, scale: 0.9, y: 10 }}
+                          className="absolute bottom-full mb-4 left-1/2 -translate-x-1/2 bg-[#1A1A1A]/95 backdrop-blur-3xl border border-white/10 rounded-2xl p-3 w-56 shadow-2xl flex flex-col gap-2 z-30 cursor-auto"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <textarea 
+                            className="w-full h-24 bg-transparent resize-none outline-none text-white text-sm placeholder-white/30"
+                            placeholder="Jot down a quick thought..."
+                            value={scratchPadText}
+                            onChange={(e) => setScratchPadText(e.target.value)}
+                            autoFocus
+                          />
+                          <div 
+                            className="flex items-center justify-center gap-2 bg-orange-500/20 hover:bg-orange-500/30 text-orange-400 py-1.5 rounded-lg cursor-pointer transition-colors text-xs font-medium"
+                            onClick={() => {
+                               if (scratchPadText.trim()) {
+                                 window.dispatchEvent(new CustomEvent('add-sticky-note', { detail: scratchPadText }));
+                                 setScratchPadText("");
+                                 setActivePopup(null);
+                               }
+                            }}
+                          >
+                            <Check className="w-3 h-3" /> Save to App
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </motion.div>
                   
-                  {/* Styles Satellite (Top Center) */}
+                  {/* Context Satellite (Top Center) */}
                   <motion.div 
                     initial={{ opacity: 0, x: 0, y: 0, scale: 0.5 }}
                     animate={{ opacity: 1, x: 0, y: -65, scale: 1 }}
@@ -229,7 +387,7 @@ const MockOS = memo(({ activeText, mode, setMode, degree, setDegree, isAltPresse
                           exit={{ opacity: 0, scale: 0.9, y: 10 }}
                           className="absolute bottom-full mb-4 left-1/2 -translate-x-1/2 bg-[#1A1A1A]/95 backdrop-blur-3xl border border-white/10 rounded-2xl p-2 w-40 shadow-2xl flex flex-col gap-1 z-30"
                         >
-                          {(['Casual', 'Professional', 'Concise'] as const).map(s => (
+                          {(['Formal', 'Casual', 'Developer', 'Prompts'] as const).map(s => (
                             <div 
                               key={s}
                               onClick={(e) => { e.stopPropagation(); if(setMode) setMode(s as any); setActivePopup(null); }}
@@ -247,23 +405,22 @@ const MockOS = memo(({ activeText, mode, setMode, degree, setDegree, isAltPresse
                     </AnimatePresence>
                   </motion.div>
 
-                  {/* Meeting Notes Satellite (Top Right) */}
+                  {/* Dictate Satellite (Top Right) */}
                   <motion.div 
                     initial={{ opacity: 0, x: 0, y: 0, scale: 0.5 }}
                     animate={{ opacity: 1, x: 60, y: -30, scale: 1 }}
                     exit={{ opacity: 0, x: 0, y: 0, scale: 0.5 }}
                     transition={{ type: "spring", stiffness: 400, damping: 25, delay: 0.1 }}
-                    onClick={() => { if(setMode) setMode('Meeting Notes' as any); if(toggleListening) toggleListening(); }}
+                    onClick={() => { if(toggleListening) toggleListening(); }}
                     className="absolute w-9 h-9 rounded-full bg-[#1e1e1e] border border-white/10 shadow-xl flex items-center justify-center cursor-pointer hover:bg-white/15 text-white/60 hover:text-white transition-colors z-20"
                   >
-                    <FileText className="w-4 h-4" />
+                    <Mic className="w-4 h-4" />
                   </motion.div>
                 </>
               )}
             </AnimatePresence>
             </div>
           </motion.div>
-        )}
 
       {/* FULL SCREEN APPS */}
       <AnimatePresence>
@@ -285,13 +442,13 @@ const MockOS = memo(({ activeText, mode, setMode, degree, setDegree, isAltPresse
                   {openApp === 'ai' && <><Sparkles className="w-4 h-4"/> Antigravity Canvas</>}
                 </div>
               )}
-              <div className="flex items-center gap-4 text-white/50 pointer-events-auto">
+              <div className={`flex items-center gap-4 pointer-events-auto ${openApp === 'whispurr' ? 'text-[#5D4037]' : 'text-white/50'}`}>
                 <Minus 
-                  className="w-4 h-4 cursor-pointer hover:text-white transition-colors" 
+                  className={`cursor-pointer transition-colors ${openApp === 'whispurr' ? 'w-5 h-5 hover:text-[#3E2723]' : 'w-4 h-4 hover:text-white'}`} 
                   onClick={() => setOpenApp(null)} 
                 />
                 <X 
-                  className="w-5 h-5 cursor-pointer hover:text-red-500 transition-colors" 
+                  className={`cursor-pointer transition-colors ${openApp === 'whispurr' ? 'w-5 h-5 hover:text-red-700' : 'w-5 h-5 hover:text-red-500'}`} 
                   onClick={() => setOpenApp(null)}
                 />
               </div>
