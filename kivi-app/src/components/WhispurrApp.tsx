@@ -288,6 +288,11 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
             <motion.div animate={{ opacity: isSidebarOpen ? 1 : 0, width: isSidebarOpen ? 'auto' : 0 }} className="text-base font-medium">Home</motion.div>
           </div>
           
+          <div onClick={() => {setActiveTab('History'); }} className={`flex items-center gap-4 py-3 rounded-xl cursor-pointer transition-all ${isSidebarOpen ? 'px-4 mx-4' : 'justify-center mx-4'} ${activeTab === 'History' ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20 shadow-sm' : 'text-white/50 hover:bg-white/5 hover:text-white'}`}>
+            <Clock className="w-5 h-5 shrink-0" />
+            <motion.div animate={{ opacity: isSidebarOpen ? 1 : 0, width: isSidebarOpen ? 'auto' : 0 }} className="text-base font-medium">History</motion.div>
+          </div>
+
           <motion.div animate={{ opacity: isSidebarOpen ? 1 : 0 }} className={`mt-6 mb-2 text-xs font-bold text-white/30 uppercase tracking-widest h-5 transition-all ${isSidebarOpen ? 'px-8' : 'px-0 text-center w-full'}`}>
             Customize
           </motion.div>
@@ -525,6 +530,60 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
               </motion.div>
             )}
 
+            {activeTab === 'History' && (
+              <motion.div key="history" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col gap-6 p-8 overflow-y-auto ${glassPanel}`}>
+                <div className="px-2 shrink-0">
+                  <h1 className="text-3xl font-bold text-[#3e2723] mb-2 flex items-center gap-3">
+                    <Clock className="text-[#8d6e63] w-8 h-8" />
+                    History
+                  </h1>
+                  <p className="text-[#5d4037]/80 font-medium text-sm">Review your past transcriptions and track your WhisPURR usage.</p>
+                </div>
+                
+                {/* Stats Brown Box */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-[#2b1f1a]/90 border border-[#5d4037]/60 rounded-3xl p-6 shrink-0 shadow-xl">
+                  <div className="flex flex-col items-center justify-center p-4 bg-[#190f0b]/50 rounded-2xl border border-[#5d4037]/40 shadow-inner">
+                    <span className="text-[#d7ccc8]/60 text-xs font-bold uppercase tracking-widest mb-2">Current Streak</span>
+                    <div className="text-3xl font-bold text-[#f4ece1] flex items-center gap-2">
+                      <Sparkles className="w-6 h-6 text-orange-400" />
+                      4 Days
+                    </div>
+                  </div>
+                  <div className="flex flex-col items-center justify-center p-4 bg-[#190f0b]/50 rounded-2xl border border-[#5d4037]/40 shadow-inner">
+                    <span className="text-[#d7ccc8]/60 text-xs font-bold uppercase tracking-widest mb-2">Total Words</span>
+                    <div className="text-3xl font-bold text-[#f4ece1]">
+                      12,450
+                    </div>
+                  </div>
+                  <div className="flex flex-col items-center justify-center p-4 bg-[#190f0b]/50 rounded-2xl border border-[#5d4037]/40 shadow-inner">
+                    <span className="text-[#d7ccc8]/60 text-xs font-bold uppercase tracking-widest mb-2">Hours Saved</span>
+                    <div className="text-3xl font-bold text-[#f4ece1]">
+                      3.5h
+                    </div>
+                  </div>
+                </div>
+
+                {/* Past Conversations List */}
+                <div className="flex flex-col gap-3 flex-1 overflow-y-auto pr-2 pb-10">
+                  <h3 className="text-[#5d4037]/70 font-bold uppercase tracking-widest text-xs mb-2 mt-4 px-2">Recent Dictations</h3>
+                  {[
+                    { date: 'Today, 10:42 AM', mode: 'Developer', text: 'Task: Resolve login bug.\nImpact: Critical. The authentication token is expiring prematurely in the new build.' },
+                    { date: 'Today, 9:15 AM', mode: 'Casual', text: 'I am going to be a bit late to the standup. Start without me!' },
+                    { date: 'Yesterday, 4:30 PM', mode: 'Formal', text: 'Please review the attached Q3 financial reports and provide your feedback by Friday.' },
+                    { date: 'Yesterday, 2:00 PM', mode: 'Prompts', text: 'Write a robust Python script using type hints to parse the customer feedback CSV and extract common keywords.' },
+                  ].map((conv, i) => (
+                    <div key={i} className="flex flex-col gap-2 p-5 bg-[#5d4037]/5 hover:bg-[#5d4037]/10 transition-colors border border-[#5d4037]/20 rounded-2xl cursor-pointer shadow-sm">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[#5d4037]/70 text-xs font-bold">{conv.date}</span>
+                        <span className="px-2 py-1 bg-[#5d4037]/20 border border-[#5d4037]/30 rounded-md text-[10px] text-[#3e2723] font-black uppercase tracking-wider">{conv.mode}</span>
+                      </div>
+                      <p className="text-[#3e2723]/90 text-sm leading-relaxed whitespace-pre-wrap font-serif italic font-medium mt-1">"{conv.text}"</p>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+
             {activeTab === 'Dictionary' && (
               <motion.div key="dict" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col gap-6 p-8 overflow-y-auto ${glassPanel}`}>
                 <div className="px-2">
@@ -532,7 +591,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                     <BookOpen className="text-orange-400 w-8 h-8" />
                     Dictionary
                   </h1>
-                  <p className="text-white/40 text-sm">Teach Kat terms that often get misspelled due to accents or jargon.</p>
+                  <p className="text-white/40 text-sm">Teach WhisPURR to correctly transcribe unique names, technical jargon, and words it frequently mishears.</p>
                 </div>
                 <div className="flex gap-4 p-5 rounded-2xl bg-white/5 border border-white/10 items-end shadow-lg">
                   <div className="flex-1">
@@ -765,7 +824,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
               </motion.div>
             )}
 
-            {!['Home', 'Dictionary', 'ShortHand', 'ScratchPad', 'Context', 'Theme', 'Tutorial'].includes(activeTab) && (
+            {!['Home', 'History', 'Dictionary', 'ShortHand', 'ScratchPad', 'Context', 'Theme', 'Tutorial'].includes(activeTab) && (
               <motion.div key="fallback" style={{ willChange: "transform, opacity, filter" }} variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col items-center justify-center gap-4 p-8 ${glassPanel}`}>
                 <Settings className="w-16 h-16 text-white/10" />
                 <h1 className="text-2xl font-bold text-white/50">{activeTab}</h1>
