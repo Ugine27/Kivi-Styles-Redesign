@@ -1,26 +1,145 @@
-import { useState, useEffect } from 'react';
-import { Cat, PanelLeftClose, PanelLeft, Home, BookOpen, Zap, Palette, Clock, FileText, X, Mic, Pencil, ArrowLeft, CheckCircle2, Circle, User, Settings, Shield, LayoutTemplate, CreditCard, PlayCircle } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { PanelLeftClose, PanelLeft, Home, BookOpen, Zap, Palette, Clock, FileText, X, Mic, Pencil, User, Settings, Shield, LayoutTemplate, CreditCard, PlayCircle, Square, Trash2, Sparkles, Copy, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Tutorial from './Tutorial';
+import StylesManager from './styles/StylesManager';
+import FootprintManager from './FootprintManager';
+import KiviCatIcon from './KiviCatIcon';
+import { transformText } from '../transformEngine';
 
-export default function WhispurrApp({ mode }: { mode?: string }) {
+export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: string, setMode?: (m: any) => void }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('Home');
   const [showTutorial, setShowTutorial] = useState(true);
-  const [selectedStyle, setSelectedStyle] = useState<any>(null);
-  const [selectedPreset, setSelectedPreset] = useState<number>(2);
-  const [customRules, setCustomRules] = useState<Record<string, string>>({});
   const [currentTheme, setCurrentTheme] = useState('coffee');
-  const [adaptEnabled, setAdaptEnabled] = useState(true);
   const [moodsEnabled, setMoodsEnabled] = useState(false);
   
   useEffect(() => {
     if (mode === 'Notes') {
       setActiveTab('Notes');
-      setSelectedStyle(null);
+      
     }
   }, [mode]);
+
+  // Home Voice-to-Text Chat Box State
+  const [homeChatText, setHomeChatText] = useState('');
+  const [isHomeListening, setIsHomeListening] = useState(false);
+  const [isHomeCopied, setIsHomeCopied] = useState(false);
+  const [isHomeTransforming, setIsHomeTransforming] = useState(false);
+  const homeRecognitionRef = useRef<any>(null);
+  const homeInitialTextRef = useRef('');
+
+  const toggleHomeListening = () => {
+    if (isHomeListening) {
+      try {
+        homeRecognitionRef.current?.stop();
+      } catch (e) {}
+      setIsHomeListening(false);
+      return;
+    }
+
+    const SpeechRec = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
+    if (!SpeechRec) {
+      alert("Speech recognition is not supported in this browser. Please use Google Chrome or a Chromium browser.");
+      return;
+    }
+
+    try {
+      const recognition = new SpeechRec();
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognition.lang = 'en-US';
+
+      homeInitialTextRef.current = homeChatText.trim();
+
+      recognition.onstart = () => {
+        setIsHomeListening(true);
+      };
+
+      recognition.onresult = (event: any) => {
+        let sessionText = '';
+        for (let i = 0; i < event.results.length; i++) {
+          sessionText += event.results[i][0].transcript;
+        }
+        const trimmedSession = sessionText.trim();
+        if (homeInitialTextRef.current) {
+          setHomeChatText(`${homeInitialTextRef.current} ${trimmedSession}`);
+        } else {
+          setHomeChatText(trimmedSession);
+        }
+      };
+
+      recognition.onerror = (e: any) => {
+        console.warn("Home Chat speech error:", e.error);
+        if (e.error !== 'no-speech') {
+          setIsHomeListening(false);
+        }
+      };
+
+      recognition.onend = () => {
+        setIsHomeListening(false);
+      };
+
+      homeRecognitionRef.current = recognition;
+      recognition.start();
+    } catch (err) {
+      console.error("Failed to start speech recognition:", err);
+      setIsHomeListening(false);
+    }
+  };
+
+  const handleCopyHomeChat = async () => {
+    if (!homeChatText.trim()) return;
+    try {
+      await navigator.clipboard.writeText(homeChatText);
+      setIsHomeCopied(true);
+      setTimeout(() => setIsHomeCopied(false), 2000);
+    } catch (err) {
+      const textarea = document.createElement('textarea');
+      textarea.value = homeChatText;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+      setIsHomeCopied(true);
+      setTimeout(() => setIsHomeCopied(false), 2000);
+    }
+  };
+
+  const handleClearHomeChat = () => {
+    setHomeChatText('');
+    if (isHomeListening) {
+      try {
+        homeRecognitionRef.current?.stop();
+      } catch (e) {}
+      setIsHomeListening(false);
+    }
+  };
+
+  const handleFormatWithAI = async () => {
+    if (!homeChatText.trim() || isHomeTransforming) return;
+    setIsHomeTransforming(true);
+    try {
+      const formatted = await transformText(homeChatText, (mode as any) || 'Professional', 2);
+      if (formatted) setHomeChatText(formatted);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsHomeTransforming(false);
+    }
+  };
+
+  // Cleanup speech recognition on unmount
+  useEffect(() => {
+    return () => {
+      if (homeRecognitionRef.current) {
+        try {
+          homeRecognitionRef.current.stop();
+        } catch (e) {}
+      }
+    };
+  }, []);
 
   // Dictionary State
   const [dictItems, setDictItems] = useState([
@@ -131,7 +250,7 @@ export default function WhispurrApp({ mode }: { mode?: string }) {
         <div className={`h-16 flex items-center border-b border-white/5 relative shrink-0 transition-all ${isSidebarOpen ? 'px-6' : 'justify-center'}`}>
           <motion.div animate={{ opacity: isSidebarOpen ? 1 : 0, width: isSidebarOpen ? 'auto' : 0 }} className="flex items-center gap-3 overflow-hidden">
             <div className="w-8 h-8 rounded-lg bg-orange-500/20 flex items-center justify-center border border-orange-500/30 shrink-0">
-              <Cat className="w-5 h-5 text-orange-400" />
+              <KiviCatIcon size={20} className="text-orange-400" />
             </div>
             <span className="font-bold text-lg tracking-wide text-orange-50">WhisPURR</span>
           </motion.div>
@@ -141,7 +260,7 @@ export default function WhispurrApp({ mode }: { mode?: string }) {
         </div>
         
         <div className="flex-1 py-6 flex flex-col gap-2">
-          <div onClick={() => {setActiveTab('Home'); setSelectedStyle(null);}} className={`flex items-center gap-4 py-3 rounded-xl cursor-pointer transition-all ${isSidebarOpen ? 'px-4 mx-4' : 'justify-center mx-4'} ${activeTab === 'Home' ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20 shadow-sm' : 'text-white/50 hover:bg-white/5 hover:text-white'}`}>
+          <div onClick={() => {setActiveTab('Home'); }} className={`flex items-center gap-4 py-3 rounded-xl cursor-pointer transition-all ${isSidebarOpen ? 'px-4 mx-4' : 'justify-center mx-4'} ${activeTab === 'Home' ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20 shadow-sm' : 'text-white/50 hover:bg-white/5 hover:text-white'}`}>
             <Home className="w-5 h-5 shrink-0" />
             <motion.div animate={{ opacity: isSidebarOpen ? 1 : 0, width: isSidebarOpen ? 'auto' : 0 }} className="text-base font-medium">Home</motion.div>
           </div>
@@ -156,7 +275,7 @@ export default function WhispurrApp({ mode }: { mode?: string }) {
             { name: 'Context', icon: Palette },
             { name: 'Notes', icon: FileText },
           ].map((tab) => (
-            <div key={tab.name} onClick={() => {setActiveTab(tab.name); setSelectedStyle(null);}} className={`flex items-center gap-4 py-3 rounded-xl cursor-pointer transition-all ${isSidebarOpen ? 'px-4 mx-4' : 'justify-center mx-4'} ${activeTab === tab.name ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20 shadow-sm' : 'text-white/50 hover:bg-white/5 hover:text-white'}`}>
+            <div key={tab.name} onClick={() => {setActiveTab(tab.name); }} className={`flex items-center gap-4 py-3 rounded-xl cursor-pointer transition-all ${isSidebarOpen ? 'px-4 mx-4' : 'justify-center mx-4'} ${activeTab === tab.name ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20 shadow-sm' : 'text-white/50 hover:bg-white/5 hover:text-white'}`}>
               <tab.icon className="w-5 h-5 shrink-0" />
               <motion.div animate={{ opacity: isSidebarOpen ? 1 : 0, width: isSidebarOpen ? 'auto' : 0 }} className="text-base font-medium">{tab.name}</motion.div>
             </div>
@@ -200,7 +319,7 @@ export default function WhispurrApp({ mode }: { mode?: string }) {
                 { name: 'Plans & Billing', icon: CreditCard },
                 { name: 'Tutorial', icon: PlayCircle },
               ].map((tab) => (
-                <div key={tab.name} onClick={() => {setActiveTab(tab.name); setSelectedStyle(null);}} className={`flex items-center gap-4 py-2.5 rounded-xl cursor-pointer transition-all px-4 mx-4 ${activeTab === tab.name ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20 shadow-sm' : 'text-white/50 hover:bg-white/5 hover:text-white'}`}>
+                <div key={tab.name} onClick={() => {setActiveTab(tab.name); }} className={`flex items-center gap-4 py-2.5 rounded-xl cursor-pointer transition-all px-4 mx-4 ${activeTab === tab.name ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20 shadow-sm' : 'text-white/50 hover:bg-white/5 hover:text-white'}`}>
                   <tab.icon className="w-4 h-4 shrink-0" />
                   <div className="text-sm font-medium">{tab.name}</div>
                 </div>
@@ -219,28 +338,144 @@ export default function WhispurrApp({ mode }: { mode?: string }) {
               {activeTab === 'Home' && (
               <motion.div key="home" variants={tabVariants} initial="initial" animate="animate" exit="exit" className="absolute inset-4 flex gap-4">
                 <div className="flex-1 flex flex-col gap-6 relative z-10">
+                  <FootprintManager contained={true} />
                   <div className="px-2 pointer-events-none relative z-10">
                     <h1 className="text-3xl font-bold tracking-tight mb-2 text-white">Good afternoon, User.</h1>
                     <p className="text-white/50 text-sm">Your invisible translation layer is active and standing by.</p>
                   </div>
-                  <div className="grid grid-cols-2 gap-6">
-                     <div className={`${glassPanel} p-6 flex flex-col`}>
-                       <div className="text-white/40 mb-3 font-medium flex items-center justify-between text-sm">
-                          Top Mode <span className="text-xs bg-white/10 px-3 py-1 rounded-full text-white/70">This Week</span>
-                       </div>
-                       <div className="text-2xl font-bold text-white mb-1">Professional</div>
-                       <div className="text-sm text-white/30 mb-4">Native Script</div>
-                       <div className="h-2 w-full bg-white/10 rounded-full overflow-hidden mt-auto">
-                          <div className="h-full w-[70%] bg-orange-400"></div>
-                       </div>
-                     </div>
-                     <div className={`${glassPanel} p-6 flex flex-col`}>
-                       <div className="text-white/40 mb-3 font-medium flex items-center justify-between text-sm">
-                          Time Saved <span className="text-xs bg-white/10 px-3 py-1 rounded-full text-white/70">Today</span>
-                       </div>
-                       <div className="text-3xl font-bold text-white mb-1">1h 14m</div>
-                       <div className="text-orange-400 text-sm font-medium mt-auto">+12% from yesterday</div>
-                     </div>
+                  {/* Voice-to-Text Chat Box */}
+                  <div className={`flex-1 ${glassPanel} p-6 flex flex-col relative z-10 overflow-hidden shadow-2xl border border-white/10 min-h-0`}>
+                    {/* Header */}
+                    <div className="flex items-center justify-between pb-4 border-b border-white/5 mb-4 shrink-0">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-orange-500/15 border border-orange-500/30 flex items-center justify-center text-orange-400 shadow-sm">
+                          <Mic className="w-5 h-5" />
+                        </div>
+                        <div>
+                          <h2 className="text-base font-semibold text-white tracking-wide flex items-center gap-2">
+                            Voice-to-Text Studio
+                            {isHomeListening && (
+                              <span className="flex items-center gap-1.5 text-xs font-normal text-red-400 bg-red-500/15 px-2.5 py-0.5 rounded-full border border-red-500/30 animate-pulse">
+                                <span className="w-2 h-2 rounded-full bg-red-500 animate-ping" />
+                                Listening...
+                              </span>
+                            )}
+                          </h2>
+                          <p className="text-xs text-white/40">Speak naturally and convert your speech into copyable text</p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        {homeChatText && (
+                          <button
+                            onClick={handleClearHomeChat}
+                            className="p-2 text-white/40 hover:text-red-400 hover:bg-white/5 rounded-xl transition-colors"
+                            title="Clear text"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        )}
+                        <button
+                          onClick={handleCopyHomeChat}
+                          disabled={!homeChatText.trim()}
+                          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
+                            isHomeCopied
+                              ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
+                              : homeChatText.trim()
+                              ? 'bg-white/10 hover:bg-white/15 text-white border border-white/15 shadow-sm active:scale-95'
+                              : 'bg-white/5 text-white/30 border border-white/5 cursor-not-allowed'
+                          }`}
+                        >
+                          {isHomeCopied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                          <span>{isHomeCopied ? 'Copied!' : 'Copy to Clipboard'}</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Textarea Area */}
+                    <div className="flex-1 relative flex flex-col min-h-0">
+                      <textarea
+                        value={homeChatText}
+                        onChange={(e) => setHomeChatText(e.target.value)}
+                        placeholder={
+                          isHomeListening
+                            ? 'Listening to your voice... Speak clearly into your microphone...'
+                            : 'Click "Speak" below and speak, or type here directly to convert and copy anywhere...'
+                        }
+                        className="flex-1 w-full bg-black/40 border border-white/5 focus:border-orange-500/40 rounded-2xl p-5 text-white placeholder-white/20 resize-none outline-none font-sans text-base leading-relaxed transition-all shadow-inner"
+                      />
+                      
+                      {/* Character & Word count */}
+                      <div className="flex items-center justify-between pt-2 px-1 text-xs text-white/30 shrink-0">
+                        <div className="flex items-center gap-4">
+                          <span>{homeChatText.trim() ? homeChatText.trim().split(/\s+/).length : 0} words</span>
+                          <span>{homeChatText.length} characters</span>
+                        </div>
+                        {isHomeCopied && (
+                          <span className="text-emerald-400 font-medium animate-pulse">
+                            Γ£ô Copied to clipboard! Ready to paste anywhere (Ctrl+V / Cmd+V)
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Action Controls Bar */}
+                    <div className="flex items-center justify-between gap-4 pt-4 mt-2 border-t border-white/5 shrink-0">
+                      <div className="flex items-center gap-2">
+                        {/* Primary Speak / Stop Button */}
+                        <button
+                          onClick={toggleHomeListening}
+                          className={`flex items-center gap-2.5 px-6 py-3 rounded-2xl font-semibold text-sm transition-all shadow-lg active:scale-95 ${
+                            isHomeListening
+                              ? 'bg-red-500 hover:bg-red-600 text-white shadow-[0_0_20px_rgba(239,68,68,0.45)]'
+                              : 'bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-black shadow-[0_0_20px_rgba(249,115,22,0.3)]'
+                          }`}
+                        >
+                          {isHomeListening ? (
+                            <>
+                              <Square className="w-4 h-4 fill-current animate-pulse" />
+                              <span>Stop Listening</span>
+                            </>
+                          ) : (
+                            <>
+                              <Mic className="w-4 h-4" />
+                              <span>Click to Speak</span>
+                            </>
+                          )}
+                        </button>
+
+                        {/* Polish with AI Button */}
+                        <button
+                          onClick={handleFormatWithAI}
+                          disabled={!homeChatText.trim() || isHomeTransforming}
+                          className={`flex items-center gap-2 px-4 py-3 rounded-2xl text-xs font-semibold transition-all border ${
+                            homeChatText.trim() && !isHomeTransforming
+                              ? 'bg-white/5 hover:bg-white/10 text-white/80 hover:text-white border-white/10 active:scale-95'
+                              : 'bg-white/[0.02] text-white/20 border-white/5 cursor-not-allowed'
+                          }`}
+                          title="Polish transcript using Kivi translation layer"
+                        >
+                          <Sparkles className={`w-3.5 h-3.5 text-purple-400 ${isHomeTransforming ? 'animate-spin' : ''}`} />
+                          <span>{isHomeTransforming ? 'Polishing...' : 'Polish with AI'}</span>
+                        </button>
+                      </div>
+
+                      {/* Copy Button */}
+                      <button
+                        onClick={handleCopyHomeChat}
+                        disabled={!homeChatText.trim()}
+                        className={`flex items-center gap-2 px-5 py-3 rounded-2xl font-semibold text-sm transition-all border ${
+                          isHomeCopied
+                            ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
+                            : homeChatText.trim()
+                            ? 'bg-white/10 hover:bg-white/15 text-white border-white/20 active:scale-95 shadow-md'
+                            : 'bg-white/5 text-white/25 border-white/5 cursor-not-allowed'
+                        }`}
+                      >
+                        {isHomeCopied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                        <span>{isHomeCopied ? 'Copied!' : 'Copy Text'}</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
 
@@ -399,44 +634,13 @@ export default function WhispurrApp({ mode }: { mode?: string }) {
             )}
 
             {activeTab === 'Context' && (
-              <motion.div key="context" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col gap-6 p-8 overflow-y-auto ${glassPanel}`}>
-                <div className="px-2">
-                  <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
-                    <Palette className="text-orange-400 w-8 h-8" />
-                    Context
-                  </h1>
-                  <p className="text-white/40 text-sm">Context decides how your words land. Set your Moods and Rules for each app!</p>
-                </div>
-                
-                <div className="flex flex-col gap-4 mt-2 px-2">
-                   {/* Adapt Toggle */}
-                   <div className="flex items-center justify-between p-6 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-orange-500/20 hover:bg-orange-500/5 transition-all shadow-sm group">
-                     <div className="flex flex-col gap-1 pr-8">
-                       <span className="text-lg font-bold text-white group-hover:text-orange-400 transition-colors">Adapt</span>
-                       <span className="text-sm text-white/40 leading-relaxed">WhisPURR adapts your tone by detecting the App you are currently using!</span>
-                     </div>
-                     <button 
-                        onClick={() => setAdaptEnabled(!adaptEnabled)}
-                        className={`relative inline-flex h-7 w-14 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${adaptEnabled ? 'bg-orange-500' : 'bg-white/10'}`}
-                     >
-                        <span className={`pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${adaptEnabled ? 'translate-x-7' : 'translate-x-0'}`} />
-                     </button>
-                   </div>
-                   
-                   {/* Moods Toggle */}
-                   <div className="flex items-center justify-between p-6 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-orange-500/20 hover:bg-orange-500/5 transition-all shadow-sm group">
-                     <div className="flex flex-col gap-1 pr-8">
-                       <span className="text-lg font-bold text-white group-hover:text-orange-400 transition-colors">Moods</span>
-                       <span className="text-sm text-white/40 leading-relaxed">WhisPURR aptly adds Emojis based on your tone!</span>
-                     </div>
-                     <button 
-                        onClick={() => setMoodsEnabled(!moodsEnabled)}
-                        className={`relative inline-flex h-7 w-14 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${moodsEnabled ? 'bg-orange-500' : 'bg-white/10'}`}
-                     >
-                        <span className={`pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${moodsEnabled ? 'translate-x-7' : 'translate-x-0'}`} />
-                     </button>
-                   </div>
-                </div>
+              <motion.div key="context" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col gap-6 p-6 md:p-8 overflow-y-auto ${glassPanel}`}>
+                <StylesManager 
+                  currentMode={mode || 'Professional'} 
+                  setMode={setMode}
+                  moodsEnabled={moodsEnabled}
+                  setMoodsEnabled={setMoodsEnabled}
+                />
               </motion.div>
             )}
           

@@ -104,8 +104,8 @@ const MockOS = memo(({ activeText, mode, setMode, degree, setDegree, isAltPresse
                  <Sparkles className="w-5 h-5 text-purple-300" />
               </div>
               <div 
-                 onClick={() => openApp !== 'whispurr' && setOpenApp('whispurr')}
-                 className={`w-8 h-8 rounded flex items-center justify-center cursor-pointer transition-colors ${openApp === 'whispurr' ? 'bg-white/10 border-b-2 border-orange-400' : 'hover:bg-white/10'}`}
+                 onClick={() => (openApp as string) !== 'whispurr' && setOpenApp('whispurr')}
+                 className={`w-8 h-8 rounded flex items-center justify-center cursor-pointer transition-colors ${(openApp as string) === 'whispurr' ? 'bg-white/10 border-b-2 border-orange-400' : 'hover:bg-white/10'}`}
               >
                  <Cat className="w-5 h-5 text-orange-400" />
               </div>
