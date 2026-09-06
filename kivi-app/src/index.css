@@ -30,13 +30,13 @@ body {
 .theme-coffee .bg-black\/80 { background-color: rgba(62, 39, 35, 0.25) !important; }
 
 .theme-coffee .text-white { color: #3e2723 !important; }
-.theme-coffee .text-white\/10 { color: rgba(62, 39, 35, 0.2) !important; }
-.theme-coffee .text-white\/20 { color: rgba(62, 39, 35, 0.4) !important; }
-.theme-coffee .text-white\/30 { color: rgba(62, 39, 35, 0.5) !important; }
-.theme-coffee .text-white\/40 { color: rgba(62, 39, 35, 0.6) !important; }
-.theme-coffee .text-white\/50 { color: rgba(62, 39, 35, 0.7) !important; }
-.theme-coffee .text-white\/60 { color: rgba(62, 39, 35, 0.8) !important; }
-.theme-coffee .text-white\/70 { color: rgba(62, 39, 35, 0.9) !important; }
+.theme-coffee .text-white\/10 { color: rgba(62, 39, 35, 0.4) !important; }
+.theme-coffee .text-white\/20 { color: rgba(62, 39, 35, 0.5) !important; }
+.theme-coffee .text-white\/30 { color: rgba(62, 39, 35, 0.6) !important; }
+.theme-coffee .text-white\/40 { color: rgba(62, 39, 35, 0.7) !important; }
+.theme-coffee .text-white\/50 { color: rgba(62, 39, 35, 0.8) !important; }
+.theme-coffee .text-white\/60 { color: rgba(62, 39, 35, 0.9) !important; }
+.theme-coffee .text-white\/70 { color: #3e2723 !important; }
 
 .theme-coffee .bg-white\/5 { background-color: rgba(62, 39, 35, 0.05) !important; }
 .theme-coffee .bg-white\/10 { background-color: rgba(62, 39, 35, 0.1) !important; }
@@ -52,13 +52,13 @@ body {
 .theme-coffee .border-white\/\[0\.05\] { border-color: rgba(62, 39, 35, 0.1) !important; }
 .theme-coffee .border-white\/\[0\.08\] { border-color: rgba(62, 39, 35, 0.15) !important; }
 
-.theme-coffee .text-orange-50 { color: #5d4037 !important; }
-.theme-coffee .text-orange-200\/50 { color: rgba(93, 64, 55, 0.5) !important; }
-.theme-coffee .text-orange-200\/70 { color: rgba(93, 64, 55, 0.7) !important; }
-.theme-coffee .text-orange-300 { color: #795548 !important; }
-.theme-coffee .text-orange-400 { color: #8d6e63 !important; }
-.theme-coffee .text-orange-500 { color: #a1887f !important; }
-.theme-coffee .text-orange-500\/50 { color: rgba(161, 136, 127, 0.5) !important; }
+.theme-coffee .text-orange-50 { color: #3e2723 !important; }
+.theme-coffee .text-orange-200\/50 { color: rgba(93, 64, 55, 0.6) !important; }
+.theme-coffee .text-orange-200\/70 { color: rgba(93, 64, 55, 0.8) !important; }
+.theme-coffee .text-orange-300 { color: #5d4037 !important; }
+.theme-coffee .text-orange-400 { color: #795548 !important; }
+.theme-coffee .text-orange-500 { color: #8d6e63 !important; }
+.theme-coffee .text-orange-500\/50 { color: rgba(141, 110, 99, 0.6) !important; }
 
 .theme-coffee .bg-orange-300 { background-color: #795548 !important; }
 .theme-coffee .bg-orange-400 { background-color: #8d6e63 !important; }
@@ -78,10 +78,13 @@ body {
 .theme-coffee .drop-shadow-\[0_0_15px_rgba\(249\,115\,22\,0\.4\)\] { filter: drop-shadow(0 0 15px rgba(161, 136, 127, 0.4)) !important; }
 
 .theme-coffee video.mix-blend-screen {
-  mix-blend-mode: darken !important;
-  opacity: 0.8;
-}
-.theme-coffee video.mix-blend-screen {
   mix-blend-mode: multiply !important;
   filter: invert(1) hue-rotate(180deg) !important;
+}
+
+/* Fluid Theme Transitions */
+body, div, span, h1, h2, h3, h4, p, a, button, svg, input, textarea {
+  transition-property: background-color, color, border-color, box-shadow;
+  transition-duration: 0.6s;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }

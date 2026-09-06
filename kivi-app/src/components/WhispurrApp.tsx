@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Cat, PanelLeftClose, PanelLeft, Home, BookOpen, Zap, Palette, Clock, FileText, X, Mic, Pencil, ArrowLeft, CheckCircle2, Circle, User, Settings, Shield, LayoutTemplate, CreditCard, PlayCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import PawTrail from './PawTrail';
 
 export default function WhispurrApp({ mode }: { mode?: string }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -11,7 +10,7 @@ export default function WhispurrApp({ mode }: { mode?: string }) {
   const [selectedStyle, setSelectedStyle] = useState<any>(null);
   const [selectedPreset, setSelectedPreset] = useState<number>(2);
   const [customRules, setCustomRules] = useState<Record<string, string>>({});
-  const [currentTheme, setCurrentTheme] = useState('midnight');
+  const [currentTheme, setCurrentTheme] = useState('coffee');
   
   useEffect(() => {
     if (mode === 'Notes') {
@@ -210,19 +209,13 @@ export default function WhispurrApp({ mode }: { mode?: string }) {
 
       {/* Main Content Area */}
 
-      <div className="flex-1 flex flex-col overflow-hidden relative">
-        <div className="h-14 border-b border-white/5 flex items-center px-8 shrink-0 bg-[#050505] z-10">
-          <div className="font-medium text-white/40 flex items-center gap-2 text-sm">
-            <span className="text-white/20">App</span> / <span className="text-orange-200/70">{activeTab}</span>
-          </div>
-        </div>
+      <div className="flex-1 flex flex-col overflow-hidden relative pt-10">
 
         <div className="flex-1 p-4 flex gap-4 overflow-hidden relative">
           <AnimatePresence>
               {activeTab === 'Home' && (
               <motion.div key="home" variants={tabVariants} initial="initial" animate="animate" exit="exit" className="absolute inset-4 flex gap-4">
                 <div className="flex-1 flex flex-col gap-6 relative z-10">
-                  <PawTrail />
                   <div className="px-2 pointer-events-none relative z-10">
                     <h1 className="text-3xl font-bold tracking-tight mb-2 text-white">Good afternoon, User.</h1>
                     <p className="text-white/50 text-sm">Your invisible translation layer is active and standing by.</p>
