@@ -1,4 +1,4 @@
-import { useState, useEffect, memo } from 'react';
+import { useState, useEffect, memo, useRef } from 'react';
 import { Mail, Terminal, Sparkles, X, Minus, Wifi, Cat, Type, FileText, Mic, Pencil, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import WhispurrApp from './WhispurrApp';
@@ -54,43 +54,47 @@ const MockOS = memo(({ activeText, mode, setMode, degree, setDegree, isAltPresse
 
   const [showModeHud, setShowModeHud] = useState(false);
   const [hudPosition, setHudPosition] = useState({ x: 0, y: 0 });
+  const [modeRotation, setModeRotation] = useState(0);
+  const modeRef = useRef(mode);
+  modeRef.current = mode;
   
+  const MODES = ['Formal', 'Casual', 'Developer', 'Prompts'];
+  
+  useEffect(() => {
+    if (isAltPressed) {
+      const idx = MODES.indexOf(modeRef.current as string);
+      setModeRotation(idx >= 0 ? idx : 0);
+    }
+  }, [isAltPressed]);
+
   // Alt+Scroll or Alt+Arrow to change mode
   useEffect(() => {
     if (!isAltPressed) return;
     
-    const MODES = ['Formal', 'Casual', 'Developer', 'Prompts'];
-    
     const cycleMode = (direction: 1 | -1, overrideX?: number, overrideY?: number) => {
       if (!setMode) return;
       
-      setMode((prev: string) => {
-        const currentIndex = MODES.indexOf(prev) >= 0 ? MODES.indexOf(prev) : 0;
-        let nextIndex = direction > 0 ? currentIndex + 1 : currentIndex - 1;
-        
-        if (nextIndex < 0) nextIndex = MODES.length - 1;
-        if (nextIndex >= MODES.length) nextIndex = 0;
-        
-        return MODES[nextIndex];
+      setModeRotation(prev => {
+        let nextRot = prev + direction;
+        if (nextRot < 0) nextRot = 0;
+        if (nextRot > MODES.length - 1) nextRot = MODES.length - 1;
+        setMode(MODES[nextRot]);
+        return nextRot;
       });
       
       const currentX = overrideX !== undefined ? overrideX : globalMouseX;
       const currentY = overrideY !== undefined ? overrideY : globalMouseY;
 
-      let rawX = currentX + 20;
-      let rawY = currentY - 100;
+      let rawX = currentX;
+      let rawY = currentY;
       
-      const hudWidth = 160;
-      const hudHeight = 220;
+      const radius = 100;
+      const padding = 70; // buffer for text widths
       
-      if (rawX + hudWidth > window.innerWidth) {
-        rawX = currentX - hudWidth - 20;
-      }
-      
-      if (rawY < 20) rawY = 20;
-      if (rawY + hudHeight > window.innerHeight) {
-        rawY = window.innerHeight - hudHeight - 20;
-      }
+      if (rawX - radius - padding < 0) rawX = radius + padding;
+      if (rawX + radius + padding > window.innerWidth) rawX = window.innerWidth - radius - padding;
+      if (rawY - radius - 30 < 0) rawY = radius + 30;
+      if (rawY + radius + 30 > window.innerHeight) rawY = window.innerHeight - radius - 30;
       
       setHudPosition({ x: rawX, y: rawY });
       setShowModeHud(true);
@@ -244,23 +248,69 @@ const MockOS = memo(({ activeText, mode, setMode, degree, setDegree, isAltPresse
         </div>
       )}
 
-      {/* ALT+SCROLL MODE HUD */}
+      {/* ALT+SCROLL MODE HUD (CIRCULAR) */}
       <AnimatePresence>
         {showModeHud && (
           <motion.div 
-            initial={{ opacity: 0, scale: 0.9 }}
+            initial={{ opacity: 0, scale: 0.5 }}
             animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9, filter: 'blur(10px)' }}
+            exit={{ opacity: 0, scale: 0.5, filter: 'blur(10px)' }}
             transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-            className="fixed z-[100] flex flex-col items-stretch justify-center p-3 w-[160px] bg-[#E8D5B5]/40 backdrop-blur-3xl border border-[#8D6E63]/30 rounded-2xl shadow-[0_15px_50px_rgba(62,39,35,0.25)] pointer-events-none"
+            className="fixed z-[100] pointer-events-none flex items-center justify-center w-0 h-0"
             style={{ left: hudPosition.x, top: hudPosition.y }}
           >
-            <div className="flex flex-col gap-1.5">
-              {['Formal', 'Casual', 'Developer', 'Prompts'].map((m) => (
-                <div key={m} className={`px-4 py-2 text-center rounded-xl transition-all duration-300 font-bold ${mode === m ? 'bg-[#5D4037] text-[#E8D5B5] scale-105 shadow-lg border border-[#3E2723]/30' : 'text-[#8D6E63] scale-95 border border-transparent'}`}>
-                  {m}
-                </div>
-              ))}
+            <div className="absolute flex items-center justify-center w-0 h-0">
+              {/* Beige gradient arc trace */}
+              <svg className="absolute pointer-events-none" style={{ width: 240, height: 240, left: -120, top: -120 }}>
+                <defs>
+                  <linearGradient id="arcFade" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#E8D5B5" stopOpacity="0" />
+                    <stop offset="20%" stopColor="#E8D5B5" stopOpacity="0.4" />
+                    <stop offset="50%" stopColor="#E8D5B5" stopOpacity="1" />
+                    <stop offset="80%" stopColor="#E8D5B5" stopOpacity="0.4" />
+                    <stop offset="100%" stopColor="#E8D5B5" stopOpacity="0" />
+                  </linearGradient>
+                </defs>
+                <path d="M 120 10 A 110 110 0 0 1 120 230" fill="none" stroke="url(#arcFade)" strokeWidth="2" strokeLinecap="round" />
+              </svg>
+
+              {['Formal', 'Casual', 'Developer', 'Prompts'].map((m, i) => {
+                const diff = i - modeRotation;
+                
+                // 25 degree arc spacing
+                const angle = diff * 25;
+                const angleRad = angle * (Math.PI / 180);
+                
+                // Place options slightly further outside the arc to ensure no clipping
+                const radius = 145; 
+                
+                const x = Math.cos(angleRad) * radius;
+                const y = Math.sin(angleRad) * radius;
+                
+                const isActive = diff === 0;
+                
+                return (
+                  <motion.div 
+                    key={m}
+                    className="absolute"
+                    animate={{ 
+                      x, 
+                      y, 
+                      scale: isActive ? 1.15 : 0.85,
+                      opacity: isActive ? 1 : 0.4
+                    }}
+                    transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                  >
+                    <div className={`-translate-y-1/2 px-4 py-2 whitespace-nowrap font-bold transition-all ${
+                      isActive 
+                        ? 'rounded-2xl shadow-xl backdrop-blur-3xl bg-[#5D4037]/90 text-[#E8D5B5] border border-[#3E2723]/50' 
+                        : 'text-[#E8D5B5] drop-shadow-md'
+                    }`}>
+                      {m}
+                    </div>
+                  </motion.div>
+                );
+              })}
             </div>
           </motion.div>
         )}
