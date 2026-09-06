@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Cat, PanelLeftClose, PanelLeft, Home, BookOpen, Zap, Palette, Clock, FileText, X, Mic, Pencil, ArrowLeft, CheckCircle2, Circle, User, Settings, Shield, LayoutTemplate, CreditCard, PlayCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import PawTrail from './PawTrail';
 
 export default function WhispurrApp({ mode }: { mode?: string }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -10,6 +11,7 @@ export default function WhispurrApp({ mode }: { mode?: string }) {
   const [selectedStyle, setSelectedStyle] = useState<any>(null);
   const [selectedPreset, setSelectedPreset] = useState<number>(2);
   const [customRules, setCustomRules] = useState<Record<string, string>>({});
+  const [currentTheme, setCurrentTheme] = useState('midnight');
   
   useEffect(() => {
     if (mode === 'Notes') {
@@ -81,9 +83,11 @@ export default function WhispurrApp({ mode }: { mode?: string }) {
   };
   
   const timeSavedWeekHrs = 15; 
-  let whispurrIcon = '😴';
+  let whispurrIcon: React.ReactNode = (
+    <video src="/kitten.mp4" autoPlay loop muted playsInline className="w-full h-full scale-150 object-contain mix-blend-screen" />
+  );
   let whispurrStage = 'Kitten';
-  let animationClass = 'animate-pulse';
+  let animationClass = '';
   
   if (timeSavedWeekHrs >= 2 && timeSavedWeekHrs < 5) {
     whispurrIcon = '🥱';
@@ -94,9 +98,11 @@ export default function WhispurrApp({ mode }: { mode?: string }) {
     whispurrStage = 'Active Kat';
     animationClass = 'animate-bounce';
   } else if (timeSavedWeekHrs >= 12) {
-    whispurrIcon = '😻';
+    whispurrIcon = (
+      <video src="/zoomies.mp4" autoPlay loop muted playsInline className="w-full h-full scale-[2.0] object-contain mix-blend-screen" />
+    );
     whispurrStage = 'Zoomies';
-    animationClass = 'animate-[spin_1s_infinite]';
+    animationClass = '';
   }
 
   // Animation variants
@@ -112,7 +118,7 @@ export default function WhispurrApp({ mode }: { mode?: string }) {
   const glassButton = "bg-orange-500/90 hover:bg-orange-400 text-black font-bold px-8 py-3 rounded-2xl transition-all shadow-[0_0_15px_rgba(249,115,22,0.2)] hover:shadow-[0_0_25px_rgba(249,115,22,0.4)] text-sm";
 
   return (
-    <div className="h-full w-full bg-black text-white flex font-sans overflow-hidden">
+    <div className={`h-full w-full bg-black text-white flex font-sans overflow-hidden ${currentTheme === 'coffee' ? 'theme-coffee' : ''}`}>
       
       {/* Sidebar */}
       <motion.div 
@@ -215,8 +221,9 @@ export default function WhispurrApp({ mode }: { mode?: string }) {
           <AnimatePresence>
               {activeTab === 'Home' && (
               <motion.div key="home" variants={tabVariants} initial="initial" animate="animate" exit="exit" className="absolute inset-4 flex gap-4">
-                <div className="flex-1 flex flex-col gap-6">
-                  <div className="px-2">
+                <div className="flex-1 flex flex-col gap-6 relative z-10">
+                  <PawTrail />
+                  <div className="px-2 pointer-events-none relative z-10">
                     <h1 className="text-3xl font-bold tracking-tight mb-2 text-white">Good afternoon, User.</h1>
                     <p className="text-white/50 text-sm">Your invisible translation layer is active and standing by.</p>
                   </div>
@@ -241,10 +248,10 @@ export default function WhispurrApp({ mode }: { mode?: string }) {
                   </div>
                 </div>
 
-                <div className={`w-[320px] ${glassPanel} bg-black/40 p-6 flex flex-col relative overflow-hidden`}>
+                <div className={`w-[320px] ${glassPanel} bg-black/40 p-6 flex flex-col relative z-10 overflow-hidden`}>
                   <div className="w-full flex-1 min-h-[160px] rounded-2xl bg-black/60 mb-8 relative shadow-inner border border-white/5 flex flex-col items-center justify-center group overflow-hidden">
                      <div className="absolute inset-0 bg-orange-500/10 blur-2xl rounded-full scale-150 group-hover:scale-110 transition-transform duration-1000"></div>
-                     <div className={`text-7xl relative z-10 ${animationClass} drop-shadow-[0_0_15px_rgba(249,115,22,0.4)]`}>
+                     <div className={`text-7xl relative z-10 ${animationClass} drop-shadow-[0_0_15px_rgba(249,115,22,0.4)] flex items-center justify-center w-full h-full`}>
                        {whispurrIcon}
                      </div>
                      <div className="absolute bottom-4 left-0 right-0 text-center z-10">
@@ -516,7 +523,49 @@ export default function WhispurrApp({ mode }: { mode?: string }) {
               </motion.div>
             )}
           
-            {!['Home', 'Dictionary', 'Shortcuts', 'Notes', 'Styles'].includes(activeTab) && (
+            {activeTab === 'Theme' && (
+              <motion.div key="theme" variants={tabVariants} initial="initial" animate="animate" exit="exit" className="absolute inset-4 flex gap-4">
+                <div className="flex-1 flex flex-col gap-6 max-w-4xl mx-auto">
+                  <div className="px-2 mt-4">
+                    <h1 className="text-3xl font-bold tracking-tight mb-2 text-white">Appearance</h1>
+                    <p className="text-white/50 text-sm">Customize the look and feel of your WhisPURR interface.</p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-6 mt-4">
+                    <div 
+                      onClick={() => setCurrentTheme('midnight')}
+                      className={`flex flex-col rounded-2xl border p-2 cursor-pointer transition-all ${currentTheme === 'midnight' ? 'border-orange-500 bg-orange-500/10' : 'border-white/10 bg-[#0f0f0f] hover:border-white/30'}`}
+                    >
+                      <div className="h-40 rounded-xl bg-black border border-white/10 mb-4 flex items-center justify-center overflow-hidden relative">
+                         <div className="w-16 h-16 rounded-full bg-orange-500/20 flex items-center justify-center">
+                           <LayoutTemplate className="w-8 h-8 text-orange-500" />
+                         </div>
+                      </div>
+                      <div className="px-4 pb-4">
+                        <div className="text-lg font-bold text-white mb-1">Midnight Dark</div>
+                        <div className="text-sm text-white/50">Pure blacks with electric orange accents for a focused environment.</div>
+                      </div>
+                    </div>
+                    
+                    <div 
+                      onClick={() => setCurrentTheme('coffee')}
+                      className={`flex flex-col rounded-2xl border p-2 cursor-pointer transition-all ${currentTheme === 'coffee' ? 'border-orange-500 bg-orange-500/10' : 'border-white/10 bg-[#0f0f0f] hover:border-white/30'}`}
+                    >
+                      <div className="h-40 rounded-xl bg-[#f4ece1] border border-white/10 mb-4 flex items-center justify-center overflow-hidden relative">
+                         <div className="w-16 h-16 rounded-full bg-[#8d6e63]/20 flex items-center justify-center">
+                           <LayoutTemplate className="w-8 h-8 text-[#8d6e63]" />
+                         </div>
+                      </div>
+                      <div className="px-4 pb-4">
+                        <div className="text-lg font-bold text-white mb-1">Coffee Brown</div>
+                        <div className="text-sm text-white/50">Warm beige and rich browns for a softer, organic reading experience.</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+            
+            {!['Home', 'Dictionary', 'Shortcuts', 'Notes', 'Styles', 'Theme'].includes(activeTab) && (
               <motion.div key="fallback" style={{ willChange: "transform, opacity, filter" }} variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col items-center justify-center gap-4 p-8 ${glassPanel}`}>
                 <Settings className="w-16 h-16 text-white/10" />
                 <h1 className="text-2xl font-bold text-white/50">{activeTab}</h1>
