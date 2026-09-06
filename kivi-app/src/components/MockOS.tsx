@@ -121,7 +121,7 @@ const MockOS = memo(({ activeText, mode, setMode, degree, setDegree, isAltPresse
 
             {/* NEW RADIAL KIVI CONTROL STRIP */}
       <div 
-        className={`absolute bottom-8 left-1/2 -translate-x-1/2 z-[60] w-72 h-72 flex items-center justify-center rounded-full ${isHovered ? 'pointer-events-auto' : 'pointer-events-none'}`}
+        className={`absolute bottom-[-64px] left-1/2 -translate-x-1/2 z-[80] w-64 h-64 flex items-center justify-center rounded-full ${isHovered ? 'pointer-events-auto' : 'pointer-events-none'}`}
         onMouseLeave={() => { setIsHovered(false); setActivePopup(null); }}
       >
         <div 
@@ -146,14 +146,14 @@ const MockOS = memo(({ activeText, mode, setMode, degree, setDegree, isAltPresse
               if (e.detail === 1 && toggleListening) toggleListening(); 
               if (e.detail === 2) setOpenApp('whispurr'); 
             }}
-            className={`w-14 h-14 rounded-full flex items-center justify-center cursor-pointer transition-all duration-500 shadow-2xl relative z-10 ${
+            className={`w-8 h-8 rounded-full flex items-center justify-center cursor-pointer transition-all duration-500 shadow-2xl relative z-10 ${
               isAltPressed || isLoading 
                 ? 'bg-black/90 border border-white/20 shadow-[0_0_20px_rgba(255,255,255,0.15)] scale-110'
                 : 'bg-gradient-to-br from-[#2a2a2a] to-[#111] hover:from-[#333] hover:to-[#1a1a1a] border border-white/10 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]'
             }`}
           >
             <Cat className={`text-gray-300 transition-all duration-500 ${
-              isLoading ? 'w-6 h-6 animate-pulse text-white' : (isAltPressed ? 'w-6 h-6 text-white' : 'w-5 h-5 opacity-80')
+              isLoading ? 'w-4 h-4 animate-pulse text-white' : (isAltPressed ? 'w-4 h-4 text-white' : 'w-4 h-4 opacity-80')
             }`} />
           </div>
 
