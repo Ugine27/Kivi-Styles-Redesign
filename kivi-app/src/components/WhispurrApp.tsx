@@ -322,7 +322,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
               <User className="w-5 h-5 text-[#3e2723]" strokeWidth={2.5} />
             </div>
             <motion.div animate={{ opacity: isSidebarOpen ? 1 : 0, width: isSidebarOpen ? 'auto' : 0 }} className="flex flex-col justify-center overflow-hidden">
-              <span className="text-sm font-medium text-white">Mr.Kat</span>
+              <span className="text-sm font-medium text-white">Ugine</span>
             </motion.div>
           </div>
 
@@ -407,7 +407,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                 <div className="flex-1 flex flex-col gap-6 relative z-10">
                   <FootprintManager contained={true} />
                   <div className="px-2 pointer-events-none relative z-10">
-                    <h1 className="text-3xl font-bold tracking-tight mb-2 text-white">Good afternoon, User.</h1>
+                    <h1 className="text-3xl font-bold tracking-tight mb-2 text-white">Good afternoon, Ugine.</h1>
                     <p className="text-white/50 text-sm">Your invisible translation layer is active and standing by.</p>
                   </div>
                   {/* Voice-to-Text Chat Box */}
