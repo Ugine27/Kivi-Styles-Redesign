@@ -2,6 +2,7 @@ import { useState, useEffect, memo } from 'react';
 import { Mail, Terminal, Sparkles, X, Minus, Wifi, Cat, Type, FileText } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import WhispurrApp from './WhispurrApp';
+import KiviCatIcon from './KiviCatIcon';
 
 type AppType = 'email' | 'vscode' | 'ai' | 'whispurr' | null;
 
@@ -11,6 +12,33 @@ const MockOS = memo(({ activeText, mode, setMode, degree, setDegree, isAltPresse
   
   // Floating Strip State
   const [isHovered, setIsHovered] = useState(false);
+
+  // Global Double Tap logic for Quicklaunch
+  useEffect(() => {
+    let lastTap = 0;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const savedShortcut = localStorage.getItem('whispurr_quicklaunch') || 'Ctrl';
+      let key = e.key;
+      if (key === ' ') key = 'Space';
+      else if (key === 'Control') key = 'Ctrl';
+      else if (key === 'Meta') key = 'Cmd';
+      if (key.length === 1) key = key.toUpperCase();
+
+      if (key === savedShortcut) {
+        const now = Date.now();
+        if (now - lastTap < 400) {
+          // Double tap detected!
+          setOpenApp(prev => prev === 'whispurr' ? null : 'whispurr');
+          lastTap = 0;
+        } else {
+          lastTap = now;
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   const [activePopup, setActivePopup] = useState<'styles' | null>(null);
 
   // Local state for native typing
@@ -38,7 +66,7 @@ const MockOS = memo(({ activeText, mode, setMode, degree, setDegree, isAltPresse
     if (openApp === 'email') return <Mail className="w-4 h-4 text-blue-300" />;
     if (openApp === 'vscode') return <Terminal className="w-4 h-4 text-blue-500" />;
     if (openApp === 'ai') return <Sparkles className="w-4 h-4 text-purple-300" />;
-    if (openApp === 'whispurr') return <Cat className="w-4 h-4 text-orange-400" />;
+    if (openApp === 'whispurr') return <KiviCatIcon className="w-4 h-4 text-orange-400" />;
     return <div className="w-4 h-4 border border-white/20 rounded-sm border-dashed" />;
   };
 
@@ -72,7 +100,7 @@ const MockOS = memo(({ activeText, mode, setMode, degree, setDegree, isAltPresse
                     >
                        <div className="text-white/50 text-xs font-bold uppercase tracking-wider mb-2">Pinned Apps</div>
                        <div className="flex items-center gap-3 text-white hover:bg-white/10 p-2 rounded cursor-pointer" onClick={() => {setOpenApp('whispurr'); setIsStartMenuOpen(false);}}>
-                          <Cat className="w-5 h-5 text-orange-400" />
+                          <KiviCatIcon className="w-5 h-5 text-orange-400" />
                           <span className="font-medium text-sm">WhisPURR Settings</span>
                        </div>
                        <div className="flex items-center gap-3 text-white hover:bg-white/10 p-2 rounded cursor-pointer" onClick={() => {setOpenApp('ai'); setIsStartMenuOpen(false);}}>
@@ -107,7 +135,7 @@ const MockOS = memo(({ activeText, mode, setMode, degree, setDegree, isAltPresse
                  onClick={() => (openApp as string) !== 'whispurr' && setOpenApp('whispurr')}
                  className={`w-8 h-8 rounded flex items-center justify-center cursor-pointer transition-colors ${(openApp as string) === 'whispurr' ? 'bg-white/10 border-b-2 border-orange-400' : 'hover:bg-white/10'}`}
               >
-                 <Cat className="w-5 h-5 text-orange-400" />
+                 <KiviCatIcon className="w-5 h-5 text-orange-400" />
               </div>
            </div>
 
@@ -122,15 +150,21 @@ const MockOS = memo(({ activeText, mode, setMode, degree, setDegree, isAltPresse
       )}
 
             {/* NEW RADIAL KIVI CONTROL STRIP */}
-      {openApp !== 'whispurr' && (
-        <div 
-          className={`absolute bottom-[-64px] left-1/2 -translate-x-1/2 z-[80] w-64 h-64 flex items-center justify-center rounded-full ${isHovered ? 'pointer-events-auto' : 'pointer-events-none'}`}
-          onMouseLeave={() => { setIsHovered(false); setActivePopup(null); }}
-        >
-          <div 
-            className="relative w-32 h-32 flex items-center justify-center rounded-full pointer-events-auto"
-            onMouseEnter={() => setIsHovered(true)}
+        {openApp !== 'whispurr' && (
+          <motion.div 
+            initial={{ y: 50, opacity: 0 }}
+            animate={{ 
+              y: (isAltPressed || isLoading || !!activeText) ? -40 : 50, 
+              opacity: (isAltPressed || isLoading || !!activeText) ? 1 : 0 
+            }}
+            transition={{ type: 'spring', stiffness: 350, damping: 25 }}
+            className={`absolute bottom-[-64px] left-1/2 -translate-x-1/2 z-[80] w-64 h-64 flex items-center justify-center rounded-full pointer-events-none`}
+            onMouseLeave={() => { setIsHovered(false); setActivePopup(null); }}
           >
+            <div 
+              className={`relative w-32 h-32 flex items-center justify-center rounded-full ${(isAltPressed || isLoading || !!activeText) ? 'pointer-events-auto' : 'pointer-events-none'}`}
+              onMouseEnter={() => setIsHovered(true)}
+            >
             {/* Subtle Hover Glow Backdrop */}
             <AnimatePresence>
               {isHovered && (
@@ -147,16 +181,16 @@ const MockOS = memo(({ activeText, mode, setMode, degree, setDegree, isAltPresse
             <div 
               onClick={(e) => { 
                 if (e.detail === 1 && toggleListening) toggleListening(); 
-                if (e.detail === 2) setOpenApp('whispurr'); 
+                if (e.detail === 2) setOpenApp(prev => prev === 'whispurr' ? null : 'whispurr'); 
               }}
-              className={`w-8 h-8 rounded-full flex items-center justify-center cursor-pointer transition-all duration-500 shadow-2xl relative z-10 ${
+              className={`w-12 h-12 rounded-full flex items-center justify-center cursor-pointer transition-all duration-500 shadow-2xl relative z-10 overflow-hidden border-2 ${
                 isAltPressed || isLoading 
-                  ? 'bg-black/90 border border-white/20 shadow-[0_0_20px_rgba(255,255,255,0.15)] scale-110'
-                  : 'bg-gradient-to-br from-[#2a2a2a] to-[#111] hover:from-[#333] hover:to-[#1a1a1a] border border-white/10 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]'
+                  ? 'border-[#8d6e63] shadow-[0_0_30px_rgba(141,110,99,0.5)] scale-110'
+                  : 'border-white/10 shadow-[0_0_15px_rgba(0,0,0,0.5)]'
               }`}
             >
-              <Cat className={`text-gray-300 transition-all duration-500 ${
-                isLoading ? 'w-4 h-4 animate-pulse text-white' : (isAltPressed ? 'w-4 h-4 text-white' : 'w-4 h-4 opacity-80')
+              <KiviCatIcon className={`w-full h-full object-cover transition-all duration-500 ${
+                isLoading ? 'animate-pulse opacity-100' : (isAltPressed ? 'opacity-100' : 'opacity-80 hover:opacity-100')
               }`} />
             </div>
 
@@ -227,9 +261,9 @@ const MockOS = memo(({ activeText, mode, setMode, degree, setDegree, isAltPresse
                 </>
               )}
             </AnimatePresence>
-          </div>
-        </div>
-      )}
+            </div>
+          </motion.div>
+        )}
 
       {/* FULL SCREEN APPS */}
       <AnimatePresence>

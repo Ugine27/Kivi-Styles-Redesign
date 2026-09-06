@@ -1,96 +1,10 @@
-import React, { useState } from 'react';
-import KiviCatIcon from './KiviCatIcon';
-import { createPortal } from 'react-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Mic, Terminal, Briefcase, MessageCircle, Mail, Settings, ChevronRight, ChevronLeft, Check } from 'lucide-react';
+﻿# -*- coding: utf-8 -*-
+import re
 
-interface TutorialProps {
-  onComplete: () => void;
-}
+with open("kivi-app/src/components/Tutorial.tsx", "r", encoding="utf-8") as f:
+    content = f.read()
 
-export default function Tutorial({ onComplete }: TutorialProps) {
-  const [slide, setSlide] = useState(0);
-  const totalSlides = 10;
-
-  const nextSlide = () => {
-    if (slide < totalSlides - 1) setSlide(s => s + 1);
-  };
-
-  const prevSlide = () => {
-    if (slide > 0) setSlide(s => s - 1);
-  };
-
-  const tutorialContent = (
-    <div className="fixed inset-0 z-[9999] bg-[#f4ece1] text-[#3e2723] flex flex-col justify-between overflow-hidden font-sans">
-      {/* Top Bar */}
-      <div className="flex justify-between items-center p-8 z-10">
-        <button 
-          onClick={onComplete}
-          className="text-[#3e2723]/60 hover:text-[#3e2723] font-mono text-sm tracking-widest border-b-2 border-transparent hover:border-[#8d6e63] transition-all pb-1"
-        >
-          skip
-        </button>
-        <div className="text-[#3e2723]/60 font-mono text-sm tracking-widest">
-          {String(slide + 1).padStart(2, '0')} / {String(totalSlides).padStart(2, '0')}
-        </div>
-      </div>
-
-      {/* Main Content Area */}
-      <div className="flex-1 flex flex-col items-center justify-center relative z-10 px-8">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={slide}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.4, ease: "easeOut" }}
-            className="flex flex-col items-center w-full max-w-5xl"
-          >
-            {renderSlideContent(slide, onComplete)}
-          </motion.div>
-        </AnimatePresence>
-      </div>
-
-      {/* Navigation Controls */}
-      <div className="absolute inset-y-0 left-0 w-32 flex items-center justify-center z-20 pointer-events-none">
-        {slide > 0 && (
-          <button 
-            onClick={prevSlide}
-            className="pointer-events-auto p-4 text-[#3e2723]/40 hover:text-[#8d6e63] transition-colors"
-          >
-            <ChevronLeft size={48} strokeWidth={1} />
-          </button>
-        )}
-      </div>
-      <div className="absolute inset-y-0 right-0 w-32 flex items-center justify-center z-20 pointer-events-none">
-        {slide < totalSlides - 1 && (
-          <button 
-            onClick={nextSlide}
-            className="pointer-events-auto p-4 text-[#3e2723]/40 hover:text-[#8d6e63] transition-colors"
-          >
-            <ChevronRight size={48} strokeWidth={1} />
-          </button>
-        )}
-      </div>
-
-      {/* Progress Dots */}
-      <div className="flex justify-center gap-3 pb-12 z-10">
-        {Array.from({ length: totalSlides }).map((_, i) => (
-          <div 
-            key={i} 
-            className={`h-1 rounded-full transition-all duration-500 ${
-              i === slide ? 'w-8 bg-[#8d6e63]' : 'w-2 bg-[#3e2723]/20'
-            }`}
-          />
-        ))}
-      </div>
-    </div>
-  );
-
-  return createPortal(tutorialContent, document.body);
-}
-
-function renderSlideContent(index: number, onComplete: () => void) {
+new_render = """function renderSlideContent(index: number, onComplete: () => void) {
   switch (index) {
     case 0:
       return (
@@ -268,3 +182,10 @@ function SurveySlide({ title, icon, subtext, options }: { title: string, icon: R
     </div>
   );
 }
+"""
+
+start_idx = content.find("function renderSlideContent")
+content = content[:start_idx] + new_render
+
+with open("kivi-app/src/components/Tutorial.tsx", "w", encoding="utf-8") as f:
+    f.write(content)

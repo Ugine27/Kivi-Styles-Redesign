@@ -97,10 +97,20 @@ export function useKiviInput() {
     }
   }, [mode, degree]);
 
-  // Handle Alt key down/up
+    // Handle Talk key down/up
   useEffect(() => {
+    const formatKey = (eKey: string) => {
+      let key = eKey;
+      if (key === ' ') key = 'Space';
+      else if (key === 'Control') key = 'Ctrl';
+      else if (key === 'Meta') key = 'Cmd';
+      if (key.length === 1) key = key.toUpperCase();
+      return key;
+    };
+
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Alt' && !e.repeat) {
+      const savedShortcut = localStorage.getItem('whispurr_talk') || 'Alt';
+      if (formatKey(e.key) === savedShortcut && !e.repeat) {
         setIsAltPressed(true);
         setTranscript('');
         setTranslatedText('');
@@ -113,7 +123,8 @@ export function useKiviInput() {
     };
 
     const handleKeyUp = (e: KeyboardEvent) => {
-      if (e.key === 'Alt') {
+      const savedShortcut = localStorage.getItem('whispurr_talk') || 'Alt';
+      if (formatKey(e.key) === savedShortcut) {
         setIsAltPressed(false);
         try {
           recognitionRef.current?.stop();
@@ -125,7 +136,6 @@ export function useKiviInput() {
 
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('keyup', handleKeyUp);
-
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);

@@ -22,23 +22,19 @@ This repository contains the **MockOS Prototype**, a beautifully designed web-ba
 1. **Clone the repository:**
    ```bash
    git clone <repository-url>
-   cd kivi-app
+   cd Kivi-Styles-Redesign
    ```
 
-2. **Install dependencies:**
-   ```bash
-   npm install
-   ```
-
-3. **Configure your API Key:**
+2. **Configure your API Key:**
    Create a `.env` file in the `kivi-app` directory and add your Gemini API key:
    ```env
    VITE_GEMINI_API_KEY=your_gemini_api_key_here
    ```
 
-4. **Run the local server:**
+3. **Start the App:**
+   We have included an easy-to-use startup script that automatically installs dependencies, starts the server, and opens your browser. Just run:
    ```bash
-   npm run dev
+   python whispurrstart.py
    ```
 
 5. **Experience the Prototype:**
