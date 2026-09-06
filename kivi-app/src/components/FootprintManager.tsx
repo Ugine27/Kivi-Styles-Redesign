@@ -191,8 +191,8 @@ export default function FootprintManager({
               className="select-none"
             >
               <div className="relative p-2 rounded-full">
-                {/* Cat Paw Icon with Warm Amber Glow Styling */}
-                <PawPrint className="w-6 h-6 text-orange-400/80 fill-orange-400/25 drop-shadow-[0_2px_8px_rgba(251,146,60,0.4)]" />
+                {/* Cat Paw Icon with Coffee Brown Styling */}
+                <PawPrint className="w-6 h-6 text-[#5d4037]/80 fill-[#5d4037]/25 drop-shadow-[0_2px_8px_rgba(93,64,55,0.4)]" />
               </div>
             </motion.div>
           ))}

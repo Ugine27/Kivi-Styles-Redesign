@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { PanelLeftClose, PanelLeft, Home, BookOpen, Zap, Palette, Clock, FileText, X, Mic, Pencil, User, Settings, Shield, LayoutTemplate, CreditCard, PlayCircle, Square, Trash2, Sparkles, Copy, Check } from 'lucide-react';
+import { PanelLeftClose, PanelLeft, Home, BookOpen, Zap, Palette, Clock, FileText, X, Mic, Pencil, User, Settings, Shield, LayoutTemplate, CreditCard, PlayCircle, Square, Trash2, Sparkles, Copy, Check, Info } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Tutorial from './Tutorial';
 import StylesManager from './styles/StylesManager';
@@ -7,18 +7,41 @@ import FootprintManager from './FootprintManager';
 import KiviCatIcon from './KiviCatIcon';
 import { transformText } from '../transformEngine';
 
+const CAT_FACTS = [
+  "Cats lack a rigid collarbone, meaning that if their head can squeeze through a gap, their whole body is probably going along for the ride!",
+  "They have 32 muscles in *each* ear (compared to our measly six) and can independently swivel them 180 degrees to pinpoint exactly which room you just opened the treat bag in.",
+  "Don't let their lazy demeanor fool you—a healthy cat can leap up to six times their own height in a single, effortless bound.",
+  "A cat’s purr rumbles at a frequency between 25 and 150 Hertz, which veterinary studies show can actually help heal bones, repair tissues, and reduce swelling. They are literally vibrating little medics!",
+  "Just like human fingerprints, no two cat nose prints are exactly alike. Every kitty is walking around with a completely unique, boopable ID card on their face.",
+  "Adult cats rarely ever meow at each other. They use body language and scent for kitty-to-kitty chats, and developed the \"meow\" almost entirely to communicate with (and successfully manipulate) us humans!",
+  "They spend roughly 70% of their lives snoozing, which means a 9-year-old cat has been awake for barely three years of its life.",
+  "Because of a genetic mutation that wiped out their sweet receptors, cats physically cannot taste sugar. If they try to steal a lick of your ice cream, they are just in it for the delicious fat and texture!",
+  "Over short distances, a domestic house cat can hit speeds of up to 30 mph, which is actually slightly faster than Olympic sprinter Usain Bolt.",
+  "Just like we are left- or right-handed, cats tend to have a preferred paw. Behavioral studies suggest that male cats often favor their left paw, while female cats tend to favor their right."
+];
+
 export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: string, setMode?: (m: any) => void }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('Home');
+  const [currentCatFact, setCurrentCatFact] = useState('');
+  const [showCatFactPopup, setShowCatFactPopup] = useState(false);
   const [showTutorial, setShowTutorial] = useState(true);
   const [currentTheme, setCurrentTheme] = useState('coffee');
   const [moodsEnabled, setMoodsEnabled] = useState(false);
   
+  // StickyNotes State
+  const [stickyNotes, setStickyNotes] = useState([
+    { id: 1, text: "Buy catnip\nSchedule vet appointment\nClean the litter box", color: "bg-[#e8d5b5]", rotation: -3, x: 20, y: 10 },
+    { id: 2, text: "Project ideas:\n- AI voice assistant\n- MockOS prototype\n- Add more cats", color: "bg-[#d5e8b5]", rotation: 4, x: -10, y: 40 },
+    { id: 3, text: "Remember to drink water!", color: "bg-[#b5d5e8]", rotation: -2, x: 30, y: -20 },
+    { id: 4, text: "Call Mom at 6 PM", color: "bg-[#e8b5c5]", rotation: 5, x: -20, y: 10 },
+  ]);
+  const [activeNoteId, setActiveNoteId] = useState<number | null>(null);
+
   useEffect(() => {
-    if (mode === 'Notes') {
-      setActiveTab('Notes');
-      
+    if (mode === 'ScratchPad') {
+      setActiveTab('ScratchPad');
     }
   }, [mode]);
 
@@ -220,7 +243,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
     animationClass = 'animate-bounce';
   } else if (timeSavedWeekHrs >= 12) {
     whispurrIcon = (
-      <video src="/zoomies.mp4" autoPlay loop muted playsInline className="w-full h-full scale-[2.0] object-contain mix-blend-screen" />
+      <video src="/new_zoomies.mp4" autoPlay loop muted playsInline className="w-full h-full scale-[2.0] object-contain mix-blend-multiply opacity-90" />
     );
     whispurrStage = 'Zoomies';
     animationClass = '';
@@ -273,25 +296,63 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
             { name: 'Dictionary', icon: BookOpen },
             { name: 'Shortcuts', icon: Zap },
             { name: 'Context', icon: Palette },
-            { name: 'Notes', icon: FileText },
+            { name: 'ScratchPad', icon: FileText },
           ].map((tab) => (
-            <div key={tab.name} onClick={() => {setActiveTab(tab.name); }} className={`flex items-center gap-4 py-3 rounded-xl cursor-pointer transition-all ${isSidebarOpen ? 'px-4 mx-4' : 'justify-center mx-4'} ${activeTab === tab.name ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20 shadow-sm' : 'text-white/50 hover:bg-white/5 hover:text-white'}`}>
+            <div key={tab.name} onClick={() => {
+              setActiveTab(tab.name);
+            }} className={`flex items-center gap-4 py-3 rounded-xl cursor-pointer transition-all ${isSidebarOpen ? 'px-4 mx-4' : 'justify-center mx-4'} ${activeTab === tab.name ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20 shadow-sm' : 'text-white/50 hover:bg-white/5 hover:text-white'}`}>
               <tab.icon className="w-5 h-5 shrink-0" />
               <motion.div animate={{ opacity: isSidebarOpen ? 1 : 0, width: isSidebarOpen ? 'auto' : 0 }} className="text-base font-medium">{tab.name}</motion.div>
             </div>
           ))}
         
-          <div className="mt-auto mb-4 w-full px-4">
+          <div className="mt-auto mb-4 w-full px-4 flex flex-col gap-2">
             <div 
               onClick={() => setIsSettingsOpen(!isSettingsOpen)} 
               className={`flex items-center gap-3 py-3 px-3 rounded-xl cursor-pointer transition-all ${isSettingsOpen ? 'bg-white/10 shadow-inner' : 'hover:bg-white/5'} ${!isSidebarOpen && 'justify-center'}`}
             >
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-orange-500 to-amber-400 flex items-center justify-center shrink-0 border border-white/10 overflow-hidden shadow-inner">
-                <User className="w-5 h-5 text-black" strokeWidth={2.5} />
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-[#8d6e63] to-[#d7ccc8] flex items-center justify-center shrink-0 border border-[#5d4037]/50 overflow-hidden shadow-inner">
+                <User className="w-5 h-5 text-[#3e2723]" strokeWidth={2.5} />
               </div>
               <motion.div animate={{ opacity: isSidebarOpen ? 1 : 0, width: isSidebarOpen ? 'auto' : 0 }} className="flex flex-col justify-center overflow-hidden">
                 <span className="text-sm font-medium text-white">Mr.Kat</span>
               </motion.div>
+            </div>
+
+            {/* Cat Facts Button with Popup */}
+            <div className="relative">
+              <div onClick={() => {
+                if (!showCatFactPopup) {
+                  setCurrentCatFact(CAT_FACTS[Math.floor(Math.random() * CAT_FACTS.length)]);
+                }
+                setShowCatFactPopup(!showCatFactPopup);
+              }} className={`flex items-center gap-3 py-3 px-3 rounded-xl cursor-pointer transition-all ${showCatFactPopup ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20 shadow-sm' : 'text-white/50 hover:bg-white/5 hover:text-white'} ${!isSidebarOpen && 'justify-center'}`}>
+                <div className="w-8 h-8 flex items-center justify-center shrink-0">
+                  <Info className="w-5 h-5" />
+                </div>
+                <motion.div animate={{ opacity: isSidebarOpen ? 1 : 0, width: isSidebarOpen ? 'auto' : 0 }} className="flex flex-col justify-center overflow-hidden whitespace-nowrap">
+                  <span className="text-sm font-medium">Cat Facts</span>
+                </motion.div>
+              </div>
+
+              <AnimatePresence>
+                {showCatFactPopup && (
+                  <motion.div 
+                    initial={{ opacity: 0, x: -10, y: 10 }}
+                    animate={{ opacity: 1, x: 0, y: 0 }}
+                    exit={{ opacity: 0, x: -10, y: 10 }}
+                    className={`fixed bottom-8 ${isSidebarOpen ? 'left-[280px]' : 'left-[100px]'} w-80 p-6 rounded-2xl bg-[#1e1e1e]/95 backdrop-blur-xl border border-orange-500/40 shadow-[0_0_40px_rgba(0,0,0,0.8)] z-[9999] pointer-events-none whitespace-normal`}
+                  >
+                    <div className="flex items-center gap-2 mb-3 text-orange-400">
+                      <Sparkles className="w-5 h-5" />
+                      <span className="text-sm font-bold uppercase tracking-wider">Did you know?</span>
+                    </div>
+                    <p className="text-[15px] text-white/90 leading-relaxed italic font-medium">
+                      "{currentCatFact}"
+                    </p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </div>
         </div>
@@ -344,13 +405,21 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                     <p className="text-white/50 text-sm">Your invisible translation layer is active and standing by.</p>
                   </div>
                   {/* Voice-to-Text Chat Box */}
-                  <div className={`flex-1 ${glassPanel} p-6 flex flex-col relative z-10 overflow-hidden shadow-2xl border border-white/10 min-h-0`}>
+                  <div className={`h-fit ${glassPanel} p-6 flex flex-col relative z-10 overflow-hidden shadow-2xl border border-white/10`}>
                     {/* Header */}
                     <div className="flex items-center justify-between pb-4 border-b border-white/5 mb-4 shrink-0">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-orange-500/15 border border-orange-500/30 flex items-center justify-center text-orange-400 shadow-sm">
-                          <Mic className="w-5 h-5" />
-                        </div>
+                        <button 
+                          onClick={toggleHomeListening}
+                          className={`w-10 h-10 rounded-xl border flex items-center justify-center shadow-sm transition-all active:scale-95 ${
+                            isHomeListening
+                              ? 'bg-red-500/20 border-red-500/40 text-red-400 animate-pulse shadow-[0_0_15px_rgba(239,68,68,0.3)]'
+                              : 'bg-orange-500/15 border-orange-500/30 text-orange-400 hover:bg-orange-500/25 hover:scale-105'
+                          }`}
+                          title={isHomeListening ? 'Stop Listening' : 'Start Listening'}
+                        >
+                          {isHomeListening ? <Square className="w-5 h-5 fill-current" /> : <Mic className="w-5 h-5" />}
+                        </button>
                         <div>
                           <h2 className="text-base font-semibold text-white tracking-wide flex items-center gap-2">
                             Voice-to-Text Studio
@@ -378,29 +447,29 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                         <button
                           onClick={handleCopyHomeChat}
                           disabled={!homeChatText.trim()}
-                          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
+                          className={`flex items-center justify-center p-2.5 rounded-xl transition-all ${
                             isHomeCopied
                               ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
                               : homeChatText.trim()
                               ? 'bg-white/10 hover:bg-white/15 text-white border border-white/15 shadow-sm active:scale-95'
                               : 'bg-white/5 text-white/30 border border-white/5 cursor-not-allowed'
                           }`}
+                          title="Copy to Clipboard"
                         >
-                          {isHomeCopied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
-                          <span>{isHomeCopied ? 'Copied!' : 'Copy to Clipboard'}</span>
+                          {isHomeCopied ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
                         </button>
                       </div>
                     </div>
 
                     {/* Textarea Area */}
-                    <div className="flex-1 relative flex flex-col min-h-0">
+                    <div className="relative flex flex-col min-h-0 h-48">
                       <textarea
                         value={homeChatText}
                         onChange={(e) => setHomeChatText(e.target.value)}
                         placeholder={
                           isHomeListening
                             ? 'Listening to your voice... Speak clearly into your microphone...'
-                            : 'Click "Speak" below and speak, or type here directly to convert and copy anywhere...'
+                            : 'Click the Mic icon to speak, or type here directly to convert and copy anywhere...'
                         }
                         className="flex-1 w-full bg-black/40 border border-white/5 focus:border-orange-500/40 rounded-2xl p-5 text-white placeholder-white/20 resize-none outline-none font-sans text-base leading-relaxed transition-all shadow-inner"
                       />
@@ -413,83 +482,20 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                         </div>
                         {isHomeCopied && (
                           <span className="text-emerald-400 font-medium animate-pulse">
-                            Γ£ô Copied to clipboard! Ready to paste anywhere (Ctrl+V / Cmd+V)
+                            ✓ Copied to clipboard! Ready to paste anywhere (Ctrl+V / Cmd+V)
                           </span>
                         )}
                       </div>
-                    </div>
-
-                    {/* Action Controls Bar */}
-                    <div className="flex items-center justify-between gap-4 pt-4 mt-2 border-t border-white/5 shrink-0">
-                      <div className="flex items-center gap-2">
-                        {/* Primary Speak / Stop Button */}
-                        <button
-                          onClick={toggleHomeListening}
-                          className={`flex items-center gap-2.5 px-6 py-3 rounded-2xl font-semibold text-sm transition-all shadow-lg active:scale-95 ${
-                            isHomeListening
-                              ? 'bg-red-500 hover:bg-red-600 text-white shadow-[0_0_20px_rgba(239,68,68,0.45)]'
-                              : 'bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-black shadow-[0_0_20px_rgba(249,115,22,0.3)]'
-                          }`}
-                        >
-                          {isHomeListening ? (
-                            <>
-                              <Square className="w-4 h-4 fill-current animate-pulse" />
-                              <span>Stop Listening</span>
-                            </>
-                          ) : (
-                            <>
-                              <Mic className="w-4 h-4" />
-                              <span>Click to Speak</span>
-                            </>
-                          )}
-                        </button>
-
-                        {/* Polish with AI Button */}
-                        <button
-                          onClick={handleFormatWithAI}
-                          disabled={!homeChatText.trim() || isHomeTransforming}
-                          className={`flex items-center gap-2 px-4 py-3 rounded-2xl text-xs font-semibold transition-all border ${
-                            homeChatText.trim() && !isHomeTransforming
-                              ? 'bg-white/5 hover:bg-white/10 text-white/80 hover:text-white border-white/10 active:scale-95'
-                              : 'bg-white/[0.02] text-white/20 border-white/5 cursor-not-allowed'
-                          }`}
-                          title="Polish transcript using Kivi translation layer"
-                        >
-                          <Sparkles className={`w-3.5 h-3.5 text-purple-400 ${isHomeTransforming ? 'animate-spin' : ''}`} />
-                          <span>{isHomeTransforming ? 'Polishing...' : 'Polish with AI'}</span>
-                        </button>
-                      </div>
-
-                      {/* Copy Button */}
-                      <button
-                        onClick={handleCopyHomeChat}
-                        disabled={!homeChatText.trim()}
-                        className={`flex items-center gap-2 px-5 py-3 rounded-2xl font-semibold text-sm transition-all border ${
-                          isHomeCopied
-                            ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
-                            : homeChatText.trim()
-                            ? 'bg-white/10 hover:bg-white/15 text-white border-white/20 active:scale-95 shadow-md'
-                            : 'bg-white/5 text-white/25 border-white/5 cursor-not-allowed'
-                        }`}
-                      >
-                        {isHomeCopied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                        <span>{isHomeCopied ? 'Copied!' : 'Copy Text'}</span>
-                      </button>
                     </div>
                   </div>
                 </div>
 
                 <div className={`w-[320px] ${glassPanel} bg-black/40 p-6 flex flex-col relative z-10 overflow-hidden`}>
-                  <div className="w-full flex-1 min-h-[160px] rounded-2xl bg-black/60 mb-8 relative shadow-inner border border-white/5 flex flex-col items-center justify-center group overflow-hidden">
-                     <div className="absolute inset-0 bg-orange-500/10 blur-2xl rounded-full scale-150 group-hover:scale-110 transition-transform duration-1000"></div>
-                     <div className={`text-7xl relative z-10 ${animationClass} drop-shadow-[0_0_15px_rgba(249,115,22,0.4)] flex items-center justify-center w-full h-full`}>
+                  <div className="w-full flex-1 min-h-[160px] rounded-2xl bg-[#0f0f0f] mb-8 relative border border-white/5 flex flex-col items-center justify-center group overflow-hidden">
+                     <div className={`text-7xl relative z-10 ${animationClass} flex items-center justify-center w-full h-full`}>
                        {whispurrIcon}
                      </div>
-                     <div className="absolute bottom-4 left-0 right-0 text-center z-10">
-                       <span className="text-orange-300 font-bold tracking-widest text-xs uppercase bg-black/60 px-4 py-1.5 rounded-full border border-orange-500/20 backdrop-blur-md">
-                         Stage: {whispurrStage}
-                       </span>
-                     </div>
+
                   </div>
                   <h3 className="text-lg font-bold text-orange-50 mb-4 text-center border-b border-white/10 pb-3">Today's Impact</h3>
                   <div className="flex flex-col gap-4 items-center">
@@ -618,18 +624,72 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
               </motion.div>
             )}
 
-            {activeTab === 'Notes' && (
-              <motion.div key="notes" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col gap-6 p-8 ${glassPanel}`}>
-                <div className="px-2">
+            {activeTab === 'ScratchPad' && (
+              <motion.div key="stickynotes" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col p-8 overflow-hidden ${glassPanel}`}>
+                <div className="px-2 mb-8 shrink-0">
                   <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
                     <FileText className="text-orange-400 w-8 h-8" />
-                    Notes
+                    ScratchPad
                   </h1>
-                  <p className="text-white/40 text-sm">Your dictated thoughts, structured and summarized automatically by WhisPURR.</p>
+                  <p className="text-white/40 text-sm">Jot down your thoughts instantly. Click any note to focus.</p>
                 </div>
-                <div className="flex-1 flex flex-col mt-2 bg-[#050505] rounded-2xl border border-white/5 p-8 overflow-y-auto shadow-inner">
-                    <div className="text-center text-white/30 py-24 italic text-sm">No notes captured yet. Hold Alt and speak while in Notes mode to begin.</div>
+                <div className="flex-1 relative w-full h-full">
+                  {stickyNotes.map((note, index) => (
+                    <motion.div
+                      key={note.id}
+                      onClick={() => setActiveNoteId(note.id)}
+                      layoutId={`note-${note.id}`}
+                      initial={{ rotate: note.rotation, x: note.x, y: note.y }}
+                      whileHover={{ scale: 1.05, rotate: 0, zIndex: 40 }}
+                      className={`absolute w-56 h-56 p-5 rounded-sm shadow-lg cursor-pointer flex flex-col ${note.color} text-[#3e2723]`}
+                      style={{ 
+                        top: `${10 + (index % 2) * 35}%`, 
+                        left: `${5 + index * 22}%`,
+                        boxShadow: '4px 4px 15px rgba(0,0,0,0.3), inset -2px -2px 10px rgba(0,0,0,0.05)'
+                      }}
+                    >
+                      <div className="w-full flex-1 overflow-hidden pointer-events-none">
+                        <p className="text-sm font-medium whitespace-pre-wrap leading-relaxed">{note.text}</p>
+                      </div>
+                    </motion.div>
+                  ))}
                 </div>
+                
+                {/* Enlarged Note Overlay */}
+                <AnimatePresence>
+                  {activeNoteId !== null && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="absolute inset-0 z-50 flex items-center justify-center p-8 bg-black/50 backdrop-blur-md"
+                      onClick={() => setActiveNoteId(null)}
+                    >
+                      {stickyNotes.find(n => n.id === activeNoteId) && (
+                        <motion.div
+                          layoutId={`note-${activeNoteId}`}
+                          onClick={(e) => e.stopPropagation()}
+                          className={`w-full max-w-lg h-96 p-8 rounded-md shadow-2xl flex flex-col relative ${stickyNotes.find(n => n.id === activeNoteId)?.color} text-[#3e2723]`}
+                          style={{ boxShadow: '8px 8px 30px rgba(0,0,0,0.5)' }}
+                        >
+                          <button 
+                            onClick={() => setActiveNoteId(null)}
+                            className="absolute top-4 right-4 p-2 text-[#3e2723]/60 hover:text-[#3e2723] hover:bg-[#3e2723]/10 rounded-full transition-colors z-10"
+                          >
+                            <X className="w-5 h-5" />
+                          </button>
+                          <textarea
+                            value={stickyNotes.find(n => n.id === activeNoteId)?.text}
+                            onChange={(e) => setStickyNotes(notes => notes.map(n => n.id === activeNoteId ? { ...n, text: e.target.value } : n))}
+                            className="w-full h-full bg-transparent resize-none outline-none font-medium text-xl leading-relaxed placeholder-[#3e2723]/40 whitespace-pre-wrap relative z-0"
+                            placeholder="Type your note here..."
+                            autoFocus
+                          />
+                        </motion.div>
+                      )}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </motion.div>
             )}
 
@@ -686,7 +746,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
               </motion.div>
             )}
             
-            {!['Home', 'Dictionary', 'Shortcuts', 'Notes', 'Context', 'Theme'].includes(activeTab) && (
+            {!['Home', 'Dictionary', 'Shortcuts', 'ScratchPad', 'Context', 'Theme'].includes(activeTab) && (
               <motion.div key="fallback" style={{ willChange: "transform, opacity, filter" }} variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col items-center justify-center gap-4 p-8 ${glassPanel}`}>
                 <Settings className="w-16 h-16 text-white/10" />
                 <h1 className="text-2xl font-bold text-white/50">{activeTab}</h1>
