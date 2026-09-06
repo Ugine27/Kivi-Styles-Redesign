@@ -33,3 +33,49 @@ This document tracks every single change made to the project.
 - **[Onboarding Experience]**: Built a full-screen, visually striking 11-slide Tutorial React component (Tutorial.tsx). The tutorial guides new users through the Kivi interaction paradigm (fn key, fn + ^, hotkey choices) and simulates the style preferences survey based on provided user mockups. Mapped local storage (kivi_onboarding_complete) to conditionally render this tutorial as an unskippable overlay on first launch, ensuring complete education of the product mechanics before entering the OS simulator.
 
 - **[Typography Overhaul]**: Switched the entire WhisPURR app to use the 'Editorial' font family (prioritizing 'Editorial New' and 'Editorial', with a Google Fonts fallback to 'Newsreader'). Updated 	ailwind.config.js to map these serif fonts to the default sans and serif families, and injected the stylesheet into index.html. This aligns the UI exactly with the premium, editorial serif aesthetic from the mockup slides.
+
+- **[Demo Mode]**: Modified App.tsx to bypass localStorage checks, ensuring the First-Launch Tutorial overlay now triggers every single time the application is reloaded for continuous demo purposes.
+
+- **[UX Adjustment]**: Moved the First-Launch Tutorial logic out of App.tsx and into MockOS.tsx. The demo now explicitly triggers only when the user opens the WhisPURR App dashboard (e.g., via double-clicking the Kivi Cat). Since it uses local component state, the demo resets every time the page reloads.
+
+- **[UI Addition]**: Added a User Profile icon to the bottom left of the WhisPURR Dashboard sidebar, featuring a responsive collapse animation matching the sidebar's state.
+
+- **[Bug Fix]**: Fixed an overflow issue in the WhisPURR Dashboard where the h-screen utility was causing the bottom of the sidebar (including the new User Profile) to be cropped behind the MockOS taskbar. Changed the root wrapper to h-full to correctly respect the parent window bounding box.
+
+- **[Settings Flow]**: Implemented a dynamic sub-navigation state (ctiveMenu) in the WhisPURR Dashboard. Clicking the User Profile now cleanly swaps the sidebar to a new context containing Settings, User Policy, Theme, Plans & Billing, and Tutorial tabs (with a < Back button to return to the main tools). Added a unified fallback render state for these new tabs.
+
+- **[Settings Flow Iteration]**: Re-architected the Settings UI to use a secondary sliding sidebar. Instead of swapping the primary navigation, clicking the User profile icon now triggers a new side panel that slides out smoothly beside the primary sidebar, displaying the Settings, User Policy, Theme, Plans & Billing, and Tutorial tabs without losing context of the primary navigation.
+
+- **[Frameless Window]**: Removed the top 'Kivi Dashboard' title ribbon specifically for the WhisPURR Dashboard. Converted the OS window controls (Close/Minimize) to float transparently over the app's native header, creating a clean, modern, frameless window experience.
+
+- **[UI Tweak]**: Lowered the Kivi Control Strip to sit closer to the bottom edge of the OS screen, and shrunk the main Kivi Cat floating action button down for a more subtle, less intrusive desktop presence.
+
+- **[UI Tweak]**: Shrank the Kivi Cat icon down to \w-8 h-8\ and positioned the radial strip flush with the bottom of the screen (\ottom-0\) for maximum unobtrusiveness.
+
+- **[Seamless Integration]**: Re-engineered the Radial Control Strip to mount natively inside the MockOS taskbar. The WhisPURR icon in the center of the taskbar is now the literal trigger for the radial cluster. This completely eliminates overlap issues and unifies the app interface with the OS environment perfectly.
+
+- **[UI Tweak]**: Moved the Kivi Control Strip out of the Taskbar and floated it *just above* the Task Ribbon (\ottom-[-64px]\) as requested. Fixed a critical hitbox bug where the invisible \w-64 h-64\ radial container was intercepting clicks meant for the Taskbar apps beneath it by restricting the initial \pointer-events-auto\ strictly to the \w-8 h-8\ Cat trigger icon.
+
+- **[Bug Fix]**: Resolved a JSX parsing error (\Expected corresponding JSX closing tag for <div>\) in MockOS.tsx caused by a trailing fragmented DOM string during the layout extraction.
+
+- **[Video Integration]**: Replaced the static CSS emoji animations for the 'Kitten' (Sleeping) and 'Zoomies' stages in the WhisPURR Dashboard with the newly downloaded high-fidelity MP4 video renders. Implemented \mix-blend-screen\ on the video elements to perfectly key out their backgrounds and blend them into the native UI.
+
+- **[Performance & Optimization]**: Engineered a comprehensive Framer Motion optimization pass across \MockOS.tsx\ and \WhispurrApp.tsx\. Forced hardware acceleration (\	ransform-gpu\) on the main App glass container, and applied explicit \willChange: "transform, opacity\" hint styles to all heavy \motion.div\ satellite popups, radial backgrounds, and tab views to eliminate layout thrashing and drop-frames during complex transition states.
+
+- **[UI Fluidity Fix]**: Fixed the sluggish 'after-effects' on side panel tab switching. Removed the heavy \ilter: blur()\ transitions and the \mode=wait\ AnimatePresence logic. Converted all tab panels to use absolute positioning (\inset-4\) during crossfades with snappy spring physics, allowing tabs to seamlessly dissolve into each other instantly without layout stacking.
+
+- **[Bug Fix]**: Resolved the 'white box' overlap visual glitch on tab switching. The glitch was caused by simultaneous rendering of highly opaque translucent glass layers during crossfade. Restored \mode=wait\ but heavily optimized the physics: old tabs now exit near-instantly (50ms) before the new tab snaps in (150ms), guaranteeing zero DOM overlap while maintaining an ultra-fast feel.
+
+- **[Revert]**: Rolled back the sequential mounting logic (\mode=wait\) on the side panel tabs. Restored the simultaneous \bsolute inset-4\ crossfading implementation as per user request to maintain the instant visual overlap effect during tab switching.
+
+- **[Recovery]**: Re-implemented the User Profile (Mr.Kat orange box) and Secondary Settings Sidebar which were accidentally dropped during the animation rollback.
+
+- **[Recovery & Enhancement]**: Successfully re-implemented the MP4 video elements for 'Stage: Kitten' and 'Stage: Zoomies' that were lost during the rollback. Upgraded the OS Window Manager to render launched apps in true 100vh Full Screen, elevating them to \z-[70]\ to completely cover and obscure the OS Task Ribbon and Kivi Strip, creating a totally immersive app view.
+
+- **[Feature]**: Completely revamped the UI architecture to support dynamic theming. Replaced all hardcoded Tailwind color utilities in \WhispurrApp.tsx\ with scoped CSS custom variables injected via \index.css\. Added a new \Coffee Light\ (Beige & Brown) theme variant alongside the existing \Midnight Dark\ (Black & Orange) variant, which can be fully toggled using the newly built Theme UI located in the 'Theme' tab within the User settings sidebar.
+
+- **[Bug Fix]**: Restored the original rounded, minimalist aesthetic by removing the harsh borders accidentally introduced during the CSS variables migration. Re-mapped the 20% opacity accent borders correctly so they don't render as solid orange lines. Removed the hard 'white lines' from the Theme Selection cards, relying instead on smooth background highlights and rounded-2xl corners to match the core design language.
+
+- **[Rollback]**: Reverted the dual-theme architecture (CSS Variables engine and Light Theme variant) per user request. Restored the native hardcoded Tailwind classes specifically tailored for the pure Midnight Dark (Black & Orange) aesthetic. All other functional upgrades (MP4 Videos, Full Screen MockOS, smooth crossfading animations, and User Profile sidebars) have been carefully preserved.
+
+- **[Bug Fix]**: Re-applied the Radial Control Strip sizing and placement fixes that were lost during the snapshot rollback. The Cat icon is correctly shrunk back to \w-8 h-8\, docked perfectly above the taskbar at \ottom-[-64px]\, and elevated to \z-[80]\ so it remains fully visible and accessible even when apps are launched in Full Screen mode.

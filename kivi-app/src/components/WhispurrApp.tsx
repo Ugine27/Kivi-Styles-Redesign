@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Cat, PanelLeftClose, PanelLeft, Home, BookOpen, Zap, Palette, Clock, FileText, X, Mic, Pencil, ArrowLeft, CheckCircle2, Circle } from 'lucide-react';
+import { Cat, PanelLeftClose, PanelLeft, Home, BookOpen, Zap, Palette, Clock, FileText, X, Mic, Pencil, ArrowLeft, CheckCircle2, Circle, User, Settings, Shield, LayoutTemplate, CreditCard, PlayCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function WhispurrApp({ mode }: { mode?: string }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('Home');
   const [selectedStyle, setSelectedStyle] = useState<any>(null);
   const [selectedPreset, setSelectedPreset] = useState<number>(2);
@@ -110,7 +111,7 @@ export default function WhispurrApp({ mode }: { mode?: string }) {
   const glassButton = "bg-orange-500/90 hover:bg-orange-400 text-black font-bold px-8 py-3 rounded-2xl transition-all shadow-[0_0_15px_rgba(249,115,22,0.2)] hover:shadow-[0_0_25px_rgba(249,115,22,0.4)] text-sm";
 
   return (
-    <div className="h-screen w-full bg-black text-white flex font-sans overflow-hidden">
+    <div className="h-full w-full bg-black text-white flex font-sans overflow-hidden">
       
       {/* Sidebar */}
       <motion.div 
@@ -151,10 +152,57 @@ export default function WhispurrApp({ mode }: { mode?: string }) {
               <motion.div animate={{ opacity: isSidebarOpen ? 1 : 0, width: isSidebarOpen ? 'auto' : 0 }} className="text-base font-medium">{tab.name}</motion.div>
             </div>
           ))}
+        
+          <div className="mt-auto mb-4 w-full px-4">
+            <div 
+              onClick={() => setIsSettingsOpen(!isSettingsOpen)} 
+              className={`flex items-center gap-3 py-3 px-3 rounded-xl cursor-pointer transition-all ${isSettingsOpen ? 'bg-white/10 shadow-inner' : 'hover:bg-white/5'} ${!isSidebarOpen && 'justify-center'}`}
+            >
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-orange-500 to-amber-400 flex items-center justify-center shrink-0 border border-white/10 overflow-hidden shadow-inner">
+                <User className="w-5 h-5 text-black" strokeWidth={2.5} />
+              </div>
+              <motion.div animate={{ opacity: isSidebarOpen ? 1 : 0, width: isSidebarOpen ? 'auto' : 0 }} className="flex flex-col justify-center overflow-hidden">
+                <span className="text-sm font-medium text-white">Mr.Kat</span>
+              </motion.div>
+            </div>
+          </div>
         </div>
       </motion.div>
 
+
+
+      {/* Secondary Settings Sidebar */}
+      <AnimatePresence>
+        {isSettingsOpen && (
+          <motion.div 
+            initial={{ width: 0, opacity: 0 }}
+            animate={{ width: 240, opacity: 1 }}
+            exit={{ width: 0, opacity: 0 }}
+            className="h-full bg-white/[0.02] border-r border-white/5 flex flex-col whitespace-nowrap overflow-hidden shrink-0 relative z-10 shadow-[4px_0_24px_rgba(0,0,0,0.3)]"
+          >
+            <div className="h-16 flex items-center px-6 border-b border-white/5 shrink-0">
+              <span className="font-bold text-white">Settings</span>
+            </div>
+            <div className="flex-1 py-6 flex flex-col gap-2 overflow-y-auto">
+              {[
+                { name: 'Settings', icon: Settings },
+                { name: 'User Policy', icon: Shield },
+                { name: 'Theme', icon: LayoutTemplate },
+                { name: 'Plans & Billing', icon: CreditCard },
+                { name: 'Tutorial', icon: PlayCircle },
+              ].map((tab) => (
+                <div key={tab.name} onClick={() => {setActiveTab(tab.name); setSelectedStyle(null);}} className={`flex items-center gap-4 py-2.5 rounded-xl cursor-pointer transition-all px-4 mx-4 ${activeTab === tab.name ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20 shadow-sm' : 'text-white/50 hover:bg-white/5 hover:text-white'}`}>
+                  <tab.icon className="w-4 h-4 shrink-0" />
+                  <div className="text-sm font-medium">{tab.name}</div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Main Content Area */}
+
       <div className="flex-1 flex flex-col overflow-hidden relative">
         <div className="h-14 border-b border-white/5 flex items-center px-8 shrink-0 bg-[#050505] z-10">
           <div className="font-medium text-white/40 flex items-center gap-2 text-sm">
@@ -163,10 +211,9 @@ export default function WhispurrApp({ mode }: { mode?: string }) {
         </div>
 
         <div className="flex-1 p-4 flex gap-4 overflow-hidden relative">
-          <AnimatePresence mode="wait">
-            
-            {activeTab === 'Home' && (
-              <motion.div key="home" variants={tabVariants} initial="initial" animate="animate" exit="exit" className="flex-1 flex gap-4 w-full h-full">
+          <AnimatePresence>
+              {activeTab === 'Home' && (
+              <motion.div key="home" variants={tabVariants} initial="initial" animate="animate" exit="exit" className="absolute inset-4 flex gap-4">
                 <div className="flex-1 flex flex-col gap-6">
                   <div className="px-2">
                     <h1 className="text-3xl font-bold tracking-tight mb-2 text-white">Good afternoon, User.</h1>
@@ -234,7 +281,7 @@ export default function WhispurrApp({ mode }: { mode?: string }) {
             )}
 
             {activeTab === 'Dictionary' && (
-              <motion.div key="dict" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`flex-1 flex flex-col gap-6 p-8 overflow-y-auto w-full h-full ${glassPanel}`}>
+              <motion.div key="dict" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col gap-6 p-8 overflow-y-auto ${glassPanel}`}>
                 <div className="px-2">
                   <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
                     <BookOpen className="text-orange-400 w-8 h-8" />
@@ -282,7 +329,7 @@ export default function WhispurrApp({ mode }: { mode?: string }) {
             )}
 
             {activeTab === 'Shortcuts' && (
-              <motion.div key="shortcuts" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`flex-1 flex flex-col gap-6 p-8 overflow-y-auto w-full h-full ${glassPanel}`}>
+              <motion.div key="shortcuts" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col gap-6 p-8 overflow-y-auto ${glassPanel}`}>
                 <div className="px-2">
                   <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
                     <Zap className="text-orange-400 w-8 h-8" />
@@ -333,7 +380,7 @@ export default function WhispurrApp({ mode }: { mode?: string }) {
             )}
 
             {activeTab === 'Notes' && (
-              <motion.div key="notes" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`flex-1 flex flex-col gap-6 p-8 w-full h-full ${glassPanel}`}>
+              <motion.div key="notes" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col gap-6 p-8 ${glassPanel}`}>
                 <div className="px-2">
                   <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
                     <FileText className="text-orange-400 w-8 h-8" />
@@ -348,7 +395,7 @@ export default function WhispurrApp({ mode }: { mode?: string }) {
             )}
 
             {activeTab === 'Styles' && (
-              <motion.div key="styles" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`flex-1 flex flex-col gap-6 p-8 overflow-y-auto w-full h-full ${glassPanel}`}>
+              <motion.div key="styles" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col gap-6 p-8 overflow-y-auto ${glassPanel}`}>
                 {!selectedStyle ? (
                   <>
                     <div className="px-2">
@@ -465,6 +512,14 @@ export default function WhispurrApp({ mode }: { mode?: string }) {
                     </div>
                   </motion.div>
                 )}
+              </motion.div>
+            )}
+          
+            {!['Home', 'Dictionary', 'Shortcuts', 'Notes', 'Styles'].includes(activeTab) && (
+              <motion.div key="fallback" style={{ willChange: "transform, opacity, filter" }} variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col items-center justify-center gap-4 p-8 ${glassPanel}`}>
+                <Settings className="w-16 h-16 text-white/10" />
+                <h1 className="text-2xl font-bold text-white/50">{activeTab}</h1>
+                <p className="text-white/30 text-sm">This section is currently under construction.</p>
               </motion.div>
             )}
           </AnimatePresence>
