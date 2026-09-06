@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Cat, PanelLeftClose, PanelLeft, Home, BookOpen, Zap, Palette, Clock, FileText, X, Mic, Pencil, ArrowLeft, CheckCircle2, Circle, User, Settings, Shield, LayoutTemplate, CreditCard, PlayCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Tutorial from './Tutorial';
 
 export default function WhispurrApp({ mode }: { mode?: string }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -570,45 +571,7 @@ export default function WhispurrApp({ mode }: { mode?: string }) {
 
         {/* Tutorial Overlay */}
         <AnimatePresence>
-          {showTutorial && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="absolute inset-0 z-[100] bg-black/80 backdrop-blur-md flex items-center justify-center p-8"
-            >
-              <motion.div
-                initial={{ scale: 0.9, y: 20, opacity: 0 }}
-                animate={{ scale: 1, y: 0, opacity: 1 }}
-                exit={{ scale: 0.95, y: -10, opacity: 0 }}
-                transition={{ type: "spring", stiffness: 300, damping: 25 }}
-                className="w-full max-w-2xl bg-[#0a0a0a] border border-white/10 rounded-[2rem] shadow-[0_0_50px_rgba(249,115,22,0.1)] overflow-hidden flex flex-col"
-              >
-                <div className="h-48 relative overflow-hidden bg-gradient-to-br from-orange-500/20 to-black flex items-center justify-center">
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] to-transparent z-10"></div>
-                  <Cat className="w-24 h-24 text-orange-400 relative z-20 drop-shadow-[0_0_15px_rgba(249,115,22,0.5)]" />
-                </div>
-                
-                <div className="p-10 flex flex-col items-center text-center relative z-20 -mt-8">
-                  <h2 className="text-3xl font-bold tracking-tight text-white mb-4">Welcome to WhisPURR</h2>
-                  <p className="text-white/60 mb-8 max-w-md leading-relaxed text-sm">
-                    Your personal AI translation layer. 
-                    WhisPURR acts as a bridge between your raw thoughts and polished professional communication. 
-                    Hold <kbd className="px-2 py-1 bg-white/10 rounded border border-white/20 text-orange-400 mx-1">Alt</kbd> anywhere on your OS to summon Kivi and start dictating.
-                  </p>
-                  
-                  <div className="flex gap-4 w-full">
-                    <button 
-                      onClick={() => setShowTutorial(false)}
-                      className="flex-1 bg-orange-500 hover:bg-orange-400 text-black font-bold py-4 rounded-2xl transition-all shadow-[0_0_15px_rgba(249,115,22,0.2)] hover:shadow-[0_0_25px_rgba(249,115,22,0.4)]"
-                    >
-                      Start Exploring
-                    </button>
-                  </div>
-                </div>
-              </motion.div>
-            </motion.div>
-          )}
+          {showTutorial && <Tutorial onComplete={() => setShowTutorial(false)} />}
         </AnimatePresence>
       </div>
     </div>
