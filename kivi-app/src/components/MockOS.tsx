@@ -346,7 +346,7 @@ const MockOS = memo(({ activeText, mode, setMode, degree, setDegree, isAltPresse
                 </div>
               )}
 
-              {openApp === 'whispurr' && <WhispurrApp mode={mode} />}
+              {openApp === 'whispurr' && <WhispurrApp mode={mode} setMode={setMode} />}
             </div>
           </motion.div>
         )}
