@@ -79,3 +79,5 @@ This document tracks every single change made to the project.
 - **[Rollback]**: Reverted the dual-theme architecture (CSS Variables engine and Light Theme variant) per user request. Restored the native hardcoded Tailwind classes specifically tailored for the pure Midnight Dark (Black & Orange) aesthetic. All other functional upgrades (MP4 Videos, Full Screen MockOS, smooth crossfading animations, and User Profile sidebars) have been carefully preserved.
 
 - **[Bug Fix]**: Re-applied the Radial Control Strip sizing and placement fixes that were lost during the snapshot rollback. The Cat icon is correctly shrunk back to \w-8 h-8\, docked perfectly above the taskbar at \ottom-[-64px]\, and elevated to \z-[80]\ so it remains fully visible and accessible even when apps are launched in Full Screen mode.
+
+- **[Feature]**: Built a sleek, glassmorphic 'Demo / Tutorial' welcome screen that auto-triggers immediately upon launching the WhisPURR app. Features the animated Cat icon with rich radial gradients, explaining how to trigger Kivi (the Alt keybind), matching the core design language.
