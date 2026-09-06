@@ -1,18 +1,13 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Sparkles,
-  Mic, 
-  Square, 
-  Check, 
-  Plus, 
-  ChevronRight, 
   Settings2, 
-  HelpCircle,
-  BarChart2,
-  Info
+  Info,
+  ChevronRight,
+  Check,
+  Plus
 } from 'lucide-react';
-import { StyleItem, WeeklyStats, transformLocally } from './StylesData';
+import { StyleItem, WeeklyStats } from './StylesData';
 
 interface MainStylesViewProps {
   styles: StyleItem[];
@@ -29,64 +24,15 @@ interface MainStylesViewProps {
 }
 
 export default function MainStylesView({
-  styles,
   activeStyleName,
   onSelectActiveStyle,
-  onOpenStyleDetail,
-  onOpenCreateModal,
-  onRevisitIntro,
-  weeklyStats,
   isAdaptiveMode = true,
   onToggleAdaptive,
   moodsEnabled,
   setMoodsEnabled
 }: MainStylesViewProps) {
-  // Playground state for "Try a Style"
-  const defaultPhrase = "hey can you check this when you get time and tell me if everything looks okay";
-  const [youSayText, setYouSayText] = useState(defaultPhrase);
-  const [isListening, setIsListening] = useState(false);
   const [showMoodsInfo, setShowMoodsInfo] = useState(false);
   const [showAdaptInfo, setShowAdaptInfo] = useState(false);
-  const recognitionRef = useRef<any>(null);
-
-  const toggleListening = () => {
-    if (isListening) {
-      try {
-        recognitionRef.current?.stop();
-      } catch (e) {}
-      setIsListening(false);
-      return;
-    }
-
-    const SpeechRec = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
-    if (!SpeechRec) {
-      alert("Speech recognition is supported in Chromium browsers like Chrome, Edge, and Arc.");
-      return;
-    }
-
-    try {
-      const recognition = new SpeechRec();
-      recognition.continuous = true;
-      recognition.interimResults = true;
-      recognition.lang = 'en-US';
-
-      recognition.onstart = () => setIsListening(true);
-      recognition.onresult = (event: any) => {
-        let text = '';
-        for (let i = 0; i < event.results.length; i++) {
-          text += event.results[i][0].transcript;
-        }
-        if (text.trim()) setYouSayText(text.trim());
-      };
-      recognition.onerror = () => setIsListening(false);
-      recognition.onend = () => setIsListening(false);
-
-      recognitionRef.current = recognition;
-      recognition.start();
-    } catch (e) {
-      setIsListening(false);
-    }
-  };
 
   return (
     <div className="flex-1 w-full h-full relative p-4">
@@ -111,10 +57,51 @@ export default function MainStylesView({
             }`}
           >
             <span className="text-lg font-semibold">{item}</span>
-            {activeStyleName === item && <Check className="w-5 h-5 text-orange-400" />}
+            {activeStyleName === item && <ChevronRight className="w-5 h-5 text-orange-400" />}
           </button>
         ))}
       </div>
+
+      {/* Selected Context Dialogue Window */}
+      <AnimatePresence>
+        {activeStyleName && ["Formal", "Casual", "Developer", "Prompts", "Other apps"].includes(activeStyleName) && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 10 }}
+            transition={{ type: "spring", stiffness: 400, damping: 30 }}
+            className="absolute bottom-4 right-4 top-[180px] left-[420px] bg-[#190f0b]/90 border border-[#5d4037]/60 rounded-3xl p-8 shadow-2xl flex flex-col overflow-hidden backdrop-blur-xl"
+          >
+            <AnimatePresence mode="wait">
+              <motion.div 
+                key={activeStyleName}
+                initial={{ opacity: 0, x: -15 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 15 }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
+                className="flex flex-col h-full w-full min-h-0"
+              >
+                <div className="flex items-center justify-between mb-6 shrink-0">
+                  <div className="flex items-center gap-4">
+                    <div className="p-3 bg-[#5d4037]/20 rounded-xl">
+                      <Settings2 className="w-6 h-6 text-[#d7ccc8]" />
+                    </div>
+                    <h2 className="text-3xl font-bold text-[#f4ece1] tracking-tight">{activeStyleName}</h2>
+                  </div>
+                  <button className="flex items-center gap-2 px-4 py-2 bg-[#5d4037]/20 hover:bg-[#5d4037]/40 text-[#f4ece1] rounded-xl font-medium transition-colors border border-[#5d4037]/30">
+                    <Plus className="w-4 h-4" />
+                    <span>Add Apps</span>
+                  </button>
+                </div>
+                
+                <div className="flex-1 bg-[#2b1f1a]/50 rounded-2xl border border-[#5d4037]/30 p-4 lg:p-6 overflow-hidden min-h-0">
+                  <ContextOptionsRenderer activeStyleName={activeStyleName} />
+                </div>
+              </motion.div>
+            </AnimatePresence>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <div className="absolute top-4 right-4 flex flex-col gap-4 items-end">
         
@@ -224,6 +211,95 @@ export default function MainStylesView({
           </AnimatePresence>
         </div>
 
+      </div>
+    </div>
+  );
+}
+
+function ContextOptionsRenderer({ activeStyleName }: { activeStyleName: string }) {
+  const contextOptions: Record<string, {apps: string[], modes: {n: string, d: string, ex: string}[]}> = {
+    "Formal": {
+      apps: ["Teams", "Outlook", "LinkedIn"],
+      modes: [
+        { n: 'clear', d: 'clean sentences, shorthand kept.', ex: 'Please take a look at this.' },
+        { n: 'casual', d: 'lowercase workplace shorthand.', ex: 'can you check this out' },
+        { n: 'formal', d: 'everything spelled out, properly.', ex: 'I kindly request that you review this material.' }
+      ]
+    },
+    "Casual": {
+      apps: ["Slack", "Discord", "WhatsApp"],
+      modes: [
+        { n: 'natural', d: 'light cleanup, your voice kept.', ex: 'I am going to be a bit late.' },
+        { n: 'very casual', d: 'lowercase, shorthand, zero fuss.', ex: 'running late' },
+        { n: 'polished', d: 'full punctuation and grammar.', ex: 'I will be arriving later than expected.' }
+      ]
+    },
+    "Developer": {
+      apps: ["VS Code", "Terminal", "GitHub"],
+      modes: [
+        { n: 'clear', d: 'the full instruction, plainly.', ex: 'Fix the bug in the login module.' },
+        { n: 'concise', d: 'the fewest words that still say it.', ex: 'Fix login bug.' },
+        { n: 'structured', d: 'goal, changes, validation.', ex: 'Task: Resolve login bug.\nImpact: Critical.' }
+      ]
+    },
+    "Prompts": {
+      apps: ["ChatGPT", "Claude", "Midjourney"],
+      modes: [
+        { n: 'direct', d: 'straight to the instruction.', ex: 'Write a Python script.' },
+        { n: 'detailed', d: 'all constraints mapped out.', ex: 'Write a robust Python script using type hints.' },
+        { n: 'creative', d: 'open-ended and descriptive.', ex: 'Act as an expert engineer and create...' }
+      ]
+    },
+    "Other apps": {
+      apps: ["Chrome", "Notion", "Obsidian"],
+      modes: [
+        { n: 'balanced', d: 'cleaned, but still yours.', ex: 'Yeah, that sounds good to me.' },
+        { n: 'minimal', d: 'compressed to fragments.', ex: 'Sounds good.' },
+        { n: 'polished', d: 'composed, complete sentences.', ex: 'That sounds perfectly fine with me.' }
+      ]
+    }
+  };
+
+  const currentOption = contextOptions[activeStyleName] || contextOptions["Other apps"];
+  const [selectedIndex, setSelectedIndex] = useState(0);
+
+  return (
+    <div className="flex flex-col gap-4 w-full h-full min-h-0">
+      <div className="flex items-center gap-3 shrink-0">
+        <span className="text-[#d7ccc8]/50 text-xs font-bold uppercase tracking-widest">Active In:</span>
+        <div className="flex gap-2">
+          {currentOption.apps.map(app => (
+            <span key={app} className="px-3 py-1 bg-[#f4ece1]/5 border border-white/5 rounded-lg text-xs text-[#d7ccc8] font-medium shadow-sm">
+              {app}
+            </span>
+          ))}
+        </div>
+      </div>
+      <div className="flex gap-4 w-full flex-1 min-h-0">
+        {currentOption.modes.map((opt, i) => (
+          <div 
+            key={i}
+            onClick={() => setSelectedIndex(i)}
+            className={`relative flex-1 rounded-2xl border-2 p-3 cursor-pointer transition-all flex flex-col justify-end min-h-0 ${
+              selectedIndex === i
+                ? 'border-[#8d6e63] bg-[#8d6e63]/20 text-[#f4ece1] shadow-lg' 
+                : 'border-[#5d4037]/30 bg-[#190f0b]/50 text-[#d7ccc8]/70 hover:border-[#5d4037]/80 hover:bg-[#2b1f1a]'
+            }`}
+          >
+            {selectedIndex === i && (
+              <div className="absolute -top-2 -right-2 w-6 h-6 bg-[#8d6e63] rounded-full flex items-center justify-center text-[#f4ece1] shadow-md z-10 shrink-0">
+                <Check size={14} strokeWidth={3} />
+              </div>
+            )}
+            <div className={`flex-1 rounded-xl mb-3 p-3 flex flex-col justify-center border min-h-0 overflow-hidden ${selectedIndex === i ? 'bg-[#f4ece1]/20 border-[#f4ece1]/30' : 'bg-[#f4ece1]/10 border-[#f4ece1]/10'}`}>
+              <p className={`text-xs md:text-[13px] font-sans leading-tight italic whitespace-pre-wrap line-clamp-3 ${selectedIndex === i ? 'text-white font-medium' : 'text-[#f4ece1]/90'}`}>
+                "{opt.ex}"
+              </p>
+            </div>
+            <h3 className="text-sm md:text-base font-bold mb-1 font-sans text-[#f4ece1] tracking-tight shrink-0 truncate">{opt.n}</h3>
+            <p className="text-[10px] md:text-[11px] opacity-80 font-serif italic leading-tight shrink-0 line-clamp-2">{opt.d}</p>
+          </div>
+        ))}
       </div>
     </div>
   );
