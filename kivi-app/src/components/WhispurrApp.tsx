@@ -19,6 +19,7 @@ const CAT_FACTS = [
   "Over short distances, a domestic house cat can hit speeds of up to 30 mph, which is actually slightly faster than Olympic sprinter Usain Bolt.",
   "Just like we are left- or right-handed, cats tend to have a preferred paw. Behavioral studies suggest that male cats often favor their left paw, while female cats tend to favor their right."
 ];
+let hasShownTutorialThisSession = false;
 
 export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: string, setMode?: (m: any) => void }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -42,7 +43,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
 
   const [currentCatFact, setCurrentCatFact] = useState('');
   const [showCatFactPopup, setShowCatFactPopup] = useState(false);
-  const [showTutorial, setShowTutorial] = useState(true);
+  const [showTutorial, setShowTutorial] = useState(() => !hasShownTutorialThisSession);
   const [talkShortcut, setTalkShortcut] = useState(() => localStorage.getItem('whispurr_talk') || 'Alt');
   const [isRecordingShortcut, setIsRecordingShortcut] = useState(false);
   const [quicklaunchShortcut, setQuicklaunchShortcut] = useState(() => localStorage.getItem('whispurr_quicklaunch') || 'Ctrl');
@@ -99,6 +100,27 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
     { id: 4, text: "Call Mom at 6 PM", color: "bg-[#e8b5c5]", rotation: 5, x: -20, y: 10 },
   ]);
   const [activeNoteId, setActiveNoteId] = useState<number | null>(null);
+
+  useEffect(() => {
+    const handleAddNote = (e: any) => {
+      const newText = e.detail;
+      if (newText) {
+        setStickyNotes(prev => [
+          ...prev, 
+          { 
+            id: Date.now(), 
+            text: newText, 
+            color: "bg-[#e8d5b5]", 
+            rotation: (Math.random() - 0.5) * 10, 
+            x: (Math.random() - 0.5) * 40, 
+            y: (Math.random() - 0.5) * 40 
+          }
+        ]);
+      }
+    };
+    window.addEventListener('add-sticky-note', handleAddNote);
+    return () => window.removeEventListener('add-sticky-note', handleAddNote);
+  }, []);
 
   useEffect(() => {
     if (mode === 'ScratchPad') {
@@ -1028,7 +1050,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
 
         {/* Tutorial Overlay */}
         <AnimatePresence>
-          {showTutorial && <Tutorial onComplete={() => { setShowTutorial(false); setIsTourActive(true); }} />}
+          {showTutorial && <Tutorial onComplete={() => { setShowTutorial(false); hasShownTutorialThisSession = true; setIsTourActive(true); }} />}
         </AnimatePresence>
       </div>
     </div>
