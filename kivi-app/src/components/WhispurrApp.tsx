@@ -294,7 +294,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
           
           {[
             { name: 'Dictionary', icon: BookOpen },
-            { name: 'Shortcuts', icon: Zap },
+            { name: 'ShortHand', icon: Zap },
             { name: 'Context', icon: Palette },
             { name: 'ScratchPad', icon: FileText },
           ].map((tab) => (
@@ -573,12 +573,12 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
               </motion.div>
             )}
 
-            {activeTab === 'Shortcuts' && (
+            {activeTab === 'ShortHand' && (
               <motion.div key="shortcuts" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col gap-6 p-8 overflow-y-auto ${glassPanel}`}>
                 <div className="px-2">
                   <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
                     <Zap className="text-orange-400 w-8 h-8" />
-                    Shortcuts
+                    ShortHand
                   </h1>
                   <p className="text-white/40 text-sm">Automatically expand quick voice triggers into long-form templates.</p>
                 </div>
@@ -746,7 +746,26 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
               </motion.div>
             )}
             
-            {!['Home', 'Dictionary', 'Shortcuts', 'ScratchPad', 'Context', 'Theme'].includes(activeTab) && (
+            {activeTab === 'Tutorial' && (
+              <motion.div key="tutorial-tab" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col items-center justify-center gap-6 p-8 ${glassPanel}`}>
+                <div className="w-24 h-24 bg-[#5d4037]/10 rounded-full flex items-center justify-center shadow-inner border border-[#5d4037]/20 mb-2">
+                  <PlayCircle className="w-12 h-12 text-[#5d4037]" />
+                </div>
+                <h1 className="text-3xl font-bold text-[#3e2723] tracking-tight">WhisPURR Tutorial</h1>
+                <p className="text-[#5d4037]/80 text-center max-w-md text-lg mb-4 font-medium">
+                  Need a refresher? Replay the interactive setup tutorial to learn about WhisPURR's features, shortcuts, and context modes.
+                </p>
+                <button
+                  onClick={() => setShowTutorial(true)}
+                  className="px-8 py-3 bg-gradient-to-r from-[#8d6e63] to-[#6d4c41] hover:from-[#795548] hover:to-[#5d4037] text-[#f4ece1] font-bold rounded-2xl flex items-center gap-3 transition-all shadow-[0_4px_20px_rgba(141,110,99,0.4)] hover:shadow-[0_6px_25px_rgba(141,110,99,0.6)] hover:-translate-y-0.5 border border-[#a1887f]/50"
+                >
+                  <PlayCircle className="w-5 h-5" />
+                  Replay Tutorial
+                </button>
+              </motion.div>
+            )}
+
+            {!['Home', 'Dictionary', 'ShortHand', 'ScratchPad', 'Context', 'Theme', 'Tutorial'].includes(activeTab) && (
               <motion.div key="fallback" style={{ willChange: "transform, opacity, filter" }} variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col items-center justify-center gap-4 p-8 ${glassPanel}`}>
                 <Settings className="w-16 h-16 text-white/10" />
                 <h1 className="text-2xl font-bold text-white/50">{activeTab}</h1>
