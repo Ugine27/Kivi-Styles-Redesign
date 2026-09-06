@@ -151,7 +151,7 @@ export default function WhispurrApp({ mode }: { mode?: string }) {
           {[
             { name: 'Dictionary', icon: BookOpen },
             { name: 'Shortcuts', icon: Zap },
-            { name: 'Styles', icon: Palette },
+            { name: 'Context', icon: Palette },
             { name: 'Notes', icon: FileText },
           ].map((tab) => (
             <div key={tab.name} onClick={() => {setActiveTab(tab.name); setSelectedStyle(null);}} className={`flex items-center gap-4 py-3 rounded-xl cursor-pointer transition-all ${isSidebarOpen ? 'px-4 mx-4' : 'justify-center mx-4'} ${activeTab === tab.name ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20 shadow-sm' : 'text-white/50 hover:bg-white/5 hover:text-white'}`}>
@@ -396,16 +396,16 @@ export default function WhispurrApp({ mode }: { mode?: string }) {
               </motion.div>
             )}
 
-            {activeTab === 'Styles' && (
-              <motion.div key="styles" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col gap-6 p-8 overflow-y-auto ${glassPanel}`}>
+            {activeTab === 'Context' && (
+              <motion.div key="context" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col gap-6 p-8 overflow-y-auto ${glassPanel}`}>
                 {!selectedStyle ? (
                   <>
                     <div className="px-2">
                       <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
                         <Palette className="text-orange-400 w-8 h-8" />
-                        Output Styles
+                        Context
                       </h1>
-                      <p className="text-white/40 text-sm">Manage AI translation contexts available in your scroll wheel.</p>
+                      <p className="text-white/40 text-sm">Context decides how your words land. Set your Moods and Rules for each app!</p>
                     </div>
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-2">
@@ -559,7 +559,7 @@ export default function WhispurrApp({ mode }: { mode?: string }) {
               </motion.div>
             )}
             
-            {!['Home', 'Dictionary', 'Shortcuts', 'Notes', 'Styles', 'Theme'].includes(activeTab) && (
+            {!['Home', 'Dictionary', 'Shortcuts', 'Notes', 'Context', 'Theme'].includes(activeTab) && (
               <motion.div key="fallback" style={{ willChange: "transform, opacity, filter" }} variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col items-center justify-center gap-4 p-8 ${glassPanel}`}>
                 <Settings className="w-16 h-16 text-white/10" />
                 <h1 className="text-2xl font-bold text-white/50">{activeTab}</h1>
