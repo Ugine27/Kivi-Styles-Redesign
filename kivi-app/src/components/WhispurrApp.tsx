@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { PanelLeftClose, PanelLeft, Home, BookOpen, Zap, Palette, Clock, FileText, X, Mic, Pencil, User, Settings, Shield, LayoutTemplate, CreditCard, PlayCircle, Square, Trash2, Sparkles, Copy, Check, Info } from 'lucide-react';
+import { PanelLeftClose, Keyboard, PanelLeft, Home, BookOpen, Zap, Palette, Clock, FileText, X, Mic, Pencil, User, Settings, Shield, LayoutTemplate, CreditCard, PlayCircle, Square, Trash2, Sparkles, Copy, Check, Info } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Tutorial from './Tutorial';
 import StylesManager from './styles/StylesManager';
@@ -24,9 +24,70 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('Home');
+
+  const [isTourActive, setIsTourActive] = useState(false);
+  const [tourStep, setTourStep] = useState(0);
+
+  const tourSteps = [
+    { id: 'Home', title: 'The Home Base', text: 'This is where you monitor WhisPURR’s activity, see live transcription, and access quick controls.' },
+    { id: 'History', title: 'Chat Registers', text: 'View all your past dictations and commands. You can always copy or replay what was said.' },
+    { id: 'Dictionary', title: 'Your Custom Dictionary', text: 'Teach WhisPURR how to spell unique names, acronyms, and industry-specific jargon.' },
+    { id: 'ShortHand', title: 'ShortHand Macros', text: 'Create powerful abbreviations. E.g. "sig" automatically expands to your full email signature.' },
+    { id: 'Context', title: 'Global Context', text: 'Tell WhisPURR about your ongoing projects so it completely understands the context of your dictations.' },
+    { id: 'ScratchPad', title: 'ScratchPad', text: 'A private space to quickly jot down thoughts or test out your custom styles and rules.' },
+    { id: 'Profile', title: 'Your Profile', text: 'Access your account settings, billing, and global preferences here.' },
+    { id: 'CatFacts', title: 'Cat Facts', text: 'Because who doesn’t need a random cat fact while they work?' }
+  ];
+  const currentTourId = isTourActive ? tourSteps[tourStep].id : null;
+
   const [currentCatFact, setCurrentCatFact] = useState('');
   const [showCatFactPopup, setShowCatFactPopup] = useState(false);
   const [showTutorial, setShowTutorial] = useState(true);
+  const [talkShortcut, setTalkShortcut] = useState(() => localStorage.getItem('whispurr_talk') || 'Alt');
+  const [isRecordingShortcut, setIsRecordingShortcut] = useState(false);
+  const [quicklaunchShortcut, setQuicklaunchShortcut] = useState(() => localStorage.getItem('whispurr_quicklaunch') || 'Ctrl');
+  const [isRecordingQuicklaunch, setIsRecordingQuicklaunch] = useState(false);
+  const [isSeamlessSwitchEnabled, setIsSeamlessSwitchEnabled] = useState(() => localStorage.getItem('whispurr_seamless_switch') !== 'false');
+
+  useEffect(() => {
+    if (isRecordingShortcut) {
+      const handleKeyDown = (e: KeyboardEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        let key = e.key;
+        if (key === ' ') key = 'Space';
+        else if (key === 'Control') key = 'Ctrl';
+        else if (key === 'Meta') key = 'Cmd';
+        if (key.length === 1) key = key.toUpperCase();
+        setTalkShortcut(key);
+        localStorage.setItem('whispurr_talk', key);
+        setIsRecordingShortcut(false);
+      };
+      window.addEventListener('keydown', handleKeyDown);
+      return () => window.removeEventListener('keydown', handleKeyDown);
+    }
+  }, [isRecordingShortcut]);
+
+  useEffect(() => {
+    if (isRecordingQuicklaunch) {
+      const handleKeyDown = (e: KeyboardEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        let key = e.key;
+        if (key === ' ') key = 'Space';
+        else if (key === 'Control') key = 'Ctrl';
+        else if (key === 'Meta') key = 'Cmd';
+        if (key.length === 1) key = key.toUpperCase();
+        setQuicklaunchShortcut(key);
+        localStorage.setItem('whispurr_quicklaunch', key);
+        setIsRecordingQuicklaunch(false);
+      };
+      window.addEventListener('keydown', handleKeyDown);
+      return () => window.removeEventListener('keydown', handleKeyDown);
+    }
+  }, [isRecordingQuicklaunch]);
+
+
   const [currentTheme, setCurrentTheme] = useState('coffee');
   const [moodsEnabled, setMoodsEnabled] = useState(false);
   
@@ -261,6 +322,19 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
   const glassInput = "bg-black/20 border border-white/10 rounded-2xl p-4 text-white outline-none focus:border-orange-500/50 focus:bg-black/40 transition-all text-sm";
   const glassButton = "bg-orange-500/90 hover:bg-orange-400 text-black font-bold px-8 py-3 rounded-2xl transition-all shadow-[0_0_15px_rgba(249,115,22,0.2)] hover:shadow-[0_0_25px_rgba(249,115,22,0.4)] text-sm";
 
+  const getSidebarItemClass = (id: string, baseClass: string) => {
+    let classes = baseClass;
+    if (isTourActive) {
+      if (currentTourId === id) {
+        classes += ' ring-2 ring-orange-500 ring-offset-4 ring-offset-[#0f0f0f] relative z-[9999] bg-[#1a1a1a] scale-105 shadow-xl opacity-100';
+      } else {
+        classes += ' opacity-20 pointer-events-none grayscale blur-[1px]';
+      }
+    }
+    return classes;
+  };
+
+
   return (
     <div className={`h-full w-full bg-black text-white flex font-sans overflow-hidden ${currentTheme === 'coffee' ? 'theme-coffee' : ''}`}>
       
@@ -272,28 +346,28 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
       >
         <div className={`h-16 flex items-center border-b border-white/5 relative shrink-0 transition-all ${isSidebarOpen ? 'px-6' : 'justify-center'}`}>
           <motion.div animate={{ opacity: isSidebarOpen ? 1 : 0, width: isSidebarOpen ? 'auto' : 0 }} className="flex items-center gap-3 overflow-hidden">
-            <div className="w-8 h-8 rounded-lg bg-orange-500/20 flex items-center justify-center border border-orange-500/30 shrink-0">
-              <KiviCatIcon size={20} className="text-orange-400" />
+            <div className="w-8 h-8 flex items-center justify-center shrink-0 drop-shadow-md">
+              <KiviCatIcon size={32} />
             </div>
-            <span className="font-bold text-lg tracking-wide text-orange-50">WhisPURR</span>
+            <span className="font-bold text-lg tracking-wide text-orange-50 whitespace-nowrap">WhisPURR</span>
           </motion.div>
           <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className={`text-white/40 hover:text-white transition-colors shrink-0 ${isSidebarOpen ? 'absolute right-4 z-10' : ''}`}>
             {isSidebarOpen ? <PanelLeftClose className="w-5 h-5" /> : <PanelLeft className="w-5 h-5" />}
           </button>
         </div>
         
-        <div className="flex-1 py-6 flex flex-col gap-2 overflow-y-auto custom-scrollbar">
-          <div onClick={() => {setActiveTab('Home'); }} className={`flex items-center gap-4 py-3 rounded-xl cursor-pointer transition-all ${isSidebarOpen ? 'px-4 mx-4' : 'justify-center mx-4'} ${activeTab === 'Home' ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20 shadow-sm' : 'text-white/50 hover:bg-white/5 hover:text-white'}`}>
+        <div className="flex-1 py-6 flex flex-col gap-2 overflow-y-auto overflow-x-hidden custom-scrollbar">
+          <div onClick={() => {setActiveTab('Home'); }} className={getSidebarItemClass('Home', `flex items-center py-3 rounded-xl cursor-pointer transition-all ${isSidebarOpen ? 'gap-4 px-4 mx-4' : 'gap-0 justify-center mx-4'} ${activeTab === 'Home' ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20 shadow-sm' : 'text-white/50 hover:bg-white/5 hover:text-white'}`)}>
             <Home className="w-5 h-5 shrink-0" />
-            <motion.div animate={{ opacity: isSidebarOpen ? 1 : 0, width: isSidebarOpen ? 'auto' : 0 }} className="text-base font-medium">Home</motion.div>
+            <motion.div animate={{ opacity: isSidebarOpen ? 1 : 0, width: isSidebarOpen ? 'auto' : 0 }} className="text-base font-medium overflow-hidden">Home</motion.div>
           </div>
           
-          <div onClick={() => {setActiveTab('History'); }} className={`flex items-center gap-4 py-3 rounded-xl cursor-pointer transition-all ${isSidebarOpen ? 'px-4 mx-4' : 'justify-center mx-4'} ${activeTab === 'History' ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20 shadow-sm' : 'text-white/50 hover:bg-white/5 hover:text-white'}`}>
+          <div onClick={() => {setActiveTab('History'); }} className={getSidebarItemClass('History', `flex items-center py-3 rounded-xl cursor-pointer transition-all ${isSidebarOpen ? 'gap-4 px-4 mx-4' : 'gap-0 justify-center mx-4'} ${activeTab === 'History' ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20 shadow-sm' : 'text-white/50 hover:bg-white/5 hover:text-white'}`)}>
             <Clock className="w-5 h-5 shrink-0" />
-            <motion.div animate={{ opacity: isSidebarOpen ? 1 : 0, width: isSidebarOpen ? 'auto' : 0 }} className="text-base font-medium">History</motion.div>
+            <motion.div animate={{ opacity: isSidebarOpen ? 1 : 0, width: isSidebarOpen ? 'auto' : 0 }} className="text-base font-medium overflow-hidden">History</motion.div>
           </div>
 
-          <motion.div animate={{ opacity: isSidebarOpen ? 1 : 0 }} className={`mt-6 mb-2 text-xs font-bold text-white/30 uppercase tracking-widest h-5 transition-all ${isSidebarOpen ? 'px-8' : 'px-0 text-center w-full shrink-0'}`}>
+          <motion.div animate={{ opacity: isSidebarOpen ? 1 : 0 }} className={`mt-6 mb-2 text-xs font-bold text-white/30 uppercase tracking-widest h-5 transition-all ${isSidebarOpen ? 'px-8' : 'px-0 text-center w-full shrink-0'} ${isTourActive ? 'opacity-20 blur-[1px]' : ''}`}>
             Customize
           </motion.div>
           
@@ -305,9 +379,9 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
           ].map((tab) => (
             <div key={tab.name} onClick={() => {
               setActiveTab(tab.name);
-            }} className={`flex items-center gap-4 py-3 rounded-xl cursor-pointer transition-all shrink-0 ${isSidebarOpen ? 'px-4 mx-4' : 'justify-center mx-4'} ${activeTab === tab.name ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20 shadow-sm' : 'text-white/50 hover:bg-white/5 hover:text-white'}`}>
+            }} className={getSidebarItemClass(tab.name, `flex items-center py-3 rounded-xl cursor-pointer transition-all shrink-0 ${isSidebarOpen ? 'gap-4 px-4 mx-4' : 'gap-0 justify-center mx-4'} ${activeTab === tab.name ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20 shadow-sm' : 'text-white/50 hover:bg-white/5 hover:text-white'}`)}>
               <tab.icon className="w-5 h-5 shrink-0" />
-              <motion.div animate={{ opacity: isSidebarOpen ? 1 : 0, width: isSidebarOpen ? 'auto' : 0 }} className="text-base font-medium">{tab.name}</motion.div>
+              <motion.div animate={{ opacity: isSidebarOpen ? 1 : 0, width: isSidebarOpen ? 'auto' : 0 }} className="text-base font-medium overflow-hidden">{tab.name}</motion.div>
             </div>
           ))}
         </div>
@@ -316,7 +390,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
         <div className="mb-6 w-full px-4 flex flex-col gap-2 shrink-0 border-t border-white/5 pt-4">
           <div 
             onClick={() => setIsSettingsOpen(!isSettingsOpen)} 
-            className={`flex items-center gap-3 py-3 px-3 rounded-xl cursor-pointer transition-all ${isSettingsOpen ? 'bg-white/10 shadow-inner' : 'hover:bg-white/5'} ${!isSidebarOpen && 'justify-center'}`}
+            className={getSidebarItemClass('Profile', `flex items-center py-3 px-3 rounded-xl cursor-pointer transition-all ${isSettingsOpen ? 'bg-white/10 shadow-inner' : 'hover:bg-white/5'} ${isSidebarOpen ? 'gap-3' : 'gap-0 justify-center'}`)}
           >
             <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-[#8d6e63] to-[#d7ccc8] flex items-center justify-center shrink-0 border border-[#5d4037]/50 overflow-hidden shadow-inner">
               <User className="w-5 h-5 text-[#3e2723]" strokeWidth={2.5} />
@@ -333,7 +407,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                 setCurrentCatFact(CAT_FACTS[Math.floor(Math.random() * CAT_FACTS.length)]);
               }
               setShowCatFactPopup(!showCatFactPopup);
-            }} className={`flex items-center gap-3 py-3 px-3 rounded-xl cursor-pointer transition-all ${showCatFactPopup ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20 shadow-sm' : 'text-white/50 hover:bg-white/5 hover:text-white'} ${!isSidebarOpen && 'justify-center'}`}>
+            }} className={getSidebarItemClass('CatFacts', `flex items-center py-3 px-3 rounded-xl cursor-pointer transition-all ${showCatFactPopup ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20 shadow-sm' : 'text-white/50 hover:bg-white/5 hover:text-white'} ${isSidebarOpen ? 'gap-3' : 'gap-0 justify-center'}`)}>
               <div className="w-8 h-8 flex items-center justify-center shrink-0">
                 <Info className="w-5 h-5" />
               </div>
@@ -381,6 +455,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
             <div className="flex-1 py-6 flex flex-col gap-2 overflow-y-auto">
               {[
                 { name: 'Settings', icon: Settings },
+                  { name: 'Shortcuts', icon: Keyboard },
                 { name: 'User Policy', icon: Shield },
                 { name: 'Theme', icon: LayoutTemplate },
                 { name: 'Plans & Billing', icon: CreditCard },
@@ -399,6 +474,53 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
       {/* Main Content Area */}
 
       <div className="flex-1 flex flex-col overflow-hidden relative pt-10">
+      <AnimatePresence>
+        {isTourActive && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute inset-0 z-[1000] bg-black/60 backdrop-blur-md flex items-center justify-center p-12"
+          >
+            <div className="bg-[#f4ece1] border-4 border-[#8d6e63] p-10 rounded-[2rem] shadow-[0_0_80px_rgba(0,0,0,0.8)] max-w-lg w-full relative">
+              <div className="absolute -top-6 -left-6 w-14 h-14 bg-[#8d6e63] rounded-full flex items-center justify-center shadow-lg text-[#f4ece1] font-bold text-2xl border-4 border-[#f4ece1]">
+                {tourStep + 1}
+              </div>
+              <h2 className="text-4xl font-serif font-bold text-[#3e2723] mb-4 tracking-tight">{tourSteps[tourStep].title}</h2>
+              <p className="text-[#3e2723]/80 text-xl mb-10 leading-relaxed font-sans">{tourSteps[tourStep].text}</p>
+              <div className="flex justify-between items-center">
+                <button onClick={() => setIsTourActive(false)} className="text-[#3e2723]/40 hover:text-[#3e2723] transition-colors uppercase tracking-widest text-sm font-bold border-b-2 border-transparent hover:border-[#8d6e63] pb-1">Skip Tour</button>
+                <button onClick={() => {
+                  if (tourStep < tourSteps.length - 1) {
+                    setTourStep(s => s + 1);
+                    // Open Profile / CatFact specifically if we hit those steps, else set tab
+                    const nextId = tourSteps[tourStep + 1].id;
+                    if (nextId === 'Profile') {
+                      setIsSettingsOpen(true);
+                      setShowCatFactPopup(false);
+                    } else if (nextId === 'CatFacts') {
+                      setIsSettingsOpen(false);
+                      setShowCatFactPopup(true);
+                    } else {
+                      setIsSettingsOpen(false);
+                      setShowCatFactPopup(false);
+                      setActiveTab(nextId);
+                    }
+                  } else {
+                    setIsTourActive(false);
+                    setIsSettingsOpen(false);
+                    setShowCatFactPopup(false);
+                    setActiveTab('Home');
+                  }
+                }} className="px-8 py-4 bg-[#3e2723] text-[#f4ece1] font-bold rounded-2xl hover:bg-[#5d4037] transition-all shadow-xl hover:shadow-2xl hover:scale-105 text-lg">
+                  {tourStep < tourSteps.length - 1 ? 'Next' : 'Finish'}
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
 
         <div className="flex-1 p-4 flex gap-4 overflow-hidden relative">
           <AnimatePresence>
@@ -764,6 +886,75 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
               </motion.div>
             )}
           
+                        {activeTab === 'Shortcuts' && (
+              <motion.div key="shortcuts" variants={tabVariants} initial="initial" animate="animate" exit="exit" className="absolute inset-4 flex gap-4">
+                <div className="flex-1 flex flex-col gap-6 max-w-4xl mx-auto">
+                  <div className="px-2 mt-4">
+                    <h1 className="text-3xl font-bold tracking-tight mb-2 text-white">Keyboard Shortcuts</h1>
+                    <p className="text-white/50 text-sm">Customize how you interact with WhisPURR via your keyboard.</p>
+                  </div>
+                  
+                  <div className={`mt-4 ${glassPanel} p-8 flex flex-col gap-6`}>
+                    <div className="flex items-center justify-between pb-6 border-b border-white/5">
+                      <div className="flex flex-col gap-1.5">
+                        <span className="text-xl font-bold text-white tracking-tight">Talk to WhisPURR</span>
+                        <span className="text-[15px] text-white/50">Hold this key to transcribe your words into text</span>
+                      </div>
+                      <button 
+                        onClick={() => setIsRecordingShortcut(true)}
+                        className={`min-w-[120px] px-6 py-4 rounded-xl border-2 font-mono text-base tracking-wider font-bold transition-all shadow-md ${
+                          isRecordingShortcut 
+                            ? 'bg-orange-500/20 text-orange-400 border-orange-500 animate-pulse' 
+                            : 'bg-[#1a1a1a] text-white/80 border-white/10 hover:border-orange-500/50 hover:bg-[#222]'
+                        }`}
+                      >
+                        {isRecordingShortcut ? 'Press a key...' : talkShortcut}
+                      </button>
+                    </div>
+
+                    <div className="flex items-center justify-between pb-6 border-b border-white/5">
+                      <div className="flex flex-col gap-1.5">
+                        <span className="text-xl font-bold text-white tracking-tight">Quicklaunch</span>
+                        <span className="text-[15px] text-white/50">Double tap this key to open or close WhisPURR</span>
+                      </div>
+                      <button 
+                        onClick={() => setIsRecordingQuicklaunch(true)}
+                        className={`min-w-[120px] px-6 py-4 rounded-xl border-2 font-mono text-base tracking-wider font-bold transition-all shadow-md ${
+                          isRecordingQuicklaunch 
+                            ? 'bg-orange-500/20 text-orange-400 border-orange-500 animate-pulse' 
+                            : 'bg-[#1a1a1a] text-white/80 border-white/10 hover:border-orange-500/50 hover:bg-[#222]'
+                        }`}
+                      >
+                        {isRecordingQuicklaunch ? 'Press a key...' : quicklaunchShortcut}
+                      </button>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <div className="flex flex-col gap-1.5">
+                        <span className="text-xl font-bold text-white tracking-tight">Seamless Switch</span>
+                        <span className="text-[15px] text-white/50">Easily switch between contexts/modes without ever having to open the app</span>
+                        <span className="text-xs text-orange-400 font-mono mt-1 uppercase tracking-widest">Shortcut: Arrow Up/Down & Mouse Scroll</span>
+                      </div>
+                      <button 
+                        onClick={() => {
+                          const next = !isSeamlessSwitchEnabled;
+                          setIsSeamlessSwitchEnabled(next);
+                          localStorage.setItem('whispurr_seamless_switch', String(next));
+                        }}
+                        className={`relative w-[68px] h-[36px] rounded-full transition-colors shadow-inner ${
+                          isSeamlessSwitchEnabled ? 'bg-orange-500' : 'bg-white/10'
+                        }`}
+                      >
+                        <div className={`absolute top-1 bottom-1 w-7 bg-white rounded-full transition-transform shadow-md ${
+                          isSeamlessSwitchEnabled ? 'left-[36px]' : 'left-1'
+                        }`} />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
             {activeTab === 'Theme' && (
               <motion.div key="theme" variants={tabVariants} initial="initial" animate="animate" exit="exit" className="absolute inset-4 flex gap-4">
                 <div className="flex-1 flex flex-col gap-6 max-w-4xl mx-auto">
@@ -825,7 +1016,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
               </motion.div>
             )}
 
-            {!['Home', 'History', 'Dictionary', 'ShortHand', 'ScratchPad', 'Context', 'Theme', 'Tutorial'].includes(activeTab) && (
+            {!['Home', 'History', 'Dictionary', 'ShortHand', 'ScratchPad', 'Context', 'Theme', 'Tutorial', 'Shortcuts'].includes(activeTab) && (
               <motion.div key="fallback" style={{ willChange: "transform, opacity, filter" }} variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col items-center justify-center gap-4 p-8 ${glassPanel}`}>
                 <Settings className="w-16 h-16 text-white/10" />
                 <h1 className="text-2xl font-bold text-white/50">{activeTab}</h1>
@@ -837,7 +1028,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
 
         {/* Tutorial Overlay */}
         <AnimatePresence>
-          {showTutorial && <Tutorial onComplete={() => setShowTutorial(false)} />}
+          {showTutorial && <Tutorial onComplete={() => { setShowTutorial(false); setIsTourActive(true); }} />}
         </AnimatePresence>
       </div>
     </div>
