@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 
 interface CatIconProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   size?: number | string;
@@ -6,7 +6,7 @@ interface CatIconProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   glowingEyes?: boolean;
 }
 
-export default function KiviCatIcon({
+const KiviCatIcon = React.memo(function KiviCatIcon({
   size,
   className = '',
   glowingEyes = false,
@@ -21,4 +21,5 @@ export default function KiviCatIcon({
       {...props}
     />
   );
-}
+});
+export default KiviCatIcon;

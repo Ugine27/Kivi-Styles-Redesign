@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PawPrint } from 'lucide-react';
 
@@ -55,12 +55,12 @@ export function Stack({
  * simulating a natural trail walking across the screen, fading each footprint
  * from 100% to 0% opacity over 5 seconds before removing it from state.
  */
-export default function FootprintManager({
+const FootprintManager = React.memo(({
   contained = false,
   spawnInterval = 750,
   fadeDuration = 5000,
   className = '',
-}: FootprintManagerProps) {
+}: FootprintManagerProps) => {
   const [paws, setPaws] = useState<Footprint[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -200,4 +200,7 @@ export default function FootprintManager({
       </div>
     </Stack>
   );
-}
+});
+
+export default FootprintManager;
+

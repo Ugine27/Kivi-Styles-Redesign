@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { 
   DEFAULT_STYLES, 
@@ -16,17 +16,14 @@ interface StylesManagerProps {
   isAdaptiveMode?: boolean;
   onToggleAdaptive?: () => void;
   // Moods toggle
-  moodsEnabled: boolean;
-  setMoodsEnabled: (val: boolean) => void;
-}
+    }
 
 export default function StylesManager({ 
   currentMode, 
   setMode,
   isAdaptiveMode: propIsAdaptiveMode,
   onToggleAdaptive: propOnToggleAdaptive,
-  moodsEnabled,
-  setMoodsEnabled
+    setMoodsEnabled
 }: StylesManagerProps) {
   // Current sub-view: defaults to 'main' so the user sees the Styles page & Adaptive Mode immediately
   const [viewMode, setViewMode] = useState<'intro' | 'main'>('main');
@@ -94,11 +91,11 @@ export default function StylesManager({
             onSelectActiveStyle={handleSelectActiveStyle}
             isAdaptiveMode={effectiveAdaptiveMode}
             onToggleAdaptive={handleToggleAdaptive}
-            moodsEnabled={moodsEnabled}
-            setMoodsEnabled={setMoodsEnabled}
-          />
+                                  />
         )}
       </AnimatePresence>
     </div>
   );
 }
+
+
