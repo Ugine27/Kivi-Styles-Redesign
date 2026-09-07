@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { PanelLeftClose, Keyboard, PanelLeft, Home, BookOpen, Zap, Palette, Clock, FileText, X, Mic, Pencil, User, Settings, Shield, LayoutTemplate, CreditCard, PlayCircle, Square, Trash2, Sparkles, Copy, Check, Info } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Tutorial from './Tutorial';
@@ -50,6 +50,8 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
   const [isRecordingShortcut, setIsRecordingShortcut] = useState(false);
   const [quicklaunchShortcut, setQuicklaunchShortcut] = useState(() => localStorage.getItem('whispurr_quicklaunch') || 'Ctrl');
   const [isRecordingQuicklaunch, setIsRecordingQuicklaunch] = useState(false);
+  const [quickEditShortcut, setQuickEditShortcut] = useState(() => localStorage.getItem('whispurr_quickedit') || 'Alt + Ctrl');
+  const [isRecordingQuickEdit, setIsRecordingQuickEdit] = useState(false);
   const [isSeamlessSwitchEnabled, setIsSeamlessSwitchEnabled] = useState(() => localStorage.getItem('whispurr_seamless_switch') !== 'false');
 
   useEffect(() => {
@@ -89,6 +91,60 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
       return () => window.removeEventListener('keydown', handleKeyDown);
     }
   }, [isRecordingQuicklaunch]);
+
+  useEffect(() => {
+    if (isRecordingQuickEdit) {
+      const handleKeyDown = (e: KeyboardEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        let key = e.key;
+        if (key === ' ') key = 'Space';
+        else if (key === 'Control') key = 'Ctrl';
+        else if (key === 'Meta') key = 'Cmd';
+        if (key.length === 1) key = key.toUpperCase();
+        
+        let combo = [];
+        if (e.ctrlKey && key !== 'Ctrl') combo.push('Ctrl');
+        if (e.altKey && key !== 'Alt') combo.push('Alt');
+        if (e.shiftKey && key !== 'Shift') combo.push('Shift');
+        combo.push(key);
+        
+        const finalKey = combo.join(' + ');
+        setQuickEditShortcut(finalKey);
+        localStorage.setItem('whispurr_quickedit', finalKey);
+        setIsRecordingQuickEdit(false);
+      };
+      window.addEventListener('keydown', handleKeyDown);
+      return () => window.removeEventListener('keydown', handleKeyDown);
+    }
+  }, [isRecordingQuickEdit]);
+
+  useEffect(() => {
+    if (isRecordingQuickEdit) {
+      const handleKeyDown = (e: KeyboardEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        let key = e.key;
+        if (key === ' ') key = 'Space';
+        else if (key === 'Control') key = 'Ctrl';
+        else if (key === 'Meta') key = 'Cmd';
+        if (key.length === 1) key = key.toUpperCase();
+        
+        let combo = [];
+        if (e.ctrlKey && key !== 'Ctrl') combo.push('Ctrl');
+        if (e.altKey && key !== 'Alt') combo.push('Alt');
+        if (e.shiftKey && key !== 'Shift') combo.push('Shift');
+        combo.push(key);
+        
+        const finalKey = combo.join(' + ');
+        setQuickEditShortcut(finalKey);
+        localStorage.setItem('whispurr_quickedit', finalKey);
+        setIsRecordingQuickEdit(false);
+      };
+      window.addEventListener('keydown', handleKeyDown);
+      return () => window.removeEventListener('keydown', handleKeyDown);
+    }
+  }, [isRecordingQuickEdit]);
 
 
   const [currentTheme, setCurrentTheme] = useState('coffee');
@@ -1071,6 +1127,23 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                       </button>
                     </div>
 
+                    <div className="flex items-center justify-between pb-6 border-b border-white/5">
+                      <div className="flex flex-col gap-1.5">
+                        <span className="text-xl font-bold text-white tracking-tight">Quick Edit</span>
+                        <span className="text-[15px] text-white/50">Edits the last sentence you typed</span>
+                      </div>
+                      <button 
+                        onClick={() => setIsRecordingQuickEdit(true)}
+                        className={`min-w-[120px] px-6 py-4 rounded-xl border-2 font-mono text-base tracking-wider font-bold transition-all shadow-md ${
+                          isRecordingQuickEdit 
+                            ? 'bg-orange-500/20 text-orange-400 border-orange-500 animate-pulse' 
+                            : 'bg-[#1a1a1a] text-white/80 border-white/10 hover:border-orange-500/50 hover:bg-[#222]'
+                        }`}
+                      >
+                        {isRecordingQuickEdit ? 'Press combo...' : quickEditShortcut}
+                      </button>
+                    </div>
+
                     <div className="flex items-center justify-between">
                       <div className="flex flex-col gap-1.5">
                         <span className="text-xl font-bold text-white tracking-tight">Seamless Switch</span>
@@ -1176,6 +1249,8 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
     </div>
   );
 }
+
+
 
 
 
