@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mic, Terminal, Briefcase, MessageCircle, Mail, ChevronRight, ChevronLeft, Check } from 'lucide-react';
@@ -11,13 +11,45 @@ export default function Tutorial({ onComplete }: TutorialProps) {
   const [slide, setSlide] = useState(0);
   const totalSlides = 10;
 
-  const nextSlide = () => {
-    if (slide < totalSlides - 1) setSlide(s => s + 1);
-  };
+  const nextSlide = useCallback(() => {
+    if (slide < totalSlides - 1) {
+      setSlide(s => s + 1);
+    }
+  }, [slide, totalSlides]);
 
-  const prevSlide = () => {
-    if (slide > 0) setSlide(s => s - 1);
-  };
+  const prevSlide = useCallback(() => {
+    if (slide > 0) {
+      setSlide(s => s - 1);
+    }
+  }, [slide]);
+
+  // Global Keyboard navigation: Left/Right Arrow, Space, Enter, Backspace, Escape
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA')) {
+        return;
+      }
+
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Enter') {
+        e.preventDefault();
+        if (slide < totalSlides - 1) {
+          nextSlide();
+        } else if (e.key === 'Enter' || e.key === ' ') {
+          onComplete();
+        }
+      } else if (e.key === 'ArrowLeft' || e.key === 'Backspace') {
+        e.preventDefault();
+        prevSlide();
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        onComplete();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [slide, totalSlides, nextSlide, prevSlide, onComplete]);
 
   const tutorialContent = (
     <div className="fixed inset-0 z-[9999] bg-[#f4ece1] text-[#3e2723] flex flex-col justify-between overflow-hidden font-sans">
@@ -25,10 +57,22 @@ export default function Tutorial({ onComplete }: TutorialProps) {
       <div className="flex justify-between items-center p-8 z-10">
         <button 
           onClick={onComplete}
-          className="text-[#3e2723]/60 hover:text-[#3e2723] font-mono text-sm tracking-widest border-b-2 border-transparent hover:border-[#8d6e63] transition-all pb-1"
+          className="text-[#3e2723]/60 hover:text-[#3e2723] font-mono text-sm tracking-widest border-b-2 border-transparent hover:border-[#8d6e63] transition-all pb-1 flex items-center gap-1.5"
+          title="Skip tutorial (Esc)"
         >
-          skip
+          <span>skip</span>
+          <span className="text-[10px] opacity-60 font-sans">[Esc]</span>
         </button>
+
+        {/* Keyboard navigation hint */}
+        <div className="hidden sm:flex items-center gap-2 text-xs font-mono text-[#3e2723]/50 bg-[#3e2723]/5 px-3.5 py-1.5 rounded-full border border-[#3e2723]/10 shadow-xs">
+          <span>Navigate with</span>
+          <kbd className="px-1.5 py-0.5 bg-white rounded border border-[#3e2723]/20 shadow-xs text-[#3e2723] font-bold">←</kbd>
+          <kbd className="px-1.5 py-0.5 bg-white rounded border border-[#3e2723]/20 shadow-xs text-[#3e2723] font-bold">→</kbd>
+          <span>or</span>
+          <kbd className="px-1.5 py-0.5 bg-white rounded border border-[#3e2723]/20 shadow-xs text-[#3e2723] font-bold">Space</kbd>
+        </div>
+
         <div className="text-[#3e2723]/60 font-mono text-sm tracking-widest">
           {String(slide + 1).padStart(2, '0')} / {String(totalSlides).padStart(2, '0')}
         </div>
@@ -55,9 +99,13 @@ export default function Tutorial({ onComplete }: TutorialProps) {
         {slide > 0 && (
           <button 
             onClick={prevSlide}
-            className="pointer-events-auto p-4 text-[#3e2723]/40 hover:text-[#8d6e63] transition-colors"
+            className="pointer-events-auto p-4 text-[#3e2723]/40 hover:text-[#8d6e63] transition-all flex flex-col items-center gap-1 group cursor-pointer"
+            title="Previous slide (← or Backspace)"
           >
-            <ChevronLeft size={48} strokeWidth={1} />
+            <ChevronLeft size={48} strokeWidth={1} className="group-hover:-translate-x-1 transition-transform" />
+            <span className="text-[11px] font-mono tracking-wider opacity-60 group-hover:opacity-100 transition-opacity bg-white/70 px-2 py-0.5 rounded-md border border-[#3e2723]/10 shadow-xs">
+              ← Left
+            </span>
           </button>
         )}
       </div>
@@ -65,9 +113,13 @@ export default function Tutorial({ onComplete }: TutorialProps) {
         {slide < totalSlides - 1 && (
           <button 
             onClick={nextSlide}
-            className="pointer-events-auto p-4 text-[#3e2723]/40 hover:text-[#8d6e63] transition-colors"
+            className="pointer-events-auto p-4 text-[#3e2723]/40 hover:text-[#8d6e63] transition-all flex flex-col items-center gap-1 group cursor-pointer"
+            title="Next slide (→, Space, or Enter)"
           >
-            <ChevronRight size={48} strokeWidth={1} />
+            <ChevronRight size={48} strokeWidth={1} className="group-hover:translate-x-1 transition-transform" />
+            <span className="text-[11px] font-mono tracking-wider opacity-60 group-hover:opacity-100 transition-opacity bg-white/70 px-2 py-0.5 rounded-md border border-[#3e2723]/10 shadow-xs">
+              Right →
+            </span>
           </button>
         )}
       </div>
@@ -214,10 +266,11 @@ function renderSlideContent(index: number, onComplete: () => void) {
           </p>
           <button 
             onClick={onComplete}
-            className="px-10 py-5 bg-[#8d6e63] hover:bg-[#795548] text-[#f4ece1] font-bold rounded-2xl flex items-center gap-4 transition-all hover:scale-105 text-2xl shadow-xl hover:shadow-2xl"
+            className="px-10 py-5 bg-[#8d6e63] hover:bg-[#795548] text-[#f4ece1] font-bold rounded-2xl flex items-center gap-4 transition-all hover:scale-105 text-2xl shadow-xl hover:shadow-2xl cursor-pointer"
           >
             <img src="/kivi_icon.png" className="w-8 h-8 rounded-full shadow-sm" alt="Icon" />
-            Launch WhisPURR
+            <span>Launch WhisPURR</span>
+            <span className="text-sm opacity-60 font-mono font-normal bg-black/10 px-2 py-1 rounded-lg ml-1">[Enter ↵]</span>
           </button>
         </div>
       );
