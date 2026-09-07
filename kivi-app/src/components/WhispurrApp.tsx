@@ -133,6 +133,9 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
   const [isHomeListening, setIsHomeListening] = useState(false);
   const [isHomeCopied, setIsHomeCopied] = useState(false);
   const [isHomeTransforming, setIsHomeTransforming] = useState(false);
+  const [isWhisperMode, setIsWhisperMode] = useState(false);
+  const [showWhisperInfo, setShowWhisperInfo] = useState(false);
+  const [showMoodsInfo, setShowMoodsInfo] = useState(false);
   const homeRecognitionRef = useRef<any>(null);
   const homeInitialTextRef = useRef('');
 
@@ -585,29 +588,146 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                       </div>
 
                       <div className="flex items-center gap-2">
-                        {homeChatText && (
+                          {homeChatText && (
+                            <button
+                              onClick={handleClearHomeChat}
+                              className="p-2 text-white/40 hover:text-red-400 hover:bg-white/5 rounded-xl transition-colors"
+                              title="Clear text"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          )}
                           <button
-                            onClick={handleClearHomeChat}
-                            className="p-2 text-white/40 hover:text-red-400 hover:bg-white/5 rounded-xl transition-colors"
-                            title="Clear text"
+                            onClick={handleCopyHomeChat}
+                            disabled={!homeChatText.trim()}
+                            className={`flex items-center justify-center p-2.5 rounded-xl transition-all ${
+                              isHomeCopied
+                                ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
+                                : homeChatText.trim()
+                                ? 'bg-white/10 hover:bg-white/15 text-white border border-white/15 shadow-sm active:scale-95'
+                                : 'bg-white/5 text-white/30 border border-white/5 cursor-not-allowed'
+                            }`}
+                            title="Copy to Clipboard"
                           >
-                            <Trash2 className="w-4 h-4" />
+                            {isHomeCopied ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
                           </button>
-                        )}
-                        <button
-                          onClick={handleCopyHomeChat}
-                          disabled={!homeChatText.trim()}
-                          className={`flex items-center justify-center p-2.5 rounded-xl transition-all ${
-                            isHomeCopied
-                              ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
-                              : homeChatText.trim()
-                              ? 'bg-white/10 hover:bg-white/15 text-white border border-white/15 shadow-sm active:scale-95'
-                              : 'bg-white/5 text-white/30 border border-white/5 cursor-not-allowed'
-                          }`}
-                          title="Copy to Clipboard"
-                        >
-                          {isHomeCopied ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
-                        </button>
+                      </div>
+                    </div>
+
+                    {/* Control Toggles Bar */}
+                    <div className="flex gap-4 mb-4 relative z-20">
+                      {/* Whisper Mode Toggle */}
+                      <div className="flex items-center justify-between bg-[#190f0b]/50 border border-[#5d4037]/40 p-2.5 px-4 rounded-2xl shadow-inner flex-1">
+                        <span className="text-xs font-bold uppercase tracking-wider text-[#d7ccc8]">
+                          Whisper Mode
+                        </span>
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            role="switch"
+                            aria-checked={isWhisperMode}
+                            onClick={() => setIsWhisperMode(!isWhisperMode)}
+                            className={`relative inline-flex h-9 w-16 shrink-0 cursor-pointer rounded-full border-2 transition-all duration-300 ease-in-out p-0.5 items-center focus:outline-none ${
+                              isWhisperMode
+                                ? 'bg-gradient-to-r from-purple-500 to-indigo-600 border-purple-400 shadow-[0_0_18px_rgba(168,85,247,0.4)]'
+                                : 'bg-[#2b1f1a] border-[#5d4037]/60'
+                            }`}
+                            title={isWhisperMode ? "Disable Whisper Mode" : "Enable Whisper Mode"}
+                          >
+                            <span className="sr-only">Toggle Whisper Mode</span>
+                            <motion.span
+                              layout
+                              transition={{ type: "spring", stiffness: 600, damping: 35 }}
+                              className={`pointer-events-none inline-block h-7 w-7 transform rounded-full bg-[#f4ece1] shadow-md flex items-center justify-center ${
+                                isWhisperMode ? 'ml-auto text-purple-900' : 'mr-auto text-[#8d6e63]'
+                              }`}
+                            >
+                              <span className={`w-2.5 h-2.5 rounded-full ${isWhisperMode ? 'bg-purple-600' : 'bg-[#8d6e63]/60'}`} />
+                            </motion.span>
+                          </button>
+                          <div className="relative">
+                            <button 
+                              onClick={() => setShowWhisperInfo(!showWhisperInfo)}
+                              onBlur={() => setShowWhisperInfo(false)}
+                              className="p-1.5 rounded-full text-[#E8D5B5]/70 hover:text-[#E8D5B5] hover:bg-[#5d4037]/40 transition-colors relative z-20"
+                              title="Info"
+                            >
+                              <Info className="w-5 h-5" />
+                            </button>
+                            <AnimatePresence>
+                              {showWhisperInfo && (
+                                <motion.div 
+                                  initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                                  exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                                  className="absolute top-full mt-2 right-0 w-56 bg-[#2B1F1A] border border-[#5D4037]/50 rounded-xl p-3 shadow-2xl z-50 pointer-events-none"
+                                >
+                                  <div className="absolute -top-1.5 right-4 w-3 h-3 bg-[#2B1F1A] border-t border-l border-[#5D4037]/50 rotate-45" />
+                                  <div className="text-[11px] text-[#E8D5B5] leading-relaxed relative z-10 font-medium">
+                                    Whisper Mode lets you talk very softly and slowly into the mic. It automatically heightens sensitivity and increases pause tolerance.
+                                  </div>
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Moods Toggle */}
+                      <div className="flex items-center justify-between bg-[#190f0b]/50 border border-[#5d4037]/40 p-2.5 px-4 rounded-2xl shadow-inner flex-1">
+                        <span className="text-xs font-bold uppercase tracking-wider text-[#d7ccc8]">
+                          Moods
+                        </span>
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            role="switch"
+                            aria-checked={moodsEnabled}
+                            onClick={() => setMoodsEnabled(!moodsEnabled)}
+                            className={`relative inline-flex h-9 w-16 shrink-0 cursor-pointer rounded-full border-2 transition-all duration-300 ease-in-out p-0.5 items-center focus:outline-none ${
+                              moodsEnabled
+                                ? 'bg-gradient-to-r from-[#8d6e63] to-[#6d4c41] border-[#a1887f] shadow-[0_0_18px_rgba(141,110,99,0.5)]'
+                                : 'bg-[#2b1f1a] border-[#5d4037]/60'
+                            }`}
+                            title={moodsEnabled ? "Disable Moods" : "Enable Moods"}
+                          >
+                            <span className="sr-only">Toggle Moods</span>
+                            <motion.span
+                              layout
+                              transition={{ type: "spring", stiffness: 600, damping: 35 }}
+                              className={`pointer-events-none inline-block h-7 w-7 transform rounded-full bg-[#f4ece1] shadow-md flex items-center justify-center ${
+                                moodsEnabled ? 'ml-auto text-[#3e2723]' : 'mr-auto text-[#8d6e63]'
+                              }`}
+                            >
+                              <span className={`w-2.5 h-2.5 rounded-full ${moodsEnabled ? 'bg-[#5d4037]' : 'bg-[#8d6e63]/60'}`} />
+                            </motion.span>
+                          </button>
+                          <div className="relative">
+                            <button 
+                              onClick={() => setShowMoodsInfo(!showMoodsInfo)}
+                              onBlur={() => setShowMoodsInfo(false)}
+                              className="p-1.5 rounded-full text-[#E8D5B5]/70 hover:text-[#E8D5B5] hover:bg-[#5d4037]/40 transition-colors relative z-20"
+                              title="Info"
+                            >
+                              <Info className="w-5 h-5" />
+                            </button>
+                            <AnimatePresence>
+                              {showMoodsInfo && (
+                                <motion.div 
+                                  initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                                  exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                                  className="absolute top-full mt-2 right-0 w-56 bg-[#2B1F1A] border border-[#5D4037]/50 rounded-xl p-3 shadow-2xl z-50 pointer-events-none"
+                                >
+                                  <div className="absolute -top-1.5 right-4 w-3 h-3 bg-[#2B1F1A] border-t border-l border-[#5D4037]/50 rotate-45" />
+                                  <div className="text-[11px] text-[#E8D5B5] leading-relaxed relative z-10 font-medium">
+                                    WhisPURR aptly adds expressive emojis based on your Emotions and Undertones
+                                  </div>
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
+                          </div>
+                        </div>
                       </div>
                     </div>
 
@@ -641,12 +761,12 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                 </div>
 
                 <div className={`w-[320px] ${glassPanel} bg-black/40 p-6 flex flex-col relative z-10 overflow-hidden`}>
-                  <div className="w-full flex-1 min-h-[160px] rounded-2xl bg-[#0f0f0f] mb-8 relative border border-white/5 flex flex-col items-center justify-center group overflow-hidden">
+                  <div className="w-full flex-1 min-h-[160px] rounded-2xl bg-[#0f0f0f] mb-6 relative border border-white/5 flex flex-col items-center justify-center group overflow-hidden">
                      <div className={`text-7xl relative z-10 ${animationClass} flex items-center justify-center w-full h-full`}>
                        {whispurrIcon}
                      </div>
-
                   </div>
+                  
                   <h3 className="text-lg font-bold text-orange-50 mb-4 text-center border-b border-white/10 pb-3">Today's Impact</h3>
                   <div className="flex flex-col gap-4 items-center">
                     <div className="flex flex-col items-center justify-center p-4 w-full rounded-2xl bg-orange-500/10 border border-orange-500/20 shadow-[0_0_20px_rgba(249,115,22,0.05)]">
@@ -902,8 +1022,6 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                 <StylesManager 
                   currentMode={mode || 'Professional'} 
                   setMode={setMode}
-                  moodsEnabled={moodsEnabled}
-                  setMoodsEnabled={setMoodsEnabled}
                 />
               </motion.div>
             )}

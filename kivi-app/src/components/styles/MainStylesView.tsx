@@ -19,19 +19,14 @@ interface MainStylesViewProps {
   weeklyStats?: WeeklyStats;
   isAdaptiveMode?: boolean;
   onToggleAdaptive?: () => void;
-  moodsEnabled: boolean;
-  setMoodsEnabled: (val: boolean) => void;
 }
 
 export default function MainStylesView({
   activeStyleName,
   onSelectActiveStyle,
   isAdaptiveMode = true,
-  onToggleAdaptive,
-  moodsEnabled,
-  setMoodsEnabled
+  onToggleAdaptive
 }: MainStylesViewProps) {
-  const [showMoodsInfo, setShowMoodsInfo] = useState(false);
   const [showAdaptInfo, setShowAdaptInfo] = useState(false);
 
   return (
@@ -104,59 +99,6 @@ export default function MainStylesView({
       </AnimatePresence>
 
       <div className="absolute top-4 right-4 flex flex-col gap-4 items-end">
-        
-        {/* Moods Toggle */}
-        <div className="flex flex-col items-end gap-2">
-          <div className="flex items-center gap-4 bg-[#190f0b]/90 border border-[#5d4037]/60 p-2.5 px-4 rounded-2xl shadow-inner w-fit">
-            <span className="text-xs font-bold uppercase tracking-wider text-[#d7ccc8]">
-              Moods
-            </span>
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                role="switch"
-                aria-checked={moodsEnabled}
-                onClick={() => setMoodsEnabled(!moodsEnabled)}
-                className={`relative inline-flex h-9 w-16 shrink-0 cursor-pointer rounded-full border-2 transition-all duration-300 ease-in-out p-0.5 items-center focus:outline-none ${
-                  moodsEnabled
-                    ? 'bg-gradient-to-r from-[#8d6e63] to-[#6d4c41] border-[#a1887f] shadow-[0_0_18px_rgba(141,110,99,0.5)]'
-                    : 'bg-[#2b1f1a] border-[#5d4037]/60'
-                }`}
-                title={moodsEnabled ? "Disable Moods" : "Enable Moods"}
-              >
-                <span className="sr-only">Toggle Moods</span>
-                <motion.span
-                  layout
-                  transition={{ type: "spring", stiffness: 600, damping: 35 }}
-                  className={`pointer-events-none inline-block h-7 w-7 transform rounded-full bg-[#f4ece1] shadow-md flex items-center justify-center ${
-                    moodsEnabled ? 'ml-auto text-[#3e2723]' : 'mr-auto text-[#8d6e63]'
-                  }`}
-                >
-                  <span className={`w-2.5 h-2.5 rounded-full ${moodsEnabled ? 'bg-[#5d4037]' : 'bg-[#8d6e63]/60'}`} />
-                </motion.span>
-              </button>
-              <button 
-                onClick={() => setShowMoodsInfo(!showMoodsInfo)}
-                className="p-1.5 rounded-full text-[#8d6e63] hover:text-[#d7ccc8] hover:bg-[#5d4037]/40 transition-colors"
-                title="Info"
-              >
-                <Info className="w-5 h-5" />
-              </button>
-            </div>
-          </div>
-          <AnimatePresence>
-            {showMoodsInfo && (
-              <motion.span 
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                className="text-[11px] text-white/50 max-w-[280px] text-right font-medium overflow-hidden"
-              >
-                WhisPURR aptly adds expressive emojis based on your Emotions and Undertones
-              </motion.span>
-            )}
-          </AnimatePresence>
-        </div>
         
         {/* Adapt Toggle */}
         <div className="flex flex-col items-end gap-2 mt-4">
