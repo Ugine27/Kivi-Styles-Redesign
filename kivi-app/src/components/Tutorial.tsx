@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import KiviCatIcon from './KiviCatIcon';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Mic, Terminal, Briefcase, MessageCircle, Mail, Settings, ChevronRight, ChevronLeft, Check } from 'lucide-react';
+import { Mic, Terminal, Briefcase, MessageCircle, Mail, ChevronRight, ChevronLeft, Check } from 'lucide-react';
 
 interface TutorialProps {
   onComplete: () => void;
