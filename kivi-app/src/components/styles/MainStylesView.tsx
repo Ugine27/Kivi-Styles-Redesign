@@ -10,11 +10,11 @@ import {
 import { StyleItem, WeeklyStats } from './StylesData';
 
 interface MainStylesViewProps {
-  styles: StyleItem[];
+  styles?: StyleItem[];
   activeStyleName: string;
   onSelectActiveStyle: (name: string) => void;
-  onOpenStyleDetail: (style: StyleItem) => void;
-  onOpenCreateModal: () => void;
+  onOpenStyleDetail?: (style: StyleItem) => void;
+  onOpenCreateModal?: () => void;
   onRevisitIntro?: () => void;
   weeklyStats?: WeeklyStats;
   isAdaptiveMode?: boolean;

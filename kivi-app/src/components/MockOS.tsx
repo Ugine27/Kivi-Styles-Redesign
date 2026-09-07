@@ -1,5 +1,5 @@
 import { useState, useEffect, memo, useRef } from 'react';
-import { Mail, Terminal, Sparkles, X, Minus, Wifi, Cat, Type, FileText, Mic, Pencil, Check } from 'lucide-react';
+import { Mail, Terminal, Sparkles, X, Minus, Wifi, Type, Mic, Pencil, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import WhispurrApp from './WhispurrApp';
 import KiviCatIcon from './KiviCatIcon';
@@ -161,13 +161,6 @@ const MockOS = memo(({ activeText, mode, setMode, degree, setDegree, isAltPresse
     }
   }, [activeText, openApp, activePopup]);
 
-  const CurrentAppIcon = () => {
-    if (openApp === 'email') return <Mail className="w-4 h-4 text-blue-300" />;
-    if (openApp === 'vscode') return <Terminal className="w-4 h-4 text-blue-500" />;
-    if (openApp === 'ai') return <Sparkles className="w-4 h-4 text-purple-300" />;
-    if (openApp === 'whispurr') return <KiviCatIcon className="w-4 h-4 text-orange-400" />;
-    return <div className="w-4 h-4 border border-white/20 rounded-sm border-dashed" />;
-  };
 
   return (
     <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop')] bg-cover bg-center">

@@ -717,13 +717,23 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
 
                       <div className="flex items-center gap-2">
                           {homeChatText && (
-                            <button
-                              onClick={handleClearHomeChat}
-                              className="p-2 text-white/40 hover:text-red-400 hover:bg-white/5 rounded-xl transition-colors"
-                              title="Clear text"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
+                            <>
+                              <button
+                                onClick={handleFormatWithAI}
+                                disabled={isHomeTransforming}
+                                className="p-2 text-white/40 hover:text-orange-400 hover:bg-white/5 rounded-xl transition-colors"
+                                title="Format with AI"
+                              >
+                                <Sparkles className={`w-4 h-4 ${isHomeTransforming ? 'animate-spin text-orange-400' : ''}`} />
+                              </button>
+                              <button
+                                onClick={handleClearHomeChat}
+                                className="p-2 text-white/40 hover:text-red-400 hover:bg-white/5 rounded-xl transition-colors"
+                                title="Clear text"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </>
                           )}
                           <button
                             onClick={handleCopyHomeChat}
@@ -890,9 +900,12 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
 
                 <div className={`w-[320px] ${glassPanel} bg-black/40 p-6 flex flex-col relative z-10 overflow-hidden`}>
                   <div className="w-full flex-1 min-h-[160px] rounded-2xl bg-[#0f0f0f] mb-6 relative border border-white/5 flex flex-col items-center justify-center group overflow-hidden">
-                     <div className={`text-7xl relative z-10 ${animationClass} flex items-center justify-center w-full h-full`}>
-                       {whispurrIcon}
-                     </div>
+                    <span className="absolute top-2.5 right-2.5 z-20 px-2.5 py-0.5 rounded-full bg-orange-500/20 text-orange-400 text-[10px] font-bold uppercase tracking-wider border border-orange-500/30">
+                      {whispurrStage}
+                    </span>
+                    <div className={`text-7xl relative z-10 ${animationClass} flex items-center justify-center w-full h-full`}>
+                      {whispurrIcon}
+                    </div>
                   </div>
                   
                   <h3 className="text-lg font-bold text-orange-50 mb-4 text-center border-b border-white/10 pb-3">Today's Impact</h3>
