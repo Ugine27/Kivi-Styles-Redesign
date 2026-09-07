@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+﻿import { useState, useEffect, useRef } from 'react';
 import { PanelLeftClose, Keyboard, PanelLeft, Home, BookOpen, Zap, Palette, Clock, FileText, X, Mic, Pencil, User, Settings, Shield, LayoutTemplate, CreditCard, PlayCircle, Square, Trash2, Sparkles, Copy, Check, Info } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Tutorial from './Tutorial';
@@ -21,6 +21,17 @@ const CAT_FACTS = [
 ];
 let hasShownTutorialThisSession = false;
 
+const TOUR_STEPS = [
+    { id: 'Home', title: 'The Home Base', text: 'This is where you monitor WhisPURR\'s activity, see live transcription, and access quick controls.' },
+    { id: 'History', title: 'Chat Registers', text: 'View all your past dictations and commands. You can always copy or replay what was said.' },
+    { id: 'Dictionary', title: 'Your Custom Dictionary', text: 'Teach WhisPURR how to spell unique names, acronyms, and industry-specific jargon.' },
+    { id: 'ShortHand', title: 'ShortHand Macros', text: 'Create powerful abbreviations. E.g. "sig" automatically expands to your full email signature.' },
+    { id: 'Context', title: 'Global Context', text: 'Tell WhisPURR about your ongoing projects so it completely understands the context of your dictations.' },
+    { id: 'ScratchPad', title: 'ScratchPad', text: 'A private space to quickly jot down thoughts or test out your custom styles and rules.' },
+    { id: 'Profile', title: 'Your Profile', text: 'Access your account settings, billing, and global preferences here.' },
+    { id: 'CatFacts', title: 'Cat Facts', text: 'Because who doesn\'t need a random cat fact while they work?' }
+  ];
+
 export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: string, setMode?: (m: any) => void }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -29,17 +40,8 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
   const [isTourActive, setIsTourActive] = useState(false);
   const [tourStep, setTourStep] = useState(0);
 
-  const tourSteps = [
-    { id: 'Home', title: 'The Home Base', text: 'This is where you monitor WhisPURR’s activity, see live transcription, and access quick controls.' },
-    { id: 'History', title: 'Chat Registers', text: 'View all your past dictations and commands. You can always copy or replay what was said.' },
-    { id: 'Dictionary', title: 'Your Custom Dictionary', text: 'Teach WhisPURR how to spell unique names, acronyms, and industry-specific jargon.' },
-    { id: 'ShortHand', title: 'ShortHand Macros', text: 'Create powerful abbreviations. E.g. "sig" automatically expands to your full email signature.' },
-    { id: 'Context', title: 'Global Context', text: 'Tell WhisPURR about your ongoing projects so it completely understands the context of your dictations.' },
-    { id: 'ScratchPad', title: 'ScratchPad', text: 'A private space to quickly jot down thoughts or test out your custom styles and rules.' },
-    { id: 'Profile', title: 'Your Profile', text: 'Access your account settings, billing, and global preferences here.' },
-    { id: 'CatFacts', title: 'Cat Facts', text: 'Because who doesn’t need a random cat fact while they work?' }
-  ];
-  const currentTourId = isTourActive ? tourSteps[tourStep].id : null;
+
+  const currentTourId = isTourActive ? TOUR_STEPS[tourStep].id : null;
 
   const [currentCatFact, setCurrentCatFact] = useState('');
   const [showCatFactPopup, setShowCatFactPopup] = useState(false);
@@ -511,15 +513,15 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
               <div className="absolute -top-6 -left-6 w-14 h-14 bg-[#8d6e63] rounded-full flex items-center justify-center shadow-lg text-[#f4ece1] font-bold text-2xl border-4 border-[#f4ece1]">
                 {tourStep + 1}
               </div>
-              <h2 className="text-4xl font-serif font-bold text-[#3e2723] mb-4 tracking-tight">{tourSteps[tourStep].title}</h2>
-              <p className="text-[#3e2723]/80 text-xl mb-10 leading-relaxed font-sans">{tourSteps[tourStep].text}</p>
+              <h2 className="text-4xl font-serif font-bold text-[#3e2723] mb-4 tracking-tight">{TOUR_STEPS[tourStep].title}</h2>
+              <p className="text-[#3e2723]/80 text-xl mb-10 leading-relaxed font-sans">{TOUR_STEPS[tourStep].text}</p>
               <div className="flex justify-between items-center">
                 <button onClick={() => setIsTourActive(false)} className="text-[#3e2723]/40 hover:text-[#3e2723] transition-colors uppercase tracking-widest text-sm font-bold border-b-2 border-transparent hover:border-[#8d6e63] pb-1">Skip Tour</button>
                 <button onClick={() => {
-                  if (tourStep < tourSteps.length - 1) {
+                  if (tourStep < TOUR_STEPS.length - 1) {
                     setTourStep(s => s + 1);
                     // Open Profile / CatFact specifically if we hit those steps, else set tab
-                    const nextId = tourSteps[tourStep + 1].id;
+                    const nextId = TOUR_STEPS[tourStep + 1].id;
                     if (nextId === 'Profile') {
                       setIsSettingsOpen(true);
                       setShowCatFactPopup(false);
@@ -538,7 +540,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                     setActiveTab('Home');
                   }
                 }} className="px-8 py-4 bg-[#3e2723] text-[#f4ece1] font-bold rounded-2xl hover:bg-[#5d4037] transition-all shadow-xl hover:shadow-2xl hover:scale-105 text-lg">
-                  {tourStep < tourSteps.length - 1 ? 'Next' : 'Finish'}
+                  {tourStep < TOUR_STEPS.length - 1 ? 'Next' : 'Finish'}
                 </button>
               </div>
             </div>
@@ -1174,4 +1176,9 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
     </div>
   );
 }
+
+
+
+
+
 
