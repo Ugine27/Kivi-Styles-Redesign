@@ -629,7 +629,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                             onClick={() => setIsWhisperMode(!isWhisperMode)}
                             className={`relative inline-flex h-9 w-16 shrink-0 cursor-pointer rounded-full border-2 transition-all duration-300 ease-in-out p-0.5 items-center focus:outline-none ${
                               isWhisperMode
-                                ? 'bg-gradient-to-r from-purple-500 to-indigo-600 border-purple-400 shadow-[0_0_18px_rgba(168,85,247,0.4)]'
+                                ? 'bg-gradient-to-r from-[#8d6e63] to-[#6d4c41] border-[#a1887f] shadow-[0_0_18px_rgba(141,110,99,0.5)]'
                                 : 'bg-[#2b1f1a] border-[#5d4037]/60'
                             }`}
                             title={isWhisperMode ? "Disable Whisper Mode" : "Enable Whisper Mode"}
@@ -639,10 +639,10 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                               layout
                               transition={{ type: "spring", stiffness: 600, damping: 35 }}
                               className={`pointer-events-none inline-block h-7 w-7 transform rounded-full bg-[#f4ece1] shadow-md flex items-center justify-center ${
-                                isWhisperMode ? 'ml-auto text-purple-900' : 'mr-auto text-[#8d6e63]'
+                                isWhisperMode ? 'ml-auto text-[#3e2723]' : 'mr-auto text-[#8d6e63]'
                               }`}
                             >
-                              <span className={`w-2.5 h-2.5 rounded-full ${isWhisperMode ? 'bg-purple-600' : 'bg-[#8d6e63]/60'}`} />
+                              <span className={`w-2.5 h-2.5 rounded-full ${isWhisperMode ? 'bg-[#5d4037]' : 'bg-[#8d6e63]/60'}`} />
                             </motion.span>
                           </button>
                           <div className="relative">
