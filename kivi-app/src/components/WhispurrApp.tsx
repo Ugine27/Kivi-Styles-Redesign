@@ -36,6 +36,13 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('Home');
+  const [homeVideo, setHomeVideo] = useState(() => Math.random() > 0.5 ? '/cat.mp4' : '/cat2.mp4');
+
+  useEffect(() => {
+    if (activeTab === 'Home') {
+      setHomeVideo(Math.random() > 0.5 ? '/cat.mp4' : '/cat2.mp4');
+    }
+  }, [activeTab]);
 
   const [isTourActive, setIsTourActive] = useState(false);
   const [tourStep, setTourStep] = useState(0);
@@ -922,8 +929,12 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
 
                 <div className={`w-[320px] ${glassPanel} bg-black/40 p-6 flex flex-col relative z-10 overflow-hidden`}>
                   <div className="w-full flex-1 min-h-[160px] rounded-2xl bg-[#0f0f0f] mb-6 relative border border-white/5 flex flex-col items-center justify-center group overflow-hidden">
-                    <video 
-                      src="/cat.mp4" 
+                    <motion.video 
+                      key={homeVideo}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.8 }}
+                      src={homeVideo} 
                       autoPlay 
                       loop 
                       muted 
