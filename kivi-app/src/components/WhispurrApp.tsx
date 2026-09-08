@@ -1372,7 +1372,131 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
               </motion.div>
             )}
 
-            {!['Home', 'History', 'Dictionary', 'ShortHand', 'ScratchPad', 'Context', 'Theme', 'Tutorial', 'Shortcuts'].includes(activeTab) && (
+            {activeTab === 'Settings' && (
+              <motion.div key="settings" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col gap-6 p-8 overflow-y-auto ${glassPanel}`}>
+                <div className="px-2 shrink-0">
+                  <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
+                    <Settings className="text-[#8d6e63] w-8 h-8" />
+                    Settings
+                  </h1>
+                  <p className="text-white/50 text-sm">Configure your system preferences and account settings.</p>
+                </div>
+                
+                <div className="grid grid-cols-1 max-w-3xl gap-6 mt-4">
+                  <div className="bg-white/[0.02] border border-white/5 p-6 rounded-2xl shadow-sm">
+                    <h3 className="text-lg font-bold text-white mb-4">General Preferences</h3>
+                    <div className="flex flex-col gap-4">
+                      <div className="flex items-center justify-between p-4 rounded-xl bg-black/20 border border-white/5">
+                        <div>
+                          <div className="font-semibold text-white">Start on Boot</div>
+                          <div className="text-sm text-white/50">Launch WhisPURR automatically when your system starts.</div>
+                        </div>
+                        <div className="w-12 h-6 bg-[#8d6e63] rounded-full relative cursor-pointer border border-[#8d6e63]/50">
+                          <div className="absolute right-1 top-1 w-4 h-4 bg-[#f4ece1] rounded-full shadow-md"></div>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between p-4 rounded-xl bg-black/20 border border-white/5">
+                        <div>
+                          <div className="font-semibold text-white">Hardware Acceleration</div>
+                          <div className="text-sm text-white/50">Use GPU to make animations and interface buttery smooth.</div>
+                        </div>
+                        <div className="w-12 h-6 bg-[#8d6e63] rounded-full relative cursor-pointer border border-[#8d6e63]/50">
+                          <div className="absolute right-1 top-1 w-4 h-4 bg-[#f4ece1] rounded-full shadow-md"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {activeTab === 'Plans & Billing' && (
+              <motion.div key="billing" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col gap-6 p-8 overflow-y-auto ${glassPanel}`}>
+                <div className="px-2 shrink-0">
+                  <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
+                    <CreditCard className="text-[#8d6e63] w-8 h-8" />
+                    Plans & Billing
+                  </h1>
+                  <p className="text-white/50 text-sm">Manage your subscription and billing details.</p>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-4">
+                  {/* Basic Plan */}
+                  <div className="bg-white/[0.02] border border-white/5 p-8 rounded-2xl shadow-sm flex flex-col">
+                    <h3 className="text-xl font-bold text-white mb-2">Kitten</h3>
+                    <div className="text-3xl font-extrabold text-white mb-6">Free</div>
+                    <ul className="text-white/60 space-y-3 mb-8 flex-1">
+                      <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-[#8d6e63]" /> 500 Daily Words</li>
+                      <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-[#8d6e63]" /> Standard Voice Engine</li>
+                      <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-[#8d6e63]" /> Community Support</li>
+                    </ul>
+                    <button className="w-full py-3 rounded-xl border border-white/10 text-white hover:bg-white/5 transition-colors font-semibold">Current Plan</button>
+                  </div>
+                  
+                  {/* Pro Plan */}
+                  <div className="bg-[#8d6e63]/10 border border-[#8d6e63]/40 p-8 rounded-2xl shadow-[0_0_30px_rgba(141,110,99,0.15)] flex flex-col relative">
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#8d6e63] text-[#f4ece1] text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">Most Popular</div>
+                    <h3 className="text-xl font-bold text-white mb-2">Lion</h3>
+                    <div className="text-3xl font-extrabold text-[#8d6e63] mb-6">$9<span className="text-lg text-white/50 font-medium">/mo</span></div>
+                    <ul className="text-white/80 space-y-3 mb-8 flex-1">
+                      <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-[#8d6e63]" /> Unlimited Words</li>
+                      <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-[#8d6e63]" /> Advanced AI Engine</li>
+                      <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-[#8d6e63]" /> Priority Support</li>
+                      <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-[#8d6e63]" /> Adaptive Contexts</li>
+                    </ul>
+                    <button className="w-full py-3 rounded-xl bg-[#8d6e63] text-[#f4ece1] hover:bg-[#795548] transition-colors font-bold shadow-md">Upgrade to Lion</button>
+                  </div>
+
+                  {/* Enterprise Plan */}
+                  <div className="bg-white/[0.02] border border-white/5 p-8 rounded-2xl shadow-sm flex flex-col">
+                    <h3 className="text-xl font-bold text-white mb-2">Panther</h3>
+                    <div className="text-3xl font-extrabold text-white mb-6">$29<span className="text-lg text-white/50 font-medium">/mo</span></div>
+                    <ul className="text-white/60 space-y-3 mb-8 flex-1">
+                      <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-[#8d6e63]" /> Everything in Lion</li>
+                      <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-[#8d6e63]" /> Custom AI Training</li>
+                      <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-[#8d6e63]" /> Team Management</li>
+                      <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-[#8d6e63]" /> API Access</li>
+                    </ul>
+                    <button className="w-full py-3 rounded-xl border border-white/10 text-white hover:bg-white/5 transition-colors font-semibold">Contact Sales</button>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {activeTab === 'User Policy' && (
+              <motion.div key="policy" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col gap-6 p-8 overflow-y-auto ${glassPanel}`}>
+                <div className="px-2 shrink-0 border-b border-white/5 pb-6">
+                  <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
+                    <Shield className="text-[#8d6e63] w-8 h-8" />
+                    User Policy & Privacy
+                  </h1>
+                  <p className="text-white/50 text-sm">We take your privacy and data security seriously.</p>
+                </div>
+                
+                <div className="max-w-4xl text-white/80 space-y-8 px-2 pb-10">
+                  <section>
+                    <h2 className="text-xl font-bold text-white mb-3">1. Data Processing</h2>
+                    <p className="leading-relaxed text-sm text-white/60 mb-2">
+                      WhisPURR processes your voice data locally whenever possible. When utilizing cloud-based transcription models, audio is transmitted via end-to-end encrypted tunnels and is immediately discarded after transcription is complete. We do not store your voice recordings on our servers.
+                    </p>
+                  </section>
+                  <section>
+                    <h2 className="text-xl font-bold text-white mb-3">2. AI Training</h2>
+                    <p className="leading-relaxed text-sm text-white/60 mb-2">
+                      We firmly believe that your data is yours. WhisPURR will never use your personal transcriptions or dictation history to train our global AI models without your explicit, opt-in consent.
+                    </p>
+                  </section>
+                  <section>
+                    <h2 className="text-xl font-bold text-white mb-3">3. Telemetry & Analytics</h2>
+                    <p className="leading-relaxed text-sm text-white/60 mb-2">
+                      To improve our service, we collect anonymized telemetry data (such as error rates, transcription latency, and feature usage). This data contains no personally identifiable information (PII) and cannot be traced back to your individual account.
+                    </p>
+                  </section>
+                </div>
+              </motion.div>
+            )}
+
+            {!['Home', 'History', 'Dictionary', 'ShortHand', 'ScratchPad', 'Context', 'Theme', 'Tutorial', 'Shortcuts', 'Settings', 'Plans & Billing', 'User Policy'].includes(activeTab) && (
               <motion.div key="fallback" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col items-center justify-center gap-4 p-8 ${glassPanel}`}>
                 <Settings className="w-16 h-16 text-white/10" />
                 <h1 className="text-2xl font-bold text-white/50">{activeTab}</h1>
