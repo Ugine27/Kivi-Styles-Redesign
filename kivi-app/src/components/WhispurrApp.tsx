@@ -1205,7 +1205,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                         className={`min-w-[120px] px-6 py-4 rounded-xl border-2 font-mono text-base tracking-wider font-bold transition-all shadow-md ${
                           isRecordingShortcut 
                             ? 'bg-orange-500/20 text-orange-400 border-orange-500 animate-pulse' 
-                            : 'bg-[#1a1a1a] text-white border-white/10 hover:border-orange-500/50 hover:bg-[#222]'
+                            : 'bg-[#1a1a1a] text-[#f4ece1] border-white/10 hover:border-orange-500/50 hover:bg-[#222]'
                         }`}
                       >
                         {isRecordingShortcut ? 'Press a key...' : talkShortcut}
@@ -1222,7 +1222,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                         className={`min-w-[120px] px-6 py-4 rounded-xl border-2 font-mono text-base tracking-wider font-bold transition-all shadow-md ${
                           isRecordingQuicklaunch 
                             ? 'bg-orange-500/20 text-orange-400 border-orange-500 animate-pulse' 
-                            : 'bg-[#1a1a1a] text-white border-white/10 hover:border-orange-500/50 hover:bg-[#222]'
+                            : 'bg-[#1a1a1a] text-[#f4ece1] border-white/10 hover:border-orange-500/50 hover:bg-[#222]'
                         }`}
                       >
                         {isRecordingQuicklaunch ? 'Press a key...' : quicklaunchShortcut}
@@ -1239,7 +1239,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                         className={`min-w-[120px] px-6 py-4 rounded-xl border-2 font-mono text-base tracking-wider font-bold transition-all shadow-md ${
                           isRecordingQuickEdit 
                             ? 'bg-orange-500/20 text-orange-400 border-orange-500 animate-pulse' 
-                            : 'bg-[#1a1a1a] text-white border-white/10 hover:border-orange-500/50 hover:bg-[#222]'
+                            : 'bg-[#1a1a1a] text-[#f4ece1] border-white/10 hover:border-orange-500/50 hover:bg-[#222]'
                         }`}
                       >
                         {isRecordingQuickEdit ? 'Press combo...' : quickEditShortcut}
