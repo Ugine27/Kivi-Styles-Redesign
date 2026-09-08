@@ -32,9 +32,9 @@ export default function MainStylesView({
   return (
     <div className="flex-1 w-full h-full relative p-4">
       {/* Title and Description */}
-      <div className="max-w-xl mb-10">
-        <h1 className="text-4xl font-extrabold text-white mb-2 tracking-tight">Context</h1>
-        <p className="text-lg text-white/60 font-medium">
+      <div className="px-2 mt-4 mb-10">
+        <h1 className="text-3xl font-bold tracking-tight mb-2 text-white">Context</h1>
+        <p className="text-white/50 text-sm">
           Context decides how your words land. Choose your Tone and Mood for each and every App!
         </p>
       </div>
