@@ -5,7 +5,8 @@ import {
   Info,
   ChevronRight,
   Check,
-  Plus
+  Plus,
+  Palette
 } from 'lucide-react';
 import { StyleItem, WeeklyStats } from './StylesData';
 
@@ -32,9 +33,12 @@ export default function MainStylesView({
   return (
     <div className="flex-1 w-full h-full relative p-4">
       {/* Title and Description */}
-      <div className="max-w-xl mb-10">
-        <h1 className="text-4xl font-extrabold text-white mb-2 tracking-tight">Context</h1>
-        <p className="text-lg text-white/60 font-medium">
+      <div className="px-2 shrink-0 mb-10">
+        <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
+          <Palette className="text-orange-400 w-8 h-8" />
+          Context
+        </h1>
+        <p className="text-white/50 text-sm">
           Context decides how your words land. Choose your Tone and Mood for each and every App!
         </p>
       </div>
