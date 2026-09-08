@@ -483,11 +483,12 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
 
   // Animation variants
   const tabVariants = {
-    initial: { opacity: 0, y: 10, scale: 0.99 },
+    initial: { opacity: 0, y: 10, scale: 0.99, filter: 'blur(4px)' },
     animate: { 
       opacity: 1, 
       y: 0, 
       scale: 1, 
+      filter: 'blur(0px)',
       transition: { 
         type: "spring", 
         stiffness: 400, 
@@ -498,6 +499,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
     exit: { 
       opacity: 0, 
       scale: 0.99, 
+      filter: 'blur(4px)',
       transition: { 
         duration: 0.15, 
         ease: "easeOut" 
@@ -734,7 +736,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
 
 
         <div className="flex-1 p-4 flex gap-4 overflow-hidden relative">
-          <AnimatePresence>
+          <AnimatePresence mode="wait">
               {activeTab === 'Home' && (
               <motion.div key="home" variants={tabVariants} initial="initial" animate="animate" exit="exit" className="absolute inset-4 flex gap-4">
                 <div className="flex-1 flex flex-col gap-6 relative z-10">
