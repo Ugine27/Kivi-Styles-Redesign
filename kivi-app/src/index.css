@@ -30,13 +30,15 @@ body {
 .theme-coffee .bg-black\/80 { background-color: rgba(62, 39, 35, 0.25) !important; }
 
 .theme-coffee .text-white { color: #3e2723 !important; }
-.theme-coffee .text-white\/10 { color: rgba(62, 39, 35, 0.4) !important; }
-.theme-coffee .text-white\/20 { color: rgba(62, 39, 35, 0.5) !important; }
-.theme-coffee .text-white\/30 { color: rgba(62, 39, 35, 0.6) !important; }
-.theme-coffee .text-white\/40 { color: rgba(62, 39, 35, 0.7) !important; }
-.theme-coffee .text-white\/50 { color: rgba(62, 39, 35, 0.8) !important; }
-.theme-coffee .text-white\/60 { color: rgba(62, 39, 35, 0.9) !important; }
-.theme-coffee .text-white\/70 { color: #3e2723 !important; }
+.theme-coffee [class~="text-white/10"] { color: rgba(62, 39, 35, 0.4) !important; }
+.theme-coffee [class~="text-white/20"] { color: rgba(62, 39, 35, 0.5) !important; }
+.theme-coffee [class~="text-white/30"] { color: rgba(62, 39, 35, 0.6) !important; }
+.theme-coffee [class~="text-white/40"] { color: rgba(62, 39, 35, 0.7) !important; }
+.theme-coffee [class~="text-white/50"] { color: rgba(62, 39, 35, 0.8) !important; }
+.theme-coffee [class~="text-white/60"] { color: rgba(62, 39, 35, 0.9) !important; }
+.theme-coffee [class~="text-white/70"] { color: #3e2723 !important; }
+.theme-coffee [class~="text-white/80"] { color: #3e2723 !important; }
+.theme-coffee [class~="text-white/90"] { color: #3e2723 !important; }
 
 .theme-coffee .bg-white\/5 { background-color: rgba(62, 39, 35, 0.05) !important; }
 .theme-coffee .bg-white\/10 { background-color: rgba(62, 39, 35, 0.1) !important; }

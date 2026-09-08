@@ -22,26 +22,89 @@ const CAT_FACTS = [
 let hasShownTutorialThisSession = false;
 
 const TOUR_STEPS = [
-    { id: 'Home', title: 'The Home Base', text: 'This is where you monitor WhisPURR\'s activity, see live transcription, and access quick controls.' },
-    { id: 'History', title: 'Chat Registers', text: 'View all your past dictations and commands. You can always copy or replay what was said.' },
-    { id: 'Dictionary', title: 'Your Custom Dictionary', text: 'Teach WhisPURR how to spell unique names, acronyms, and industry-specific jargon.' },
-    { id: 'ShortHand', title: 'ShortHand Macros', text: 'Create powerful abbreviations. E.g. "sig" automatically expands to your full email signature.' },
-    { id: 'Context', title: 'Global Context', text: 'Tell WhisPURR about your ongoing projects so it completely understands the context of your dictations.' },
-    { id: 'ScratchPad', title: 'ScratchPad', text: 'A private space to quickly jot down thoughts or test out your custom styles and rules.' },
-    { id: 'Profile', title: 'Your Profile', text: 'Access your account settings, billing, and global preferences here.' },
-    { id: 'CatFacts', title: 'Cat Facts', text: 'Because who doesn\'t need a random cat fact while they work?' }
+    { id: 'Home', title: 'The Home Base', text: 'Watch WhisPURR in action! See your speech turn into text live and access your quick controls.' },
+    { id: 'History', title: 'Chat Registers', text: 'Look back at everything you\'ve said. You can easily copy or reuse your past words here.' },
+    { id: 'Dictionary', title: 'Your Custom Dictionary', text: 'Teach WhisPURR your unique vocabulary, like tricky names, special acronyms, or work-specific words.' },
+    { id: 'ShortHand', title: 'ShortHand Macros', text: 'Create quick voice shortcuts! For example, say "sig" to automatically type out your entire email signature.' },
+    { id: 'Context', title: 'Global Context', text: 'Set up custom styles so WhisPURR always uses the right tone for your current task, like writing emails, chatting, or coding.' },
+    { id: 'ScratchPad', title: 'ScratchPad', text: 'Your personal sandbox! Quickly jot down ideas or play around to test your new custom styles.' },
+    { id: 'Profile', title: 'Your Profile', text: 'Manage your account details, billing, and tweak your overall settings just the way you like them.' },
+    { id: 'CatFacts', title: 'Cat Facts', text: 'Because who doesn\'t need a fun, random cat fact to brighten their workday?' }
   ];
 
 export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: string, setMode?: (m: any) => void }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('Home');
+  const [homeVideo, setHomeVideo] = useState(() => Math.random() > 0.5 ? '/cat.mp4' : '/cat2.mp4');
+  const [videoKey, setVideoKey] = useState(0);
+
+  useEffect(() => {
+    if (activeTab === 'Home') {
+      setHomeVideo(Math.random() > 0.5 ? '/cat.mp4' : '/cat2.mp4');
+      setVideoKey(prev => prev + 1);
+    }
+  }, [activeTab]);
 
   const [isTourActive, setIsTourActive] = useState(false);
   const [tourStep, setTourStep] = useState(0);
 
 
   const currentTourId = isTourActive ? TOUR_STEPS[tourStep].id : null;
+
+  const handleNextTourStep = () => {
+    if (tourStep < TOUR_STEPS.length - 1) {
+      setTourStep(s => s + 1);
+      const nextId = TOUR_STEPS[tourStep + 1].id;
+      if (nextId === 'Profile') {
+        setIsSettingsOpen(true);
+        setShowCatFactPopup(false);
+      } else if (nextId === 'CatFacts') {
+        setIsSettingsOpen(false);
+        setShowCatFactPopup(true);
+      } else {
+        setIsSettingsOpen(false);
+        setShowCatFactPopup(false);
+        setActiveTab(nextId);
+      }
+    } else {
+      setIsTourActive(false);
+      setIsSettingsOpen(false);
+      setShowCatFactPopup(false);
+      setActiveTab('Home');
+    }
+  };
+
+  const handlePrevTourStep = () => {
+    if (tourStep > 0) {
+      setTourStep(s => s - 1);
+      const prevId = TOUR_STEPS[tourStep - 1].id;
+      if (prevId === 'Profile') {
+        setIsSettingsOpen(true);
+        setShowCatFactPopup(false);
+      } else if (prevId === 'CatFacts') {
+        setIsSettingsOpen(false);
+        setShowCatFactPopup(true);
+      } else {
+        setIsSettingsOpen(false);
+        setShowCatFactPopup(false);
+        setActiveTab(prevId);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (!isTourActive) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowRight') {
+        handleNextTourStep();
+      } else if (e.key === 'ArrowLeft') {
+        handlePrevTourStep();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isTourActive, tourStep]);
 
   const [currentCatFact, setCurrentCatFact] = useState('');
   const [showCatFactPopup, setShowCatFactPopup] = useState(false);
@@ -394,35 +457,33 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
     setExpansionInput(item.expansion);
     setShortcutItems(shortcutItems.filter(i => i.id !== item.id));
   };
-  
-  const timeSavedWeekHrs = 15; 
-  let whispurrIcon: React.ReactNode = (
-    <video src="/kitten.mp4" autoPlay loop muted playsInline className="w-full h-full scale-150 object-contain mix-blend-screen" />
-  );
-  let whispurrStage = 'Kitten';
-  let animationClass = '';
-  
-  if (timeSavedWeekHrs >= 2 && timeSavedWeekHrs < 5) {
-    whispurrIcon = '🥱';
-    whispurrStage = 'Waking Up';
-    animationClass = 'animate-[bounce_3s_infinite]';
-  } else if (timeSavedWeekHrs >= 5 && timeSavedWeekHrs < 12) {
-    whispurrIcon = '🐱';
-    whispurrStage = 'Active Kat';
-    animationClass = 'animate-bounce';
-  } else if (timeSavedWeekHrs >= 12) {
-    whispurrIcon = (
-      <video src="/new_zoomies.mp4" autoPlay loop muted playsInline className="w-full h-full scale-[2.0] object-contain mix-blend-multiply opacity-90" />
-    );
-    whispurrStage = 'Zoomies';
-    animationClass = '';
-  }
 
+  const timeSavedWeekHrs = 15;
+  
   // Animation variants
   const tabVariants = {
-    initial: { opacity: 0, y: 15, scale: 0.98, filter: 'blur(4px)' },
-    animate: { opacity: 1, y: 0, scale: 1, filter: 'blur(0px)', transition: { duration: 0.3, ease: 'easeOut' } },
-    exit: { opacity: 0, y: -15, scale: 0.98, filter: 'blur(4px)', transition: { duration: 0.2, ease: 'easeIn' } }
+    initial: { opacity: 0, y: 10, scale: 0.99, filter: 'blur(4px)' },
+    animate: { 
+      opacity: 1, 
+      y: 0, 
+      scale: 1, 
+      filter: 'blur(0px)',
+      transition: { 
+        type: "spring", 
+        stiffness: 400, 
+        damping: 30, 
+        mass: 0.8 
+      } 
+    },
+    exit: { 
+      opacity: 0, 
+      scale: 0.99, 
+      filter: 'blur(4px)',
+      transition: { 
+        duration: 0.15, 
+        ease: "easeOut" 
+      } 
+    }
   };
 
   // Glassmorphism classes
@@ -546,7 +607,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
             className={getSidebarItemClass('Profile', `flex items-center py-3 px-3 rounded-xl cursor-pointer transition-all ${isSettingsOpen ? 'bg-white/10 shadow-inner' : 'hover:bg-white/5'} ${isSidebarOpen ? 'gap-3' : 'gap-0 justify-center'}`)}
           >
             <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-[#8d6e63] to-[#d7ccc8] flex items-center justify-center shrink-0 border border-[#5d4037]/50 overflow-hidden shadow-inner">
-              <User className="w-5 h-5 text-[#3e2723]" strokeWidth={2.5} />
+              <User className="w-5 h-5 text-white" strokeWidth={2.5} />
             </div>
             <motion.div animate={{ opacity: isSidebarOpen ? 1 : 0, width: isSidebarOpen ? 'auto' : 0 }} className="flex flex-col justify-center overflow-hidden">
               <span className="text-sm font-medium text-white">Ugine</span>
@@ -575,13 +636,13 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                   initial={{ opacity: 0, x: -10, y: 10 }}
                   animate={{ opacity: 1, x: 0, y: 0 }}
                   exit={{ opacity: 0, x: -10, y: 10 }}
-                  className={`fixed bottom-8 ${isSidebarOpen ? 'left-[280px]' : 'left-[100px]'} w-80 p-6 rounded-2xl bg-[#1e1e1e]/95 backdrop-blur-xl border border-orange-500/40 shadow-[0_0_40px_rgba(0,0,0,0.8)] z-[9999] pointer-events-none whitespace-normal`}
+                  className={`fixed bottom-8 ${isSidebarOpen ? 'left-[280px]' : 'left-[100px]'} w-80 p-6 rounded-2xl bg-[#1e1e1e]/95 backdrop-blur-xl border border-[#8d6e63]/40 shadow-[0_0_40px_rgba(0,0,0,0.8)] z-[9999] pointer-events-none whitespace-normal`}
                 >
-                  <div className="flex items-center gap-2 mb-3 text-orange-400">
+                  <div className="flex items-center gap-2 mb-3 text-[#8d6e63]">
                     <Sparkles className="w-5 h-5" />
                     <span className="text-sm font-bold uppercase tracking-wider">Did you know?</span>
                   </div>
-                  <p className="text-[15px] text-white/90 leading-relaxed italic font-medium">
+                  <p className="text-[15px] text-[#E8D5B5] leading-relaxed italic font-medium">
                     "{currentCatFact}"
                   </p>
                 </motion.div>
@@ -639,33 +700,11 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
               <div className="absolute -top-6 -left-6 w-14 h-14 bg-[#8d6e63] rounded-full flex items-center justify-center shadow-lg text-[#f4ece1] font-bold text-2xl border-4 border-[#f4ece1]">
                 {tourStep + 1}
               </div>
-              <h2 className="text-4xl font-serif font-bold text-[#3e2723] mb-4 tracking-tight">{TOUR_STEPS[tourStep].title}</h2>
-              <p className="text-[#3e2723]/80 text-xl mb-10 leading-relaxed font-sans">{TOUR_STEPS[tourStep].text}</p>
+              <h2 className="text-4xl font-serif font-bold text-white mb-4 tracking-tight">{TOUR_STEPS[tourStep].title}</h2>
+              <p className="text-white/80 text-xl mb-10 leading-relaxed font-sans">{TOUR_STEPS[tourStep].text}</p>
               <div className="flex justify-between items-center">
-                <button onClick={() => setIsTourActive(false)} className="text-[#3e2723]/40 hover:text-[#3e2723] transition-colors uppercase tracking-widest text-sm font-bold border-b-2 border-transparent hover:border-[#8d6e63] pb-1">Skip Tour</button>
-                <button onClick={() => {
-                  if (tourStep < TOUR_STEPS.length - 1) {
-                    setTourStep(s => s + 1);
-                    // Open Profile / CatFact specifically if we hit those steps, else set tab
-                    const nextId = TOUR_STEPS[tourStep + 1].id;
-                    if (nextId === 'Profile') {
-                      setIsSettingsOpen(true);
-                      setShowCatFactPopup(false);
-                    } else if (nextId === 'CatFacts') {
-                      setIsSettingsOpen(false);
-                      setShowCatFactPopup(true);
-                    } else {
-                      setIsSettingsOpen(false);
-                      setShowCatFactPopup(false);
-                      setActiveTab(nextId);
-                    }
-                  } else {
-                    setIsTourActive(false);
-                    setIsSettingsOpen(false);
-                    setShowCatFactPopup(false);
-                    setActiveTab('Home');
-                  }
-                }} className="px-8 py-4 bg-[#3e2723] text-[#f4ece1] font-bold rounded-2xl hover:bg-[#5d4037] transition-all shadow-xl hover:shadow-2xl hover:scale-105 text-lg">
+                <button onClick={() => setIsTourActive(false)} className="text-white/40 hover:text-white transition-colors uppercase tracking-widest text-sm font-bold border-b-2 border-transparent hover:border-[#8d6e63] pb-1">Skip Tour</button>
+                <button onClick={handleNextTourStep} className="px-8 py-4 bg-[#3e2723] text-[#f4ece1] font-bold rounded-2xl hover:bg-[#5d4037] transition-all shadow-xl hover:shadow-2xl hover:scale-105 text-lg">
                   {tourStep < TOUR_STEPS.length - 1 ? 'Next' : 'Finish'}
                 </button>
               </div>
@@ -676,7 +715,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
 
 
         <div className="flex-1 p-4 flex gap-4 overflow-hidden relative">
-          <AnimatePresence>
+          <AnimatePresence mode="wait">
               {activeTab === 'Home' && (
               <motion.div key="home" variants={tabVariants} initial="initial" animate="animate" exit="exit" className="absolute inset-4 flex gap-4">
                 <div className="flex-1 flex flex-col gap-6 relative z-10">
@@ -756,7 +795,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                     <div className="flex gap-4 mb-4 relative z-20">
                       {/* Whisper Mode Toggle */}
                       <div className="flex items-center justify-between bg-[#190f0b]/50 border border-[#5d4037]/40 p-2.5 px-4 rounded-2xl shadow-inner flex-1">
-                        <span className="text-xs font-bold uppercase tracking-wider text-[#d7ccc8]">
+                        <span className="text-xs font-bold uppercase tracking-wider text-white">
                           Whisper Mode
                         </span>
                         <div className="flex items-center gap-2">
@@ -777,7 +816,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                               layout
                               transition={{ type: "spring", stiffness: 600, damping: 35 }}
                               className={`pointer-events-none inline-block h-7 w-7 transform rounded-full bg-[#f4ece1] shadow-md flex items-center justify-center ${
-                                isWhisperMode ? 'ml-auto text-[#3e2723]' : 'mr-auto text-[#8d6e63]'
+                                isWhisperMode ? 'ml-auto text-white' : 'mr-auto text-[#8d6e63]'
                               }`}
                             >
                               <span className={`w-2.5 h-2.5 rounded-full ${isWhisperMode ? 'bg-[#5d4037]' : 'bg-[#8d6e63]/60'}`} />
@@ -813,7 +852,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
 
                       {/* Moods Toggle */}
                       <div className="flex items-center justify-between bg-[#190f0b]/50 border border-[#5d4037]/40 p-2.5 px-4 rounded-2xl shadow-inner flex-1">
-                        <span className="text-xs font-bold uppercase tracking-wider text-[#d7ccc8]">
+                        <span className="text-xs font-bold uppercase tracking-wider text-white">
                           Moods
                         </span>
                         <div className="flex items-center gap-2">
@@ -834,7 +873,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                               layout
                               transition={{ type: "spring", stiffness: 600, damping: 35 }}
                               className={`pointer-events-none inline-block h-7 w-7 transform rounded-full bg-[#f4ece1] shadow-md flex items-center justify-center ${
-                                moodsEnabled ? 'ml-auto text-[#3e2723]' : 'mr-auto text-[#8d6e63]'
+                                moodsEnabled ? 'ml-auto text-white' : 'mr-auto text-[#8d6e63]'
                               }`}
                             >
                               <span className={`w-2.5 h-2.5 rounded-full ${moodsEnabled ? 'bg-[#5d4037]' : 'bg-[#8d6e63]/60'}`} />
@@ -900,12 +939,20 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
 
                 <div className={`w-[320px] ${glassPanel} bg-black/40 p-6 flex flex-col relative z-10 overflow-hidden`}>
                   <div className="w-full flex-1 min-h-[160px] rounded-2xl bg-[#0f0f0f] mb-6 relative border border-white/5 flex flex-col items-center justify-center group overflow-hidden">
-                    <span className="absolute top-2.5 right-2.5 z-20 px-2.5 py-0.5 rounded-full bg-orange-500/20 text-orange-400 text-[10px] font-bold uppercase tracking-wider border border-orange-500/30">
-                      {whispurrStage}
-                    </span>
-                    <div className={`text-7xl relative z-10 ${animationClass} flex items-center justify-center w-full h-full`}>
-                      {whispurrIcon}
-                    </div>
+                    <motion.video 
+                      key={homeVideo + videoKey}
+                      variants={{
+                        initial: { opacity: 0 },
+                        animate: { opacity: 1, transition: { duration: 1.2, ease: "easeInOut" } },
+                        exit: { opacity: 0 }
+                      }}
+                      src={homeVideo} 
+                      autoPlay 
+                      loop 
+                      muted 
+                      playsInline 
+                      className="absolute inset-0 w-full h-full object-cover object-center"
+                    />
                   </div>
                   
                   <h3 className="text-lg font-bold text-orange-50 mb-4 text-center border-b border-white/10 pb-3">Today's Impact</h3>
@@ -939,30 +986,30 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
             {activeTab === 'History' && (
               <motion.div key="history" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col gap-6 p-8 overflow-y-auto ${glassPanel}`}>
                 <div className="px-2 shrink-0">
-                  <h1 className="text-3xl font-bold text-[#3e2723] mb-2 flex items-center gap-3">
+                  <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
                     <Clock className="text-[#8d6e63] w-8 h-8" />
                     History
                   </h1>
-                  <p className="text-[#5d4037]/80 font-medium text-sm">Review your past transcriptions and track your WhisPURR usage.</p>
+                  <p className="text-white/80 font-medium text-sm">Review your past transcriptions and track your WhisPURR usage.</p>
                 </div>
                 
                 {/* Stats Brown Box */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-[#2b1f1a]/90 border border-[#5d4037]/60 rounded-3xl p-6 shrink-0 shadow-xl">
                   <div className="flex flex-col items-center justify-center p-4 bg-[#190f0b]/50 rounded-2xl border border-[#5d4037]/40 shadow-inner">
-                    <span className="text-[#d7ccc8]/60 text-xs font-bold uppercase tracking-widest mb-2">Current Streak</span>
+                    <span className="text-white/60 text-xs font-bold uppercase tracking-widest mb-2">Current Streak</span>
                     <div className="text-3xl font-bold text-[#f4ece1] flex items-center gap-2">
                       <Sparkles className="w-6 h-6 text-orange-400" />
                       4 Days
                     </div>
                   </div>
                   <div className="flex flex-col items-center justify-center p-4 bg-[#190f0b]/50 rounded-2xl border border-[#5d4037]/40 shadow-inner">
-                    <span className="text-[#d7ccc8]/60 text-xs font-bold uppercase tracking-widest mb-2">Total Words</span>
+                    <span className="text-white/60 text-xs font-bold uppercase tracking-widest mb-2">Total Words</span>
                     <div className="text-3xl font-bold text-[#f4ece1]">
                       12,450
                     </div>
                   </div>
                   <div className="flex flex-col items-center justify-center p-4 bg-[#190f0b]/50 rounded-2xl border border-[#5d4037]/40 shadow-inner">
-                    <span className="text-[#d7ccc8]/60 text-xs font-bold uppercase tracking-widest mb-2">Hours Saved</span>
+                    <span className="text-white/60 text-xs font-bold uppercase tracking-widest mb-2">Hours Saved</span>
                     <div className="text-3xl font-bold text-[#f4ece1]">
                       3.5h
                     </div>
@@ -971,7 +1018,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
 
                 {/* Past Conversations List */}
                 <div className="flex flex-col gap-3 flex-1 overflow-y-auto pr-2 pb-10">
-                  <h3 className="text-[#5d4037]/70 font-bold uppercase tracking-widest text-xs mb-2 mt-4 px-2">Recent Dictations</h3>
+                  <h3 className="text-white/70 font-bold uppercase tracking-widest text-xs mb-2 mt-4 px-2">Recent Dictations</h3>
                   {[
                     { date: 'Today, 10:42 AM', mode: 'Developer', text: 'Task: Resolve login bug.\nImpact: Critical. The authentication token is expiring prematurely in the new build.' },
                     { date: 'Today, 9:15 AM', mode: 'Casual', text: 'I am going to be a bit late to the standup. Start without me!' },
@@ -980,10 +1027,10 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                   ].map((conv, i) => (
                     <div key={i} className="flex flex-col gap-2 p-5 bg-[#5d4037]/5 hover:bg-[#5d4037]/10 transition-colors border border-[#5d4037]/20 rounded-2xl cursor-pointer shadow-sm">
                       <div className="flex items-center justify-between">
-                        <span className="text-[#5d4037]/70 text-xs font-bold">{conv.date}</span>
-                        <span className="px-2 py-1 bg-[#5d4037]/20 border border-[#5d4037]/30 rounded-md text-[10px] text-[#3e2723] font-black uppercase tracking-wider">{conv.mode}</span>
+                        <span className="text-white/70 text-xs font-bold">{conv.date}</span>
+                        <span className="px-2 py-1 bg-[#5d4037]/20 border border-[#5d4037]/30 rounded-md text-[10px] text-white font-black uppercase tracking-wider">{conv.mode}</span>
                       </div>
-                      <p className="text-[#3e2723]/90 text-sm leading-relaxed whitespace-pre-wrap font-serif italic font-medium mt-1">"{conv.text}"</p>
+                      <p className="text-white/90 text-sm leading-relaxed whitespace-pre-wrap font-serif italic font-medium mt-1">"{conv.text}"</p>
                     </div>
                   ))}
                 </div>
@@ -1106,7 +1153,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                       layoutId={`note-${note.id}`}
                       initial={{ rotate: note.rotation, x: note.x, y: note.y }}
                       whileHover={{ scale: 1.05, rotate: 0, zIndex: 40 }}
-                      className={`absolute w-56 h-56 p-5 rounded-sm shadow-lg cursor-pointer flex flex-col ${note.color} text-[#3e2723]`}
+                      className={`absolute w-56 h-56 p-5 rounded-sm shadow-lg cursor-pointer flex flex-col ${note.color} text-white`}
                       style={{ 
                         top: `${10 + (index % 2) * 35}%`, 
                         left: `${5 + index * 22}%`,
@@ -1134,12 +1181,12 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                         <motion.div
                           layoutId={`note-${activeNoteId}`}
                           onClick={(e) => e.stopPropagation()}
-                          className={`w-full max-w-lg h-96 p-8 rounded-md shadow-2xl flex flex-col relative ${stickyNotes.find(n => n.id === activeNoteId)?.color} text-[#3e2723]`}
+                          className={`w-full max-w-lg h-96 p-8 rounded-md shadow-2xl flex flex-col relative ${stickyNotes.find(n => n.id === activeNoteId)?.color} text-white`}
                           style={{ boxShadow: '8px 8px 30px rgba(0,0,0,0.5)' }}
                         >
                           <button 
                             onClick={() => setActiveNoteId(null)}
-                            className="absolute top-4 right-4 p-2 text-[#3e2723]/60 hover:text-[#3e2723] hover:bg-[#3e2723]/10 rounded-full transition-colors z-10"
+                            className="absolute top-4 right-4 p-2 text-white/60 hover:text-white hover:bg-[#3e2723]/10 rounded-full transition-colors z-10"
                           >
                             <X className="w-5 h-5" />
                           </button>
@@ -1186,7 +1233,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                         className={`min-w-[120px] px-6 py-4 rounded-xl border-2 font-mono text-base tracking-wider font-bold transition-all shadow-md ${
                           isRecordingShortcut 
                             ? 'bg-orange-500/20 text-orange-400 border-orange-500 animate-pulse' 
-                            : 'bg-[#1a1a1a] text-white/80 border-white/10 hover:border-orange-500/50 hover:bg-[#222]'
+                            : 'bg-[#1a1a1a] text-[#f4ece1] border-white/10 hover:border-orange-500/50 hover:bg-[#222]'
                         }`}
                       >
                         {isRecordingShortcut ? 'Press a key...' : talkShortcut}
@@ -1203,7 +1250,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                         className={`min-w-[120px] px-6 py-4 rounded-xl border-2 font-mono text-base tracking-wider font-bold transition-all shadow-md ${
                           isRecordingQuicklaunch 
                             ? 'bg-orange-500/20 text-orange-400 border-orange-500 animate-pulse' 
-                            : 'bg-[#1a1a1a] text-white/80 border-white/10 hover:border-orange-500/50 hover:bg-[#222]'
+                            : 'bg-[#1a1a1a] text-[#f4ece1] border-white/10 hover:border-orange-500/50 hover:bg-[#222]'
                         }`}
                       >
                         {isRecordingQuicklaunch ? 'Press a key...' : quicklaunchShortcut}
@@ -1220,7 +1267,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                         className={`min-w-[120px] px-6 py-4 rounded-xl border-2 font-mono text-base tracking-wider font-bold transition-all shadow-md ${
                           isRecordingQuickEdit 
                             ? 'bg-orange-500/20 text-orange-400 border-orange-500 animate-pulse' 
-                            : 'bg-[#1a1a1a] text-white/80 border-white/10 hover:border-orange-500/50 hover:bg-[#222]'
+                            : 'bg-[#1a1a1a] text-[#f4ece1] border-white/10 hover:border-orange-500/50 hover:bg-[#222]'
                         }`}
                       >
                         {isRecordingQuickEdit ? 'Press combo...' : quickEditShortcut}
@@ -1271,8 +1318,8 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                          </div>
                       </div>
                       <div className="px-4 pb-4">
-                        <div className="text-lg font-bold text-white mb-1">Midnight Dark</div>
-                        <div className="text-sm text-white/50">Pure blacks with electric orange accents for a focused environment.</div>
+                        <div className="text-lg font-bold text-white mb-1">Dark Choco</div>
+                        <div className="text-sm text-white/50">Deep chocolate tones for a rich, focused environment.</div>
                       </div>
                     </div>
                     
@@ -1298,10 +1345,10 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
             {activeTab === 'Tutorial' && (
               <motion.div key="tutorial-tab" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col items-center justify-center gap-6 p-8 ${glassPanel}`}>
                 <div className="w-24 h-24 bg-[#5d4037]/10 rounded-full flex items-center justify-center shadow-inner border border-[#5d4037]/20 mb-2">
-                  <PlayCircle className="w-12 h-12 text-[#5d4037]" />
+                  <PlayCircle className="w-12 h-12 text-white/90" />
                 </div>
-                <h1 className="text-3xl font-bold text-[#3e2723] tracking-tight">WhisPURR Tutorial</h1>
-                <p className="text-[#5d4037]/80 text-center max-w-md text-lg mb-4 font-medium">
+                <h1 className="text-3xl font-bold text-white tracking-tight">WhisPURR Tutorial</h1>
+                <p className="text-white/80 text-center max-w-md text-lg mb-4 font-medium">
                   Need a refresher? Replay the interactive setup tutorial to learn about WhisPURR's features, shortcuts, and context modes.
                 </p>
                 <button
@@ -1315,7 +1362,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
             )}
 
             {!['Home', 'History', 'Dictionary', 'ShortHand', 'ScratchPad', 'Context', 'Theme', 'Tutorial', 'Shortcuts'].includes(activeTab) && (
-              <motion.div key="fallback" style={{ willChange: "transform, opacity, filter" }} variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col items-center justify-center gap-4 p-8 ${glassPanel}`}>
+              <motion.div key="fallback" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col items-center justify-center gap-4 p-8 ${glassPanel}`}>
                 <Settings className="w-16 h-16 text-white/10" />
                 <h1 className="text-2xl font-bold text-white/50">{activeTab}</h1>
                 <p className="text-white/30 text-sm">This section is currently under construction.</p>
