@@ -922,9 +922,14 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
 
                 <div className={`w-[320px] ${glassPanel} bg-black/40 p-6 flex flex-col relative z-10 overflow-hidden`}>
                   <div className="w-full flex-1 min-h-[160px] rounded-2xl bg-[#0f0f0f] mb-6 relative border border-white/5 flex flex-col items-center justify-center group overflow-hidden">
-                     <div className={`text-7xl relative z-10 ${animationClass} flex items-center justify-center w-full h-full`}>
-                       {whispurrIcon}
-                     </div>
+                    <video 
+                      src="/cat.mp4" 
+                      autoPlay 
+                      loop 
+                      muted 
+                      playsInline 
+                      className="absolute inset-0 w-full h-full object-cover object-center"
+                    />
                   </div>
                   
                   <h3 className="text-lg font-bold text-orange-50 mb-4 text-center border-b border-white/10 pb-3">Today's Impact</h3>
