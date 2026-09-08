@@ -1498,42 +1498,42 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
             )}
 
             {activeTab === 'Profile' && (
-              <motion.div key="profile" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col gap-6 p-8 overflow-y-auto ${glassPanel}`}>
-                <div className="px-2 shrink-0 border-b border-white/5 pb-6">
-                  <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
+              <motion.div key="profile" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col gap-4 p-6 overflow-hidden ${glassPanel}`}>
+                <div className="px-2 shrink-0 border-b border-white/5 pb-4">
+                  <h1 className="text-3xl font-bold text-white mb-1 flex items-center gap-3">
                     <User className="text-[#8d6e63] w-8 h-8" />
                     Profile
                   </h1>
                   <p className="text-white/50 text-sm">Your personal dashboard and lifetime statistics.</p>
                 </div>
                 
-                <div className="flex-1 flex flex-col items-center max-w-4xl mx-auto w-full py-8">
-                  <div className="w-40 h-40 rounded-full bg-gradient-to-tr from-[#8d6e63] to-[#d7ccc8] flex items-center justify-center border-4 border-[#5d4037]/50 shadow-[0_0_50px_rgba(141,110,99,0.3)] mb-6">
-                    <User className="w-20 h-20 text-white" strokeWidth={2} />
+                <div className="flex-1 flex flex-col items-center max-w-4xl mx-auto w-full py-2 min-h-0">
+                  <div className="w-28 h-28 shrink-0 rounded-full bg-gradient-to-tr from-[#8d6e63] to-[#d7ccc8] flex items-center justify-center border-4 border-[#5d4037]/50 shadow-[0_0_50px_rgba(141,110,99,0.3)] mb-4">
+                    <User className="w-14 h-14 text-white" strokeWidth={2} />
                   </div>
-                  <h2 className="text-4xl font-extrabold text-white mb-2">Ugine</h2>
-                  <div className="text-white/50 font-medium tracking-widest uppercase text-sm mb-12">Lion Plan Member</div>
+                  <h2 className="text-3xl font-extrabold text-white mb-1">Ugine</h2>
+                  <div className="text-white/50 font-medium tracking-widest uppercase text-xs mb-8">Lion Plan Member</div>
 
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-6 w-full mb-auto">
-                    <div className="bg-white/[0.02] border border-white/5 p-6 rounded-2xl flex flex-col items-center justify-center text-center shadow-sm hover:bg-white/[0.04] transition-colors">
-                      <div className="text-3xl font-bold text-white mb-1">45.2k</div>
-                      <div className="text-xs text-white/40 uppercase tracking-wider font-semibold">Words Spoken</div>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full mb-auto shrink-0">
+                    <div className="bg-white/[0.02] border border-white/5 p-4 rounded-2xl flex flex-col items-center justify-center text-center shadow-sm hover:bg-white/[0.04] transition-colors">
+                      <div className="text-2xl font-bold text-white mb-1">45.2k</div>
+                      <div className="text-[10px] text-white/40 uppercase tracking-wider font-semibold">Words Spoken</div>
                     </div>
-                    <div className="bg-white/[0.02] border border-white/5 p-6 rounded-2xl flex flex-col items-center justify-center text-center shadow-sm hover:bg-white/[0.04] transition-colors">
-                      <div className="text-3xl font-bold text-[#8d6e63] mb-1">16.5h</div>
-                      <div className="text-xs text-white/40 uppercase tracking-wider font-semibold">Time Saved</div>
+                    <div className="bg-white/[0.02] border border-white/5 p-4 rounded-2xl flex flex-col items-center justify-center text-center shadow-sm hover:bg-white/[0.04] transition-colors">
+                      <div className="text-2xl font-bold text-[#8d6e63] mb-1">16.5h</div>
+                      <div className="text-[10px] text-white/40 uppercase tracking-wider font-semibold">Time Saved</div>
                     </div>
-                    <div className="bg-white/[0.02] border border-white/5 p-6 rounded-2xl flex flex-col items-center justify-center text-center shadow-sm hover:bg-white/[0.04] transition-colors">
-                      <div className="text-3xl font-bold text-white mb-1">Formal</div>
-                      <div className="text-xs text-white/40 uppercase tracking-wider font-semibold">Top Context</div>
+                    <div className="bg-white/[0.02] border border-white/5 p-4 rounded-2xl flex flex-col items-center justify-center text-center shadow-sm hover:bg-white/[0.04] transition-colors">
+                      <div className="text-2xl font-bold text-white mb-1">Formal</div>
+                      <div className="text-[10px] text-white/40 uppercase tracking-wider font-semibold">Top Context</div>
                     </div>
-                    <div className="bg-white/[0.02] border border-white/5 p-6 rounded-2xl flex flex-col items-center justify-center text-center shadow-sm hover:bg-white/[0.04] transition-colors">
-                      <div className="text-3xl font-bold text-white mb-1">342</div>
-                      <div className="text-xs text-white/40 uppercase tracking-wider font-semibold">Shortcuts Used</div>
+                    <div className="bg-white/[0.02] border border-white/5 p-4 rounded-2xl flex flex-col items-center justify-center text-center shadow-sm hover:bg-white/[0.04] transition-colors">
+                      <div className="text-2xl font-bold text-white mb-1">342</div>
+                      <div className="text-[10px] text-white/40 uppercase tracking-wider font-semibold">Shortcuts Used</div>
                     </div>
                   </div>
 
-                  <div className="mt-16 text-center text-white/30 italic text-sm font-medium">
+                  <div className="mt-auto pt-6 text-center text-white/30 italic text-sm font-medium shrink-0">
                     "Thank you for using WhisPURR"
                   </div>
                 </div>
