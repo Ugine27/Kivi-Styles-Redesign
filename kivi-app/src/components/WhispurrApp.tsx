@@ -657,9 +657,9 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                   initial={{ opacity: 0, x: -10, y: 10 }}
                   animate={{ opacity: 1, x: 0, y: 0 }}
                   exit={{ opacity: 0, x: -10, y: 10 }}
-                  className={`fixed bottom-8 ${isSidebarOpen ? 'left-[280px]' : 'left-[100px]'} w-80 p-6 rounded-2xl bg-[#1e1e1e]/95 backdrop-blur-xl border border-orange-500/40 shadow-[0_0_40px_rgba(0,0,0,0.8)] z-[9999] pointer-events-none whitespace-normal`}
+                  className={`fixed bottom-8 ${isSidebarOpen ? 'left-[280px]' : 'left-[100px]'} w-80 p-6 rounded-2xl bg-[#1e1e1e]/95 backdrop-blur-xl border border-[#8d6e63]/40 shadow-[0_0_40px_rgba(0,0,0,0.8)] z-[9999] pointer-events-none whitespace-normal`}
                 >
-                  <div className="flex items-center gap-2 mb-3 text-[#fb923c]">
+                  <div className="flex items-center gap-2 mb-3 text-[#8d6e63]">
                     <Sparkles className="w-5 h-5" />
                     <span className="text-sm font-bold uppercase tracking-wider">Did you know?</span>
                   </div>
