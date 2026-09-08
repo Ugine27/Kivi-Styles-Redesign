@@ -659,11 +659,11 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                   exit={{ opacity: 0, x: -10, y: 10 }}
                   className={`fixed bottom-8 ${isSidebarOpen ? 'left-[280px]' : 'left-[100px]'} w-80 p-6 rounded-2xl bg-[#1e1e1e]/95 backdrop-blur-xl border border-orange-500/40 shadow-[0_0_40px_rgba(0,0,0,0.8)] z-[9999] pointer-events-none whitespace-normal`}
                 >
-                  <div className="flex items-center gap-2 mb-3 text-orange-400">
+                  <div className="flex items-center gap-2 mb-3 text-[#fb923c]">
                     <Sparkles className="w-5 h-5" />
                     <span className="text-sm font-bold uppercase tracking-wider">Did you know?</span>
                   </div>
-                  <p className="text-[15px] text-white/90 leading-relaxed italic font-medium">
+                  <p className="text-[15px] text-[#E8D5B5] leading-relaxed italic font-medium">
                     "{currentCatFact}"
                   </p>
                 </motion.div>
