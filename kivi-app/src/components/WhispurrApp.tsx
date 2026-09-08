@@ -483,9 +483,26 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
 
   // Animation variants
   const tabVariants = {
-    initial: { opacity: 0, y: 15, scale: 0.98, filter: 'blur(4px)' },
-    animate: { opacity: 1, y: 0, scale: 1, filter: 'blur(0px)', transition: { duration: 0.3, ease: 'easeOut' } },
-    exit: { opacity: 0, y: -15, scale: 0.98, filter: 'blur(4px)', transition: { duration: 0.2, ease: 'easeIn' } }
+    initial: { opacity: 0, y: 10, scale: 0.99 },
+    animate: { 
+      opacity: 1, 
+      y: 0, 
+      scale: 1, 
+      transition: { 
+        type: "spring", 
+        stiffness: 400, 
+        damping: 30, 
+        mass: 0.8 
+      } 
+    },
+    exit: { 
+      opacity: 0, 
+      scale: 0.99, 
+      transition: { 
+        duration: 0.15, 
+        ease: "easeOut" 
+      } 
+    }
   };
 
   // Glassmorphism classes
@@ -1354,7 +1371,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
             )}
 
             {!['Home', 'History', 'Dictionary', 'ShortHand', 'ScratchPad', 'Context', 'Theme', 'Tutorial', 'Shortcuts'].includes(activeTab) && (
-              <motion.div key="fallback" style={{ willChange: "transform, opacity, filter" }} variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col items-center justify-center gap-4 p-8 ${glassPanel}`}>
+              <motion.div key="fallback" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col items-center justify-center gap-4 p-8 ${glassPanel}`}>
                 <Settings className="w-16 h-16 text-white/10" />
                 <h1 className="text-2xl font-bold text-white/50">{activeTab}</h1>
                 <p className="text-white/30 text-sm">This section is currently under construction.</p>

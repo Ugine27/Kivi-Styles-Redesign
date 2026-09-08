@@ -254,7 +254,7 @@ const MockOS = memo(({ activeText, mode, setMode, degree, setDegree, isAltPresse
           <motion.div 
             initial={{ opacity: 0, scale: 0.5 }}
             animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.5, filter: 'blur(10px)' }}
+            exit={{ opacity: 0, scale: 0.5 }}
             transition={{ type: 'spring', stiffness: 400, damping: 25 }}
             className="fixed z-[100] pointer-events-none flex items-center justify-center w-0 h-0"
             style={{ left: hudPosition.x, top: hudPosition.y }}
