@@ -689,6 +689,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
             </div>
             <div className="flex-1 py-6 flex flex-col gap-2 overflow-y-auto">
               {[
+                { name: 'Profile', icon: User },
                 { name: 'Settings', icon: Settings },
                   { name: 'Shortcuts', icon: Keyboard },
                 { name: 'User Policy', icon: Shield },
@@ -1496,7 +1497,50 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
               </motion.div>
             )}
 
-            {!['Home', 'History', 'Dictionary', 'ShortHand', 'ScratchPad', 'Context', 'Theme', 'Tutorial', 'Shortcuts', 'Settings', 'Plans & Billing', 'User Policy'].includes(activeTab) && (
+            {activeTab === 'Profile' && (
+              <motion.div key="profile" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col gap-6 p-8 overflow-y-auto ${glassPanel}`}>
+                <div className="px-2 shrink-0 border-b border-white/5 pb-6">
+                  <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
+                    <User className="text-[#8d6e63] w-8 h-8" />
+                    Profile
+                  </h1>
+                  <p className="text-white/50 text-sm">Your personal dashboard and lifetime statistics.</p>
+                </div>
+                
+                <div className="flex-1 flex flex-col items-center max-w-4xl mx-auto w-full py-8">
+                  <div className="w-40 h-40 rounded-full bg-gradient-to-tr from-[#8d6e63] to-[#d7ccc8] flex items-center justify-center border-4 border-[#5d4037]/50 shadow-[0_0_50px_rgba(141,110,99,0.3)] mb-6">
+                    <User className="w-20 h-20 text-white" strokeWidth={2} />
+                  </div>
+                  <h2 className="text-4xl font-extrabold text-white mb-2">Ugine</h2>
+                  <div className="text-white/50 font-medium tracking-widest uppercase text-sm mb-12">Lion Plan Member</div>
+
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-6 w-full mb-auto">
+                    <div className="bg-white/[0.02] border border-white/5 p-6 rounded-2xl flex flex-col items-center justify-center text-center shadow-sm hover:bg-white/[0.04] transition-colors">
+                      <div className="text-3xl font-bold text-white mb-1">45.2k</div>
+                      <div className="text-xs text-white/40 uppercase tracking-wider font-semibold">Words Spoken</div>
+                    </div>
+                    <div className="bg-white/[0.02] border border-white/5 p-6 rounded-2xl flex flex-col items-center justify-center text-center shadow-sm hover:bg-white/[0.04] transition-colors">
+                      <div className="text-3xl font-bold text-[#8d6e63] mb-1">16.5h</div>
+                      <div className="text-xs text-white/40 uppercase tracking-wider font-semibold">Time Saved</div>
+                    </div>
+                    <div className="bg-white/[0.02] border border-white/5 p-6 rounded-2xl flex flex-col items-center justify-center text-center shadow-sm hover:bg-white/[0.04] transition-colors">
+                      <div className="text-3xl font-bold text-white mb-1">Formal</div>
+                      <div className="text-xs text-white/40 uppercase tracking-wider font-semibold">Top Context</div>
+                    </div>
+                    <div className="bg-white/[0.02] border border-white/5 p-6 rounded-2xl flex flex-col items-center justify-center text-center shadow-sm hover:bg-white/[0.04] transition-colors">
+                      <div className="text-3xl font-bold text-white mb-1">342</div>
+                      <div className="text-xs text-white/40 uppercase tracking-wider font-semibold">Shortcuts Used</div>
+                    </div>
+                  </div>
+
+                  <div className="mt-16 text-center text-white/30 italic text-sm font-medium">
+                    "Thank you for using WhisPURR"
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {!['Home', 'History', 'Dictionary', 'ShortHand', 'ScratchPad', 'Context', 'Theme', 'Tutorial', 'Shortcuts', 'Settings', 'Plans & Billing', 'User Policy', 'Profile'].includes(activeTab) && (
               <motion.div key="fallback" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col items-center justify-center gap-4 p-8 ${glassPanel}`}>
                 <Settings className="w-16 h-16 text-white/10" />
                 <h1 className="text-2xl font-bold text-white/50">{activeTab}</h1>
