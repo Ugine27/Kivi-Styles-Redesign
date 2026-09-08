@@ -22,14 +22,14 @@ const CAT_FACTS = [
 let hasShownTutorialThisSession = false;
 
 const TOUR_STEPS = [
-    { id: 'Home', title: 'The Home Base', text: 'This is where you monitor WhisPURR\'s activity, see live transcription, and access quick controls.' },
-    { id: 'History', title: 'Chat Registers', text: 'View all your past dictations and commands. You can always copy or replay what was said.' },
-    { id: 'Dictionary', title: 'Your Custom Dictionary', text: 'Teach WhisPURR how to spell unique names, acronyms, and industry-specific jargon.' },
-    { id: 'ShortHand', title: 'ShortHand Macros', text: 'Create powerful abbreviations. E.g. "sig" automatically expands to your full email signature.' },
-    { id: 'Context', title: 'Global Context', text: 'Tell WhisPURR about your ongoing projects so it completely understands the context of your dictations.' },
-    { id: 'ScratchPad', title: 'ScratchPad', text: 'A private space to quickly jot down thoughts or test out your custom styles and rules.' },
-    { id: 'Profile', title: 'Your Profile', text: 'Access your account settings, billing, and global preferences here.' },
-    { id: 'CatFacts', title: 'Cat Facts', text: 'Because who doesn\'t need a random cat fact while they work?' }
+    { id: 'Home', title: 'The Home Base', text: 'Watch WhisPURR in action! See your speech turn into text live and access your quick controls.' },
+    { id: 'History', title: 'Chat Registers', text: 'Look back at everything you\'ve said. You can easily copy or reuse your past words here.' },
+    { id: 'Dictionary', title: 'Your Custom Dictionary', text: 'Teach WhisPURR your unique vocabulary, like tricky names, special acronyms, or work-specific words.' },
+    { id: 'ShortHand', title: 'ShortHand Macros', text: 'Create quick voice shortcuts! For example, say "sig" to automatically type out your entire email signature.' },
+    { id: 'Context', title: 'Global Context', text: 'Set up custom styles so WhisPURR always uses the right tone for your current task, like writing emails, chatting, or coding.' },
+    { id: 'ScratchPad', title: 'ScratchPad', text: 'Your personal sandbox! Quickly jot down ideas or play around to test your new custom styles.' },
+    { id: 'Profile', title: 'Your Profile', text: 'Manage your account details, billing, and tweak your overall settings just the way you like them.' },
+    { id: 'CatFacts', title: 'Cat Facts', text: 'Because who doesn\'t need a fun, random cat fact to brighten their workday?' }
   ];
 
 export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: string, setMode?: (m: any) => void }) {
