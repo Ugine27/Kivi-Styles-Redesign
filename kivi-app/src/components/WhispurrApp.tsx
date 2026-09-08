@@ -43,6 +43,60 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
 
   const currentTourId = isTourActive ? TOUR_STEPS[tourStep].id : null;
 
+  const handleNextTourStep = () => {
+    if (tourStep < TOUR_STEPS.length - 1) {
+      setTourStep(s => s + 1);
+      const nextId = TOUR_STEPS[tourStep + 1].id;
+      if (nextId === 'Profile') {
+        setIsSettingsOpen(true);
+        setShowCatFactPopup(false);
+      } else if (nextId === 'CatFacts') {
+        setIsSettingsOpen(false);
+        setShowCatFactPopup(true);
+      } else {
+        setIsSettingsOpen(false);
+        setShowCatFactPopup(false);
+        setActiveTab(nextId);
+      }
+    } else {
+      setIsTourActive(false);
+      setIsSettingsOpen(false);
+      setShowCatFactPopup(false);
+      setActiveTab('Home');
+    }
+  };
+
+  const handlePrevTourStep = () => {
+    if (tourStep > 0) {
+      setTourStep(s => s - 1);
+      const prevId = TOUR_STEPS[tourStep - 1].id;
+      if (prevId === 'Profile') {
+        setIsSettingsOpen(true);
+        setShowCatFactPopup(false);
+      } else if (prevId === 'CatFacts') {
+        setIsSettingsOpen(false);
+        setShowCatFactPopup(true);
+      } else {
+        setIsSettingsOpen(false);
+        setShowCatFactPopup(false);
+        setActiveTab(prevId);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (!isTourActive) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowRight') {
+        handleNextTourStep();
+      } else if (e.key === 'ArrowLeft') {
+        handlePrevTourStep();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isTourActive, tourStep]);
+
   const [currentCatFact, setCurrentCatFact] = useState('');
   const [showCatFactPopup, setShowCatFactPopup] = useState(false);
   const [showTutorial, setShowTutorial] = useState(() => !hasShownTutorialThisSession);
@@ -643,29 +697,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
               <p className="text-white/80 text-xl mb-10 leading-relaxed font-sans">{TOUR_STEPS[tourStep].text}</p>
               <div className="flex justify-between items-center">
                 <button onClick={() => setIsTourActive(false)} className="text-white/40 hover:text-white transition-colors uppercase tracking-widest text-sm font-bold border-b-2 border-transparent hover:border-[#8d6e63] pb-1">Skip Tour</button>
-                <button onClick={() => {
-                  if (tourStep < TOUR_STEPS.length - 1) {
-                    setTourStep(s => s + 1);
-                    // Open Profile / CatFact specifically if we hit those steps, else set tab
-                    const nextId = TOUR_STEPS[tourStep + 1].id;
-                    if (nextId === 'Profile') {
-                      setIsSettingsOpen(true);
-                      setShowCatFactPopup(false);
-                    } else if (nextId === 'CatFacts') {
-                      setIsSettingsOpen(false);
-                      setShowCatFactPopup(true);
-                    } else {
-                      setIsSettingsOpen(false);
-                      setShowCatFactPopup(false);
-                      setActiveTab(nextId);
-                    }
-                  } else {
-                    setIsTourActive(false);
-                    setIsSettingsOpen(false);
-                    setShowCatFactPopup(false);
-                    setActiveTab('Home');
-                  }
-                }} className="px-8 py-4 bg-[#3e2723] text-[#f4ece1] font-bold rounded-2xl hover:bg-[#5d4037] transition-all shadow-xl hover:shadow-2xl hover:scale-105 text-lg">
+                <button onClick={handleNextTourStep} className="px-8 py-4 bg-[#3e2723] text-[#f4ece1] font-bold rounded-2xl hover:bg-[#5d4037] transition-all shadow-xl hover:shadow-2xl hover:scale-105 text-lg">
                   {tourStep < TOUR_STEPS.length - 1 ? 'Next' : 'Finish'}
                 </button>
               </div>
