@@ -579,6 +579,39 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
   const [isWhisperMode, setIsWhisperMode] = useState(false);
   const [showWhisperInfo, setShowWhisperInfo] = useState(false);
   const [showMoodsInfo, setShowMoodsInfo] = useState(false);
+  const whisperInfoRef = useRef<HTMLDivElement>(null);
+  const moodsInfoRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!showWhisperInfo && !showMoodsInfo) return;
+
+    const handleOutsideInteraction = (e: MouseEvent | TouchEvent) => {
+      if (showWhisperInfo && whisperInfoRef.current && !whisperInfoRef.current.contains(e.target as Node)) {
+        setShowWhisperInfo(false);
+      }
+      if (showMoodsInfo && moodsInfoRef.current && !moodsInfoRef.current.contains(e.target as Node)) {
+        setShowMoodsInfo(false);
+      }
+    };
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setShowWhisperInfo(false);
+        setShowMoodsInfo(false);
+      }
+    };
+
+    document.addEventListener('pointerdown', handleOutsideInteraction);
+    document.addEventListener('touchstart', handleOutsideInteraction);
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('pointerdown', handleOutsideInteraction);
+      document.removeEventListener('touchstart', handleOutsideInteraction);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [showWhisperInfo, showMoodsInfo]);
+
   const homeRecognitionRef = useRef<any>(null);
   const homeInitialTextRef = useRef('');
 
@@ -1249,11 +1282,10 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                               <span className={`w-2.5 h-2.5 rounded-full ${isWhisperMode ? 'bg-[#5d4037]' : 'bg-[#8d6e63]/60'}`} />
                             </motion.span>
                           </button>
-                          <div className="relative">
+                          <div ref={whisperInfoRef} className="relative">
                             <button 
                               onClick={() => setShowWhisperInfo(!showWhisperInfo)}
-                              onBlur={() => setShowWhisperInfo(false)}
-                              className="p-1.5 rounded-full text-[#E8D5B5]/70 hover:text-[#E8D5B5] hover:bg-[#5d4037]/40 transition-colors relative z-20"
+                              className="p-1.5 rounded-full text-[#E8D5B5]/70 hover:text-[#E8D5B5] hover:bg-[#5d4037]/40 transition-colors relative z-20 cursor-pointer"
                               title="Info"
                             >
                               <Info className="w-5 h-5" />
@@ -1264,7 +1296,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                                   initial={{ opacity: 0, y: -10, scale: 0.95 }}
                                   animate={{ opacity: 1, y: 0, scale: 1 }}
                                   exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                                  className="absolute top-full mt-2 right-0 w-56 bg-[#2B1F1A] border border-[#5D4037]/50 rounded-xl p-3 shadow-2xl z-50 pointer-events-none"
+                                  className="absolute top-full mt-2 right-0 w-56 bg-[#2B1F1A] border border-[#5D4037]/50 rounded-xl p-3 shadow-2xl z-50 pointer-events-auto"
                                 >
                                   <div className="absolute -top-1.5 right-4 w-3 h-3 bg-[#2B1F1A] border-t border-l border-[#5D4037]/50 rotate-45" />
                                   <div className="text-[11px] text-[#E8D5B5] leading-relaxed relative z-10 font-medium">
@@ -1306,11 +1338,10 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                               <span className={`w-2.5 h-2.5 rounded-full ${moodsEnabled ? 'bg-[#5d4037]' : 'bg-[#8d6e63]/60'}`} />
                             </motion.span>
                           </button>
-                          <div className="relative">
+                          <div ref={moodsInfoRef} className="relative">
                             <button 
                               onClick={() => setShowMoodsInfo(!showMoodsInfo)}
-                              onBlur={() => setShowMoodsInfo(false)}
-                              className="p-1.5 rounded-full text-[#E8D5B5]/70 hover:text-[#E8D5B5] hover:bg-[#5d4037]/40 transition-colors relative z-20"
+                              className="p-1.5 rounded-full text-[#E8D5B5]/70 hover:text-[#E8D5B5] hover:bg-[#5d4037]/40 transition-colors relative z-20 cursor-pointer"
                               title="Info"
                             >
                               <Info className="w-5 h-5" />
@@ -1321,7 +1352,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                                   initial={{ opacity: 0, y: -10, scale: 0.95 }}
                                   animate={{ opacity: 1, y: 0, scale: 1 }}
                                   exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                                  className="absolute top-full mt-2 right-0 w-56 bg-[#2B1F1A] border border-[#5D4037]/50 rounded-xl p-3 shadow-2xl z-50 pointer-events-none"
+                                  className="absolute top-full mt-2 right-0 w-56 bg-[#2B1F1A] border border-[#5D4037]/50 rounded-xl p-3 shadow-2xl z-50 pointer-events-auto"
                                 >
                                   <div className="absolute -top-1.5 right-4 w-3 h-3 bg-[#2B1F1A] border-t border-l border-[#5D4037]/50 rotate-45" />
                                   <div className="text-[11px] text-[#E8D5B5] leading-relaxed relative z-10 font-medium">
