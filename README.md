@@ -5,6 +5,17 @@
 
 ---
 
+## 🎯 Evaluator & Submission Quick Links
+
+| Deliverable | Location / Link | Description |
+| :--- | :--- | :--- |
+| 📄 **Product Positioning Statement** | [**`docs/product-positioning.pdf`**](docs/product-positioning.pdf) | Market problem, Geoffrey Moore positioning statement, user personas & competitive matrix |
+| 🔮 **Product Vision & Roadmap** | [**`docs/product-vision.pdf`**](docs/product-vision.pdf) | Long-term vision, 3 architectural pillars, and strategic 3-phase roadmap |
+| 🖼️ **Permanent Screen Reference** | [**`prototype/screens.pdf`**](prototype/screens.pdf) | High-resolution exported screen deck with design annotations across all core flows |
+| ⚡ **Direct Interactive Prototype** | **`[INTERACTIVE_PROTOTYPE_URL_PLACEHOLDER]`**<br>*(Local prototype: [http://localhost:5173/](http://localhost:5173/))* | Live interactive prototype URL (replace placeholder with deployed URL if applicable) |
+
+---
+
 ## 🌟 What is WhisPURR?
 
 **WhisPURR** (formerly Kivi) is designed to sit quietly at the bottom of your desktop environment as a gentle, intelligent companion. When you hold your shortcut, WhisPURR listens, understands your intent and emotional undertones, translates or re-styles your thoughts in real-time, and seamlessly pastes the output directly into whatever application you are using.
@@ -159,30 +170,40 @@ WhisPURR tracks your productivity gains in real-time, translating minutes saved 
 
 ```
 Kivi-Styles-Redesign/
-├── README.md                      # Comprehensive project documentation
-├── whispurrstart.py               # Automated launcher & dependency installer
-├── docs/
-│   ├── Plan.md                    # Core philosophy and architectural roadmap
-│   └── Runner.md                  # Development history and design pivots
-└── kivi-app/
-    ├── index.html                 # App shell and web fonts
-    ├── package.json               # Dependencies and build scripts
-    ├── tailwind.config.js         # Theme customization and semantic color tokens
-    ├── vite.config.ts             # Vite build configuration
-    └── src/
-        ├── App.tsx                # Top-level application controller
-        ├── index.css              # Global styles, theme overrides & utilities
-        ├── transformEngine.ts     # Gemini AI prompt transformation pipeline
-        ├── useKiviInput.ts        # Keyboard, Alt-detection & speech recognition hook
-        └── components/
-            ├── Tutorial.tsx       # 10-slide vibrant onboarding & interactive dials
-            ├── WhispurrApp.tsx    # Main WhisPURR dashboard, styles & metrics
-            ├── MockOS.tsx         # macOS desktop environment simulation
-            ├── KiviCatIcon.tsx    # WhisPURR cat mascot SVG icon
-            ├── FootprintManager.tsx # Memory footprint and context tracker
-            └── styles/
-                ├── StylesManager.tsx # Deep tone profile and style customization
-                └── MainStylesView.tsx # Quick-access tone matrix
+├── README.md                      # Comprehensive project overview & evaluator guide
+├── .gitignore                     # Git ignore rules (node, python cache, system files)
+├── whispurrstart.py               # One-click automated Python launcher
+├── docs/                          # Product positioning, vision, and architectural docs
+│   ├── product-positioning.pdf    # Executive positioning statement & competitive matrix
+│   ├── product-vision.pdf         # Product vision, design tenets & strategic roadmap
+│   ├── Plan.md                    # Core architecture and system overview
+│   └── Runner.md                  # Development history and design pivots timelog
+├── prototype/                     # Permanent design artifacts
+│   └── screens.pdf                # Exported high-resolution screen deck with annotations
+├── kivi-app/                      # Core working React 18 + TypeScript + Vite application
+│   ├── index.html                 # App shell and web fonts
+│   ├── package.json               # Dependencies and build scripts
+│   ├── tailwind.config.js         # Theme tokens and semantic color palettes
+│   ├── vite.config.ts             # Vite build configuration
+│   └── src/
+│       ├── App.tsx                # Top-level application controller
+│       ├── index.css              # Global styles, theme overrides & utilities
+│       ├── transformEngine.ts     # Gemini AI prompt transformation pipeline
+│       ├── useKiviInput.ts        # Keyboard, Alt-detection & speech recognition hook
+│       └── components/
+│           ├── Tutorial.tsx       # 10-slide vibrant onboarding & interactive dials
+│           ├── WhispurrApp.tsx    # Main WhisPURR dashboard, styles & metrics
+│           ├── MockOS.tsx         # macOS desktop environment simulation
+│           ├── KiviCatIcon.tsx    # WhisPURR cat mascot SVG icon
+│           ├── FootprintManager.tsx # Memory footprint and context tracker
+│           └── styles/
+│               ├── StylesManager.tsx # Deep tone profile and style customization
+│               └── MainStylesView.tsx # Quick-access tone matrix
+└── scripts/                       # One-off development, setup & utility scripts
+    ├── README.md                  # Explanation of historical development scripts
+    ├── generate_submission_artifacts.py # Reproducible script for generating submission PDFs
+    ├── convocatcher.py & requirements.txt # Early proof-of-concept Python implementation
+    └── [historical migration scripts: add_*.py, fix_*.py, pop_up_cat*.py]
 ```
 
 ---
