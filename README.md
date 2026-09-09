@@ -18,6 +18,8 @@
 
 ## 🌟 What is WhisPURR?
 
+> *"Kivi is a bridge between what you want to say and how you need to say it. It is made for people who constantly switch between WhatsApp, email, client messages, and AI tools, each needing a different tone and format. This means always interrupting your workflow to type and reformat. Kivi tries to solve this problem. It saves time and lowers the mental burden. Talk the way you normally do, and Kivi changes your words to fit the app or website you are using. It does not speak or act on behalf of you. It simply makes sharing your thoughts quicker and less frustrating. It is always there, without feeling like another app, another step, or another burden."*
+
 **WhisPURR** (formerly Kivi) is designed to sit quietly at the bottom of your desktop environment as a gentle, intelligent companion. When you hold your shortcut, WhisPURR listens, understands your intent and emotional undertones, translates or re-styles your thoughts in real-time, and seamlessly pastes the output directly into whatever application you are using.
 
 Whether drafting quick Slack messages, authoring formal executive proposals, writing terminal commands, or speaking in foreign languages, WhisPURR eliminates the friction of manual re-typing and editing.
@@ -173,11 +175,9 @@ Kivi-Styles-Redesign/
 ├── README.md                      # Comprehensive project overview & evaluator guide
 ├── .gitignore                     # Git ignore rules (node, python cache, system files)
 ├── whispurrstart.py               # One-click automated Python launcher
-├── docs/                          # Product positioning, vision, and architectural docs
+├── docs/                          # Evaluator deliverables: product positioning & vision
 │   ├── product-positioning.pdf    # Executive positioning statement & competitive matrix
-│   ├── product-vision.pdf         # Product vision, design tenets & strategic roadmap
-│   ├── Plan.md                    # Core architecture and system overview
-│   └── Runner.md                  # Development history and design pivots timelog
+│   └── product-vision.pdf         # Product vision, design tenets & strategic roadmap
 ├── prototype/                     # Permanent design artifacts
 │   └── screens.pdf                # Exported high-resolution screen deck with annotations
 ├── kivi-app/                      # Core working React 18 + TypeScript + Vite application
@@ -203,6 +203,7 @@ Kivi-Styles-Redesign/
     ├── README.md                  # Explanation of historical development scripts
     ├── generate_submission_artifacts.py # Reproducible script for generating submission PDFs
     ├── convocatcher.py & requirements.txt # Early proof-of-concept Python implementation
+    ├── archive/                   # Historical design logs and timelogs (Plan.md, Runner.md)
     └── [historical migration scripts: add_*.py, fix_*.py, pop_up_cat*.py]
 ```
 

@@ -120,6 +120,11 @@ positioning_html = """<!DOCTYPE html>
     margin: 16px 0;
     box-shadow: 0 4px 12px rgba(2, 132, 199, 0.06);
   }
+  .callout-orange {
+    border-color: #ea580c;
+    background: #fffcf9;
+    box-shadow: 0 4px 12px rgba(234, 88, 12, 0.06);
+  }
   .callout-title {
     font-weight: 700;
     color: #0284c7;
@@ -127,6 +132,9 @@ positioning_html = """<!DOCTYPE html>
     text-transform: uppercase;
     letter-spacing: 0.06em;
     margin-bottom: 6px;
+  }
+  .callout-title-orange {
+    color: #c2410c;
   }
   .statement-text {
     font-family: 'Newsreader', serif;
@@ -137,6 +145,14 @@ positioning_html = """<!DOCTYPE html>
   .statement-text strong {
     color: #0284c7;
     font-weight: 600;
+  }
+  .quote-body {
+    font-family: 'Newsreader', Georgia, serif;
+    font-size: 14.5px;
+    line-height: 1.6;
+    color: #431407;
+    font-style: italic;
+    margin: 0;
   }
   .grid-2 {
     display: grid;
@@ -213,6 +229,14 @@ positioning_html = """<!DOCTYPE html>
 </div>
 
 <h2>1. Executive Summary & Market Problem</h2>
+
+<div class="callout-box callout-orange">
+  <div class="callout-title callout-title-orange">The Kivi Product Positioning Statement</div>
+  <p class="quote-body">
+    “Kivi is a bridge between what you want to say and how you need to say it. It is made for people who constantly switch between WhatsApp, email, client messages, and AI tools, each needing a different tone and format. This means always interrupting your workflow to type and reformat. Kivi tries to solve this problem. It saves time and lowers the mental burden. Talk the way you normally do, and Kivi changes your words to fit the app or website you are using. It does not speak or act on behalf of you. It simply makes sharing your thoughts quicker and less frustrating. It is always there, without feeling like another app, another step, or another burden.”
+  </p>
+</div>
+
 <p>
   Human speech operates at <strong>140–160 words per minute</strong>, nearly 4× faster than the average typing speed of 40 words per minute. However, voice dictation has historically suffered from an immense <em>"editing tax"</em>: traditional speech-to-text engines produce verbatim, raw transcriptions full of filler words, false starts, awkward syntax, and inappropriate registers.
 </p>
