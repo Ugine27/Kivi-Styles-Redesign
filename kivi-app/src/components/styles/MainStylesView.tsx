@@ -298,7 +298,6 @@ export default function MainStylesView({
                 activeStyleName={activeStyleName} 
                 apps={activeApps}
                 onRemoveApp={(app) => handleRemoveApp(activeStyleName, app)}
-                onOpenAddApps={() => setIsAddAppsOpen(true)}
               />
             </motion.div>
           </AnimatePresence>
@@ -346,14 +345,12 @@ interface ContextOptionsRendererProps {
   activeStyleName: string;
   apps: string[];
   onRemoveApp: (app: string) => void;
-  onOpenAddApps: () => void;
 }
 
 function ContextOptionsRenderer({ 
   activeStyleName, 
   apps,
-  onRemoveApp,
-  onOpenAddApps 
+  onRemoveApp
 }: ContextOptionsRendererProps) {
   const contextModes: Record<string, {n: string, d: string, ex: string}[]> = {
     "Formal": [
@@ -433,34 +430,29 @@ function ContextOptionsRenderer({
       <div className="flex items-center gap-2.5 shrink-0 flex-wrap">
         <span className="text-[#d7ccc8]/50 text-xs font-bold uppercase tracking-widest">Active In:</span>
         <div className="flex gap-2 flex-wrap items-center">
-          {apps.map(app => (
-            <span 
-              key={app} 
-              className="group inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-[#f4ece1]/5 hover:bg-[#f4ece1]/10 border border-white/10 hover:border-[#8d6e63]/60 rounded-lg text-xs text-[#d7ccc8] hover:text-[#f4ece1] font-medium shadow-sm transition-all"
-            >
-              <span>{app}</span>
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onRemoveApp(app);
-                }}
-                className="opacity-40 group-hover:opacity-100 hover:text-red-400 p-0.5 rounded transition-all cursor-pointer"
-                title={`Remove ${app}`}
+          {apps.length === 0 ? (
+            <span className="text-xs text-[#d7ccc8]/40 italic">None assigned</span>
+          ) : (
+            apps.map(app => (
+              <span 
+                key={app} 
+                className="group inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-[#f4ece1]/5 hover:bg-[#f4ece1]/10 border border-white/10 hover:border-[#8d6e63]/60 rounded-lg text-xs text-[#d7ccc8] hover:text-[#f4ece1] font-medium shadow-sm transition-all"
               >
-                <X className="w-3 h-3" />
-              </button>
-            </span>
-          ))}
-          <button
-            type="button"
-            onClick={onOpenAddApps}
-            className="inline-flex items-center gap-1 px-2 py-0.5 bg-[#8d6e63]/20 hover:bg-[#8d6e63]/40 border border-[#8d6e63]/40 hover:border-[#8d6e63] text-xs text-[#f4ece1] rounded-lg transition-colors cursor-pointer"
-            title="Add more apps to this context"
-          >
-            <Plus className="w-3 h-3 text-orange-400" />
-            <span>Add</span>
-          </button>
+                <span>{app}</span>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onRemoveApp(app);
+                  }}
+                  className="opacity-40 group-hover:opacity-100 hover:text-red-400 p-0.5 rounded transition-all cursor-pointer"
+                  title={`Remove ${app}`}
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </span>
+            ))
+          )}
         </div>
       </div>
 
