@@ -108,6 +108,33 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
 
   const [currentCatFact, setCurrentCatFact] = useState('');
   const [showCatFactPopup, setShowCatFactPopup] = useState(false);
+  const catFactRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!showCatFactPopup) return;
+
+    const handleOutsideInteraction = (e: MouseEvent | TouchEvent) => {
+      if (catFactRef.current && !catFactRef.current.contains(e.target as Node)) {
+        setShowCatFactPopup(false);
+      }
+    };
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setShowCatFactPopup(false);
+      }
+    };
+
+    document.addEventListener('pointerdown', handleOutsideInteraction);
+    document.addEventListener('touchstart', handleOutsideInteraction);
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('pointerdown', handleOutsideInteraction);
+      document.removeEventListener('touchstart', handleOutsideInteraction);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [showCatFactPopup]);
   const [showTutorial, setShowTutorial] = useState(() => !hasShownTutorialThisSession);
   const [talkShortcut, setTalkShortcut] = useState(() => localStorage.getItem('whispurr_talk') || 'Alt');
   const [isRecordingShortcut, setIsRecordingShortcut] = useState(false);
@@ -615,7 +642,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
           </div>
 
           {/* Cat Facts Button with Popup */}
-          <div className="relative">
+          <div ref={catFactRef} className="relative">
             <div onClick={() => {
               if (!showCatFactPopup) {
                 setCurrentCatFact(CAT_FACTS[Math.floor(Math.random() * CAT_FACTS.length)]);
@@ -636,11 +663,24 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                   initial={{ opacity: 0, x: -10, y: 10 }}
                   animate={{ opacity: 1, x: 0, y: 0 }}
                   exit={{ opacity: 0, x: -10, y: 10 }}
-                  className={`fixed bottom-8 ${isSidebarOpen ? 'left-[280px]' : 'left-[100px]'} w-80 p-6 rounded-2xl bg-[#1e1e1e]/95 backdrop-blur-xl border border-[#8d6e63]/40 shadow-[0_0_40px_rgba(0,0,0,0.8)] z-[9999] pointer-events-none whitespace-normal`}
+                  className={`fixed bottom-8 ${isSidebarOpen ? 'left-[280px]' : 'left-[100px]'} w-80 p-6 rounded-2xl bg-[#1e1e1e]/95 backdrop-blur-xl border border-[#8d6e63]/40 shadow-[0_0_40px_rgba(0,0,0,0.8)] z-[9999] pointer-events-auto whitespace-normal`}
                 >
-                  <div className="flex items-center gap-2 mb-3 text-[#8d6e63]">
-                    <Sparkles className="w-5 h-5" />
-                    <span className="text-sm font-bold uppercase tracking-wider">Did you know?</span>
+                  <div className="flex items-center justify-between mb-3 text-[#8d6e63]">
+                    <div className="flex items-center gap-2">
+                      <Sparkles className="w-5 h-5" />
+                      <span className="text-sm font-bold uppercase tracking-wider">Did you know?</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setShowCatFactPopup(false);
+                      }}
+                      className="text-white/40 hover:text-white p-1 rounded-lg hover:bg-white/10 transition-colors cursor-pointer"
+                      title="Close"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
                   </div>
                   <p className="text-[15px] text-[#E8D5B5] leading-relaxed italic font-medium">
                     "{currentCatFact}"
