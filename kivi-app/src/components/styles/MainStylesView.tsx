@@ -212,7 +212,7 @@ export default function MainStylesView({
         <div className="w-[260px] md:w-[280px] shrink-0 flex flex-col h-full overflow-hidden gap-2">
           {/* Profiles */}
           <div className="flex flex-col gap-2 shrink-0">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-[#8d6e63] dark:text-[#d7ccc8]/60 px-1">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#8d6e63] px-1">
               Context Profiles
             </span>
             {CONTEXT_ITEMS.map(({ name, icon: Icon }) => {

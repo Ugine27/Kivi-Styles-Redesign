@@ -937,7 +937,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
             <motion.div animate={{ opacity: isSidebarOpen ? 1 : 0, width: isSidebarOpen ? 'auto' : 0 }} className="text-base font-medium overflow-hidden">History</motion.div>
           </div>
 
-          <motion.div animate={{ opacity: isSidebarOpen ? 1 : 0 }} className={`mt-6 mb-2 text-xs font-bold text-white/30 uppercase tracking-widest h-5 transition-all ${isSidebarOpen ? 'px-8' : 'px-0 text-center w-full shrink-0'} ${isTourActive ? 'opacity-20 blur-[1px]' : ''}`}>
+          <motion.div animate={{ opacity: isSidebarOpen ? 1 : 0 }} className={`mt-6 mb-2 text-xs font-bold text-white/50 uppercase tracking-widest h-5 transition-all ${isSidebarOpen ? 'px-8' : 'px-0 text-center w-full shrink-0'} ${isTourActive ? 'opacity-20 blur-[1px]' : ''}`}>
             Customize
           </motion.div>
           
@@ -1096,7 +1096,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                     <div className="relative inline-flex items-center justify-center gap-3">
                       <h1 className="text-3xl lg:text-4xl font-extrabold tracking-tight text-white flex items-center gap-2 drop-shadow-sm">
                         <span>{getTimeGreeting().text},</span>
-                        <span className="bg-gradient-to-r from-orange-300 via-amber-200 to-orange-400 bg-clip-text text-transparent">
+                        <span className="bg-gradient-to-r from-orange-400 via-amber-300 to-orange-500 bg-clip-text text-transparent">
                           Ugine
                         </span>
                         <span className="text-2xl">{getTimeGreeting().icon}</span>
@@ -1142,7 +1142,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.25 }}
                       onClick={handleBoop}
-                      className="mt-2 text-white/60 hover:text-white/90 text-sm max-w-xl cursor-pointer flex items-center justify-center gap-1.5 transition-colors group px-2"
+                      className="mt-2 text-white/70 hover:text-white text-sm font-medium max-w-xl cursor-pointer flex items-center justify-center gap-1.5 transition-colors group px-2"
                       title="Click to shuffle fun kitty thoughts!"
                     >
                       <p className="leading-relaxed">
@@ -1177,7 +1177,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                               </span>
                             )}
                           </h2>
-                          <p className="text-xs text-white/40">Speak naturally and convert your speech into copyable text</p>
+                          <p className="text-xs text-white/60 font-medium">Speak naturally and convert your speech into copyable text</p>
                         </div>
                       </div>
 
@@ -1345,17 +1345,17 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                             ? 'Listening to your voice... Speak clearly into your microphone...'
                             : 'Click the Mic icon to speak, or type here directly to convert and copy anywhere...'
                         }
-                        className="flex-1 w-full bg-black/40 border border-white/5 focus:border-orange-500/40 rounded-2xl p-5 text-white placeholder-white/20 resize-none outline-none font-sans text-base leading-relaxed transition-all shadow-inner"
+                        className="flex-1 w-full bg-black/40 border border-white/5 focus:border-orange-500/40 rounded-2xl p-5 text-white placeholder-white/40 resize-none outline-none font-sans text-base leading-relaxed transition-all shadow-inner"
                       />
                       
                       {/* Character & Word count */}
-                      <div className="flex items-center justify-between pt-2 px-1 text-xs text-white/30 shrink-0">
+                      <div className="flex items-center justify-between pt-2 px-1 text-xs text-white/60 font-semibold shrink-0">
                         <div className="flex items-center gap-4">
                           <span>{homeChatText.trim() ? homeChatText.trim().split(/\s+/).length : 0} words</span>
                           <span>{homeChatText.length} characters</span>
                         </div>
                         {isHomeCopied && (
-                          <span className="text-emerald-400 font-medium animate-pulse">
+                          <span className="text-emerald-400 font-semibold animate-pulse">
                             ✓ Copied to clipboard! Ready to paste anywhere (Ctrl+V / Cmd+V)
                           </span>
                         )}
@@ -1391,29 +1391,29 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                     />
                   </div>
                   
-                  <h3 className="text-lg font-bold text-orange-50 mb-4 text-center border-b border-white/10 pb-3">Today's Impact</h3>
+                  <h3 className="text-lg font-bold text-white mb-4 text-center border-b border-white/10 pb-3">Today's Impact</h3>
                   <div className="flex flex-col gap-4 items-center">
                     <div className="flex flex-col items-center justify-center p-4 w-full rounded-2xl bg-orange-500/10 border border-orange-500/20 shadow-[0_0_20px_rgba(249,115,22,0.05)]">
-                      <div className="text-xs text-orange-100/70 mb-1 uppercase tracking-wider font-semibold">Time Saved Today</div>
+                      <div className="text-xs text-orange-200 mb-1 uppercase tracking-wider font-bold">Time Saved Today</div>
                       <div className="font-bold text-4xl text-orange-400">{timeSavedToday}</div>
-                      <div className="text-xs text-orange-200/70 mt-1 font-medium text-center tracking-tight px-1">
+                      <div className="text-xs text-orange-100 font-semibold mt-1.5 text-center tracking-tight px-1">
                         {timeSavedRelatableMessage}
                       </div>
-                      <div className="text-xs text-orange-200/40 mt-2">Weekly Total: {timeSavedWeekHrs} Hours</div>
+                      <div className="text-xs text-orange-200 mt-2 font-semibold">Weekly Total: {timeSavedWeekHrs} Hours</div>
                     </div>
                     <div className="flex w-full gap-3">
                       <div className="flex-1 flex flex-col items-center gap-2 p-3 rounded-xl bg-white/5 border border-white/5">
-                        <Clock className="w-5 h-5 text-white/30" />
+                        <Clock className="w-5 h-5 text-orange-400" />
                         <div className="text-center">
                           <div className="font-bold text-sm text-white">24m</div>
-                          <div className="text-[10px] text-white/40 uppercase">Dictating</div>
+                          <div className="text-[10px] text-white/70 uppercase font-bold tracking-wider">Dictating</div>
                         </div>
                       </div>
                       <div className="flex-1 flex flex-col items-center gap-2 p-3 rounded-xl bg-white/5 border border-white/5">
-                        <FileText className="w-5 h-5 text-white/30" />
+                        <FileText className="w-5 h-5 text-orange-400" />
                         <div className="text-center">
                           <div className="font-bold text-sm text-white">3.4k</div>
-                          <div className="text-[10px] text-white/40 uppercase">Words</div>
+                          <div className="text-[10px] text-white/70 uppercase font-bold tracking-wider">Words</div>
                         </div>
                       </div>
                     </div>
