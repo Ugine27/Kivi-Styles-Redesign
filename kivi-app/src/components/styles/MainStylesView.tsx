@@ -208,8 +208,8 @@ export default function MainStylesView({
 
       {/* Main 2-Column Area */}
       <div className="flex-1 min-h-0 flex gap-3.5 overflow-hidden">
-        {/* Left Column: Contexts List + Adaptive Status Card */}
-        <div className="w-[260px] md:w-[280px] shrink-0 flex flex-col justify-between h-full overflow-hidden gap-2.5">
+        {/* Left Column: Context Profiles */}
+        <div className="w-[260px] md:w-[280px] shrink-0 flex flex-col h-full overflow-hidden gap-2">
           {/* Profiles */}
           <div className="flex flex-col gap-2 shrink-0">
             <span className="text-[11px] font-bold uppercase tracking-wider text-[#8d6e63] dark:text-[#d7ccc8]/60 px-1">
@@ -250,24 +250,6 @@ export default function MainStylesView({
                 </button>
               );
             })}
-          </div>
-
-          {/* Adaptive App Detection / Status Card */}
-          <div className="bg-[#190f0b]/90 border border-[#5d4037]/50 rounded-2xl p-3 flex flex-col gap-2 shrink-0 shadow-inner">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
-                <span className="text-[10.5px] font-bold uppercase tracking-wider text-[#d7ccc8]">
-                  Active Detection
-                </span>
-              </div>
-              <span className="text-[9.5px] font-semibold text-orange-300 bg-orange-500/15 px-2 py-0.5 rounded-md border border-orange-500/20">
-                {activeStyleName}
-              </span>
-            </div>
-            <p className="text-[11px] text-[#d7ccc8]/75 leading-relaxed">
-              WhisPURR switches context when you switch apps, formatting your speech for each target environment.
-            </p>
           </div>
         </div>
 
