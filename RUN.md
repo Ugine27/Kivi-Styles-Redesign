@@ -3,8 +3,8 @@
 A quick sequence to clone, install dependencies, and start the Whispurr interactive prototype:
 
 ```bash
-git clone https://github.com/Ugine27/Kivi-Styles-Redesign.git
-cd Kivi-Styles-Redesign/kivi-app
+git clone https://github.com/Ugine27/Whispurr.git
+cd Whispurr/kivi-app
 npm install
 npm run dev
 ```

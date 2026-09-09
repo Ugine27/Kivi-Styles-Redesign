@@ -135,8 +135,8 @@ WhisPURR tracks your productivity gains in real-time, translating minutes saved 
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/Ugine27/Kivi-Styles-Redesign.git
-   cd Kivi-Styles-Redesign
+   git clone https://github.com/Ugine27/Whispurr.git
+   cd Whispurr
    ```
 
 2. **Configure Environment Variables**:
@@ -171,7 +171,7 @@ WhisPURR tracks your productivity gains in real-time, translating minutes saved 
 ## 📁 Repository Structure
 
 ```
-Kivi-Styles-Redesign/
+Whispurr/
 ├── README.md                      # Comprehensive project overview & evaluator guide
 ├── .gitignore                     # Git ignore rules (node, python cache, system files)
 ├── whispurrstart.py               # One-click automated Python launcher
