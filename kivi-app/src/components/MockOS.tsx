@@ -3,6 +3,7 @@ import { Mail, Terminal, Sparkles, X, Minus, Wifi, Type, Mic, Pencil, Check } fr
 import { motion, AnimatePresence } from 'framer-motion';
 import WhispurrApp from './WhispurrApp';
 import KiviCatIcon from './KiviCatIcon';
+import FloatingDictationHUD from './FloatingDictationHUD';
 
 type AppType = 'email' | 'vscode' | 'ai' | 'whispurr' | null;
 
@@ -15,7 +16,37 @@ if (typeof window !== 'undefined') {
     globalMouseY = e.clientY;
   });
 }
-const MockOS = memo(({ activeText, mode, setMode, degree, setDegree, isAltPressed, isLoading, toggleListening }: { activeText: string, mode?: string, setMode?: any, degree?: number, setDegree?: any, isAltPressed?: boolean, isLoading?: boolean, toggleListening?: any }) => {
+
+interface MockOSProps {
+  activeText: string;
+  transcript?: string;
+  translatedText?: string;
+  setTranslatedText?: (t: string) => void;
+  mode?: string;
+  setMode?: any;
+  degree?: number;
+  setDegree?: any;
+  isAltPressed?: boolean;
+  isLoading?: boolean;
+  toggleListening?: any;
+  simulateSpeech?: (phrase: string) => void;
+  resetInputState?: () => void;
+}
+
+const MockOS = memo(({ 
+  activeText, 
+  transcript,
+  translatedText,
+  mode, 
+  setMode, 
+  degree, 
+  setDegree, 
+  isAltPressed, 
+  isLoading, 
+  toggleListening,
+  simulateSpeech,
+  resetInputState
+}: MockOSProps) => {
   const [openApp, setOpenApp] = useState<AppType>(() => {
     try {
       const params = new URLSearchParams(window.location.search);
@@ -187,18 +218,117 @@ const MockOS = memo(({ activeText, mode, setMode, degree, setDegree, isAltPresse
     }
   }, [mode, isAltPressed]);
 
-  // Append whispurr's translated text to the currently open app or popup
+  // Floating Dictation HUD State & Automatic Typing Logic
+  const [isHudOpen, setIsHudOpen] = useState(false);
+  const autoDismissTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const lastTypedTextRef = useRef<string>('');
+
+  // Open HUD whenever Alt is held or speech begins
   useEffect(() => {
-    if (activeText) {
-      if (activePopup === 'scratchpad') {
-        setScratchPadText(prev => prev + (prev ? '\n' : '') + activeText);
-      } else if (openApp) {
-        if (openApp === 'email') setEmailText(prev => prev + (prev ? '\n' : '') + activeText);
-        if (openApp === 'vscode') setVscodeText(prev => prev + (prev ? '\n' : '') + activeText);
-        if (openApp === 'ai') setAiText(prev => prev + (prev ? ' ' : '') + activeText);
+    if (isAltPressed) {
+      if (autoDismissTimerRef.current) {
+        clearTimeout(autoDismissTimerRef.current);
+        autoDismissTimerRef.current = null;
       }
+      setIsHudOpen(true);
     }
-  }, [activeText, openApp, activePopup]);
+  }, [isAltPressed]);
+
+  useEffect(() => {
+    if (transcript && transcript.trim() && !isHudOpen) {
+      if (autoDismissTimerRef.current) {
+        clearTimeout(autoDismissTimerRef.current);
+        autoDismissTimerRef.current = null;
+      }
+      setIsHudOpen(true);
+    }
+  }, [transcript]);
+
+  // Determine current active destination app or text field
+  const getDestinationApp = () => {
+    if (openApp === 'email') return 'Outlook';
+    if (openApp === 'vscode') return 'VS Code';
+    if (openApp === 'ai') return 'Antigravity AI';
+    if (openApp === 'whispurr') return 'WhisPURR';
+    if (activePopup === 'scratchpad') return 'ScratchPad';
+    const activeEl = document.activeElement;
+    if (activeEl && (activeEl instanceof HTMLInputElement || activeEl instanceof HTMLTextAreaElement)) {
+      return 'Active Text Field';
+    }
+    return null;
+  };
+
+  // Helper to insert text at the current cursor position in a focused text field
+  const insertAtCursor = (text: string): boolean => {
+    const activeEl = document.activeElement;
+    if (
+      activeEl &&
+      (activeEl instanceof HTMLInputElement || activeEl instanceof HTMLTextAreaElement)
+    ) {
+      const start = activeEl.selectionStart ?? activeEl.value.length;
+      const end = activeEl.selectionEnd ?? activeEl.value.length;
+      const original = activeEl.value;
+      const spaceBefore = start > 0 && !original.slice(0, start).endsWith(' ') && !original.slice(0, start).endsWith('\n') ? ' ' : '';
+      const newText = original.slice(0, start) + spaceBefore + text + original.slice(end);
+
+      const setter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, 'value')?.set ||
+                     Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value')?.set;
+      if (setter) {
+        setter.call(activeEl, newText);
+      } else {
+        activeEl.value = newText;
+      }
+
+      activeEl.dispatchEvent(new Event('input', { bubbles: true }));
+      activeEl.dispatchEvent(new Event('change', { bubbles: true }));
+
+      const newCursor = start + spaceBefore.length + text.length;
+      activeEl.setSelectionRange(newCursor, newCursor);
+      return true;
+    }
+    return false;
+  };
+
+  // Process text typing when final transformed text is ready
+  useEffect(() => {
+    const outputText = translatedText || activeText;
+    if (!outputText || outputText.trim() === '' || isLoading) return;
+    if (lastTypedTextRef.current === outputText) return;
+    lastTypedTextRef.current = outputText;
+
+    const destination = getDestinationApp();
+    if (destination) {
+      // 1. Try cursor insertion if an input/textarea is currently focused
+      const insertedAtCursor = insertAtCursor(outputText);
+
+      // 2. Only update state directly if not already handled by focused element cursor insertion
+      if (!insertedAtCursor) {
+        if (openApp === 'email') {
+          setEmailText(prev => prev ? `${prev}\n${outputText}` : outputText);
+        } else if (openApp === 'vscode') {
+          setVscodeText(prev => prev ? `${prev}\n${outputText}` : outputText);
+        } else if (openApp === 'ai') {
+          setAiText(prev => prev ? `${prev} ${outputText}` : outputText);
+        } else if (activePopup === 'scratchpad') {
+          setScratchPadText(prev => prev ? `${prev}\n${outputText}` : outputText);
+        }
+      }
+
+      if (openApp === 'whispurr') {
+        window.dispatchEvent(new CustomEvent('whispurr-insert-text', { detail: outputText }));
+      }
+
+      // Auto-dismiss HUD after 4s since the text has been inserted into the app
+      if (autoDismissTimerRef.current) clearTimeout(autoDismissTimerRef.current);
+      autoDismissTimerRef.current = setTimeout(() => {
+        setIsHudOpen(false);
+      }, 4000);
+    } else {
+      // No active destination: User is on Desktop!
+      // Keep HUD open with the prominent Copy button so the user can copy and paste from this dialogue box!
+      setIsHudOpen(true);
+    }
+  }, [translatedText, activeText, isLoading, openApp, activePopup]);
 
 
   return (
@@ -648,6 +778,24 @@ const MockOS = memo(({ activeText, mode, setMode, degree, setDegree, isAltPresse
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* FLOATING SPEECH & DICTATION DIALOGUE HUD */}
+      <FloatingDictationHUD 
+        isOpen={isHudOpen}
+        isListening={!!isAltPressed}
+        isProcessing={!!isLoading}
+        transcript={transcript || ''}
+        transformedText={translatedText || activeText || ''}
+        mode={mode || 'Formal'}
+        degree={degree}
+        destinationApp={getDestinationApp()}
+        onClose={() => {
+          setIsHudOpen(false);
+          if (autoDismissTimerRef.current) clearTimeout(autoDismissTimerRef.current);
+          if (resetInputState) resetInputState();
+        }}
+        onSimulateSpeech={simulateSpeech}
+      />
     </div>
   );
 });

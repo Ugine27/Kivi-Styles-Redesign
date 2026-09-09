@@ -350,8 +350,17 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
         ]);
       }
     };
+    const handleInsertText = (e: any) => {
+      if (e.detail) {
+        setHomeChatText(prev => prev ? `${prev} ${e.detail}` : e.detail);
+      }
+    };
     window.addEventListener('add-sticky-note', handleAddNote);
-    return () => window.removeEventListener('add-sticky-note', handleAddNote);
+    window.addEventListener('whispurr-insert-text', handleInsertText);
+    return () => {
+      window.removeEventListener('add-sticky-note', handleAddNote);
+      window.removeEventListener('whispurr-insert-text', handleInsertText);
+    };
   }, []);
 
   useEffect(() => {
