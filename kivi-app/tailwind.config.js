@@ -8,7 +8,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['"Editorial New"', 'Editorial', 'Newsreader', 'serif'],
+        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', '"SF Pro Text"', '"Segoe UI"', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],
         serif: ['"Editorial New"', 'Editorial', 'Newsreader', 'serif'],
       },
       colors: {
