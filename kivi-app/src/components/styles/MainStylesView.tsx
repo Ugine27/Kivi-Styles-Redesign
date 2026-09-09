@@ -8,7 +8,8 @@ import {
   Plus,
   Palette,
   X,
-  Search
+  Search,
+  Zap
 } from 'lucide-react';
 import { StyleItem, WeeklyStats } from './StylesData';
 
@@ -124,7 +125,7 @@ export default function MainStylesView({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 10 }}
             transition={{ type: "spring", stiffness: 400, damping: 30 }}
-            className="absolute bottom-4 right-4 top-[180px] left-[420px] bg-[#190f0b]/90 border border-[#5d4037]/60 rounded-3xl p-8 shadow-2xl flex flex-col overflow-hidden backdrop-blur-xl"
+            className="absolute bottom-4 right-4 top-[140px] left-[420px] bg-[#190f0b]/90 border border-[#5d4037]/60 rounded-3xl p-6 lg:p-8 shadow-2xl flex flex-col overflow-hidden backdrop-blur-xl"
           >
             <AnimatePresence mode="wait">
               <motion.div 
@@ -135,12 +136,12 @@ export default function MainStylesView({
                 transition={{ duration: 0.2, ease: "easeOut" }}
                 className="flex flex-col h-full w-full min-h-0"
               >
-                <div className="flex items-center justify-between mb-6 shrink-0">
+                <div className="flex items-center justify-between mb-4 shrink-0">
                   <div className="flex items-center gap-4">
-                    <div className="p-3 bg-[#5d4037]/20 rounded-xl">
+                    <div className="p-2.5 bg-[#5d4037]/20 rounded-xl">
                       <Settings2 className="w-6 h-6 text-[#d7ccc8]" />
                     </div>
-                    <h2 className="text-3xl font-bold text-[#f4ece1] tracking-tight">{activeStyleName}</h2>
+                    <h2 className="text-2xl lg:text-3xl font-bold text-[#f4ece1] tracking-tight">{activeStyleName}</h2>
                   </div>
                   <button 
                     type="button"
@@ -153,7 +154,7 @@ export default function MainStylesView({
                   </button>
                 </div>
                 
-                <div className="flex-1 bg-[#2b1f1a]/50 rounded-2xl border border-[#5d4037]/30 p-4 lg:p-6 overflow-hidden min-h-0">
+                <div className="flex-1 bg-[#2b1f1a]/50 rounded-2xl border border-[#5d4037]/30 p-4 lg:p-5 overflow-hidden min-h-0 flex flex-col">
                   <ContextOptionsRenderer 
                     activeStyleName={activeStyleName} 
                     apps={activeApps}
@@ -237,6 +238,30 @@ export default function MainStylesView({
   );
 }
 
+const DEFAULT_CONTEXT_RULES: Record<string, string> = {
+  "Formal": "Keep messages under 2 sentences. Avoid emojis. Keep the tone confident, polite, and work-ready.",
+  "Casual": "Keep wording natural and conversational. Feel free to use relaxed phrasing and friendly expressions.",
+  "Developer": "Format code snippets in markdown blocks. Keep explanations concise, direct, and structured with bullet points.",
+  "Prompts": "Specify clear system instructions. Request output strictly in markdown or JSON without chatty filler.",
+  "Other apps": "Clean grammar, natural conversational flow without filler words."
+};
+
+const CONTEXT_SUGGESTIONS: Record<string, string[]> = {
+  "Formal": ["Under 2 sentences", "No emojis", "Workplace polished", "Sign off 'Best regards'"],
+  "Casual": ["Natural & conversational", "Light emojis allowed", "Lowercase styling", "Relaxed phrasing"],
+  "Developer": ["Markdown code blocks", "Concise bullet points", "No syntax fluff", "Include type hints"],
+  "Prompts": ["Output as JSON", "Step-by-step reasoning", "Strict constraints", "Act as Senior Engineer"],
+  "Other apps": ["Cut filler words", "Clean grammar", "Straight to the point", "Preserve intent"]
+};
+
+const CONTEXT_PLACEHOLDERS: Record<string, string> = {
+  "Formal": "E.g. \"Always start with 'Dear Team'\", \"Never use emojis\", \"Keep under 2 sentences\"...",
+  "Casual": "E.g. \"Keep it chill\", \"Use friendly emojis\", \"Allow conversational slang\"...",
+  "Developer": "E.g. \"Format code snippets in markdown\", \"Use bullet points for changes\", \"Keep concise\"...",
+  "Prompts": "E.g. \"Output strictly in valid JSON\", \"Think step-by-step\", \"No conversational filler\"...",
+  "Other apps": "E.g. \"Cut filler words like 'um' and 'like'\", \"Clean punctuation\"..."
+};
+
 interface ContextOptionsRendererProps {
   activeStyleName: string;
   apps: string[];
@@ -281,8 +306,50 @@ function ContextOptionsRenderer({
   const currentModes = contextModes[activeStyleName] || contextModes["Other apps"];
   const [selectedIndex, setSelectedIndex] = useState(0);
 
+  const [customRules, setCustomRules] = useState<Record<string, string>>(() => {
+    try {
+      const saved = localStorage.getItem('whispurr_context_custom_rules');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {}
+    return DEFAULT_CONTEXT_RULES;
+  });
+  const [isSaved, setIsSaved] = useState(false);
+
+  const currentRule = customRules[activeStyleName] ?? (DEFAULT_CONTEXT_RULES[activeStyleName] || '');
+
+  const handleRuleChange = (text: string) => {
+    setCustomRules(prev => {
+      const updated = {
+        ...prev,
+        [activeStyleName]: text
+      };
+      try {
+        localStorage.setItem('whispurr_context_custom_rules', JSON.stringify(updated));
+      } catch (e) {}
+      return updated;
+    });
+    setIsSaved(true);
+    setTimeout(() => setIsSaved(false), 1500);
+  };
+
+  const handleAddChip = (chip: string) => {
+    const trimmed = currentRule.trim();
+    let updated = '';
+    if (trimmed.toLowerCase().includes(chip.toLowerCase())) {
+      // Remove chip if already present
+      updated = trimmed
+        .replace(new RegExp(`(^|\\.\\s*)${chip}(\\.\\s*|$)`, 'gi'), '')
+        .trim();
+    } else {
+      // Append chip cleanly
+      updated = trimmed ? `${trimmed}${trimmed.endsWith('.') ? '' : '.'} ${chip}.` : `${chip}.`;
+    }
+    handleRuleChange(updated);
+  };
+
   return (
-    <div className="flex flex-col gap-4 w-full h-full min-h-0">
+    <div className="flex flex-col gap-4 w-full h-full min-h-0 overflow-y-auto pr-1 select-text">
+      {/* Active Apps Row */}
       <div className="flex items-center gap-3 shrink-0 flex-wrap">
         <span className="text-[#d7ccc8]/50 text-xs font-bold uppercase tracking-widest">Active In:</span>
         <div className="flex gap-2 flex-wrap items-center">
@@ -316,7 +383,9 @@ function ContextOptionsRenderer({
           </button>
         </div>
       </div>
-      <div className="flex gap-4 w-full flex-1 min-h-0">
+
+      {/* Preset Cards */}
+      <div className="flex gap-3 w-full shrink-0 min-h-[110px]">
         {currentModes.map((opt, i) => (
           <div 
             key={i}
@@ -332,15 +401,87 @@ function ContextOptionsRenderer({
                 <Check size={14} strokeWidth={3} />
               </div>
             )}
-            <div className={`flex-1 rounded-xl mb-3 p-3 flex flex-col justify-center border min-h-0 overflow-hidden ${selectedIndex === i ? 'bg-[#f4ece1]/20 border-[#f4ece1]/30' : 'bg-[#f4ece1]/10 border-[#f4ece1]/10'}`}>
-              <p className={`text-xs md:text-[13px] font-sans leading-tight italic whitespace-pre-wrap line-clamp-3 ${selectedIndex === i ? 'text-white font-medium' : 'text-[#f4ece1]/90'}`}>
+            <div className={`flex-1 rounded-xl mb-2 p-2 flex flex-col justify-center border min-h-0 overflow-hidden ${selectedIndex === i ? 'bg-[#f4ece1]/20 border-[#f4ece1]/30' : 'bg-[#f4ece1]/10 border-[#f4ece1]/10'}`}>
+              <p className={`text-xs font-sans leading-tight italic whitespace-pre-wrap line-clamp-2 ${selectedIndex === i ? 'text-white font-medium' : 'text-[#f4ece1]/90'}`}>
                 "{opt.ex}"
               </p>
             </div>
-            <h3 className="text-sm md:text-base font-bold mb-1 font-sans text-[#f4ece1] tracking-tight shrink-0 truncate">{opt.n}</h3>
-            <p className="text-[10px] md:text-[11px] opacity-80 font-serif italic leading-tight shrink-0 line-clamp-2">{opt.d}</p>
+            <h3 className="text-sm font-bold mb-0.5 font-sans text-[#f4ece1] tracking-tight shrink-0 truncate">{opt.n}</h3>
+            <p className="text-[10px] md:text-[11px] opacity-80 font-serif italic leading-tight shrink-0 line-clamp-1">{opt.d}</p>
           </div>
         ))}
+      </div>
+
+      {/* Custom Rules Box */}
+      <div className="bg-[#190f0b]/90 border border-[#5d4037]/50 rounded-2xl p-4 flex flex-col gap-3 shrink-0 shadow-inner">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <div className="p-1.5 bg-orange-500/15 text-orange-400 rounded-xl border border-orange-500/25 shadow-sm">
+              <Zap className="w-4 h-4" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h4 className="text-xs font-bold text-[#f4ece1] uppercase tracking-wider">
+                  Custom Rules for {activeStyleName}
+                </h4>
+                {isSaved && (
+                  <span className="text-[10px] text-emerald-400 font-medium normal-case flex items-center gap-1 bg-emerald-500/15 px-2 py-0.5 rounded-full border border-emerald-500/30 animate-pulse">
+                    <Check className="w-3 h-3" /> Saved
+                  </span>
+                )}
+              </div>
+              <p className="text-[11px] text-[#d7ccc8]/60 mt-0.5">
+                Instruct WhisPURR to consistently apply specific formatting rules whenever {activeStyleName} is active.
+              </p>
+            </div>
+          </div>
+          {currentRule.trim() && (
+            <button
+              type="button"
+              onClick={() => handleRuleChange('')}
+              className="text-[11px] text-[#d7ccc8]/50 hover:text-red-400 hover:bg-white/5 transition-colors px-2 py-1 rounded-md cursor-pointer"
+              title="Clear rules for this context"
+            >
+              Clear
+            </button>
+          )}
+        </div>
+
+        {/* Textarea */}
+        <div className="relative">
+          <textarea
+            value={currentRule}
+            onChange={(e) => handleRuleChange(e.target.value)}
+            placeholder={CONTEXT_PLACEHOLDERS[activeStyleName] || "Enter custom rules for this context..."}
+            rows={2}
+            className="w-full bg-[#2b1f1a] border border-[#5d4037]/60 focus:border-orange-400/80 rounded-xl p-3 text-xs md:text-sm text-[#f4ece1] placeholder:text-[#d7ccc8]/35 resize-none outline-none font-sans leading-relaxed transition-all shadow-inner"
+          />
+        </div>
+
+        {/* Quick Rule Suggestion Chips */}
+        <div className="flex items-center gap-1.5 flex-wrap">
+          <span className="text-[10px] uppercase font-bold text-[#d7ccc8]/40 tracking-wider mr-1">
+            Suggestions:
+          </span>
+          {(CONTEXT_SUGGESTIONS[activeStyleName] || CONTEXT_SUGGESTIONS["Other apps"]).map(chip => {
+            const isChipActive = currentRule.toLowerCase().includes(chip.toLowerCase());
+            return (
+              <button
+                key={chip}
+                type="button"
+                onClick={() => handleAddChip(chip)}
+                className={`text-[11px] px-2.5 py-1 rounded-lg border transition-all cursor-pointer font-medium ${
+                  isChipActive
+                    ? 'bg-orange-500/25 border-orange-400/60 text-orange-200 shadow-sm'
+                    : 'bg-[#2b1f1a]/80 hover:bg-[#5d4037]/40 border-[#5d4037]/50 text-[#d7ccc8]/70 hover:text-[#f4ece1]'
+                }`}
+                title={isChipActive ? "Click to remove" : "Click to add rule"}
+              >
+                {isChipActive ? '✓ ' : '+ '}{chip}
+              </button>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
