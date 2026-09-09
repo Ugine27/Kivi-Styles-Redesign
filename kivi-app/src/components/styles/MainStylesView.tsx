@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Info,
@@ -71,6 +71,33 @@ export default function MainStylesView({
   onRevisitIntro
 }: MainStylesViewProps) {
   const [showAdaptInfo, setShowAdaptInfo] = useState(false);
+  const adaptInfoRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!showAdaptInfo) return;
+
+    const handleOutsideInteraction = (e: MouseEvent | TouchEvent) => {
+      if (adaptInfoRef.current && !adaptInfoRef.current.contains(e.target as Node)) {
+        setShowAdaptInfo(false);
+      }
+    };
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setShowAdaptInfo(false);
+      }
+    };
+
+    document.addEventListener('pointerdown', handleOutsideInteraction);
+    document.addEventListener('touchstart', handleOutsideInteraction);
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('pointerdown', handleOutsideInteraction);
+      document.removeEventListener('touchstart', handleOutsideInteraction);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [showAdaptInfo]);
   const [isAddAppsOpen, setIsAddAppsOpen] = useState(false);
   const [contextApps, setContextApps] = useState<Record<string, string[]>>(() => {
     try {
@@ -181,7 +208,7 @@ export default function MainStylesView({
               <span className={`w-2 h-2 rounded-full ${isAdaptiveMode ? 'bg-[#5d4037]' : 'bg-[#8d6e63]/60'}`} />
             </motion.span>
           </button>
-          <div className="relative">
+          <div ref={adaptInfoRef} className="relative">
             <button 
               onClick={() => setShowAdaptInfo(!showAdaptInfo)}
               className="p-1 rounded-full text-[#8d6e63] hover:text-[#d7ccc8] hover:bg-[#5d4037]/40 transition-colors cursor-pointer"
