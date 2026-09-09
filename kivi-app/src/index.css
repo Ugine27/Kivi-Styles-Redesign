@@ -77,8 +77,47 @@ body {
 .theme-coffee .text-orange-400 { color: #795548 !important; }
 .theme-coffee .text-orange-500 { color: #8d6e63 !important; }
 .theme-coffee .text-orange-500\/50 { color: rgba(141, 110, 99, 0.75) !important; }
-.theme-coffee [class*="text-[#d7ccc8]"] { color: #5d4037 !important; }
-.theme-coffee [class*="text-[#f4ece1]"] { color: #3e2723 !important; }
+
+/* Context Studio: Rich Espresso Content Panel with High-Contrast Typography */
+.context-studio-panel {
+  background-color: #342018 !important;
+  border-color: rgba(125, 83, 64, 0.5) !important;
+}
+
+.theme-coffee .context-studio-panel,
+.context-studio-panel {
+  color: #fdfaf6 !important;
+}
+
+.theme-coffee .context-studio-panel .text-title-cream,
+.context-studio-panel .text-title-cream {
+  color: #fdfaf6 !important;
+}
+
+.theme-coffee .context-studio-panel .text-desc-beige,
+.context-studio-panel .text-desc-beige {
+  color: #eeddc9 !important;
+}
+
+.theme-coffee .context-studio-panel .text-label-muted,
+.context-studio-panel .text-label-muted {
+  color: #d7c2ae !important;
+}
+
+.theme-coffee .context-studio-panel .text-quote-sample,
+.context-studio-panel .text-quote-sample {
+  color: #ffffff !important;
+}
+
+.theme-coffee .context-studio-panel textarea,
+.context-studio-panel textarea {
+  color: #fdfaf6 !important;
+}
+
+.theme-coffee .context-studio-panel textarea::placeholder,
+.context-studio-panel textarea::placeholder {
+  color: #c4ab94 !important;
+}
 
 .theme-coffee .bg-orange-300 { background-color: #795548 !important; }
 .theme-coffee .bg-orange-400 { background-color: #8d6e63 !important; }
