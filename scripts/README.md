@@ -5,6 +5,8 @@ This directory contains historical, one-off utility and migration scripts create
 These scripts are **not required at runtime** by the core web application (`kivi-app/`). They are preserved here for historical context, reproducibility, and development audit trails.
 
 ### Contents
+- **`generate_submission_artifacts.py`**: Fully automated script using headless Chrome to compile high-resolution submission PDFs (`docs/product-positioning.pdf`, `docs/product-vision.pdf`, and `prototype/screens.pdf`).
+- **`archive/`**: Historical project setup and architecture documents (`Plan.md`, `Runner.md`).
 - **`add_*.py`**: Scripts that introduced initial feature skeletons and state hooks (shortcuts, quicklaunch, seamless switching).
 - **`fix_*.py`**: One-off layout, hitbox, and CSS correction utilities.
 - **`pop_up_cat*.py`**: Iterations exploring radial positioning of the WhisPURR desktop anchor.
