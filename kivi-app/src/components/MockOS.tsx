@@ -823,7 +823,7 @@ const MockOS = memo(({
                     <Sparkles className="w-16 h-16 text-purple-500/50 mx-auto mb-6" />
                     <h2 className="text-2xl font-bold text-white mb-2">Antigravity AI</h2>
                     <p className="text-gray-400 max-w-md mx-auto">
-                      Hold <kbd className="px-2 py-1 bg-white/10 rounded-md text-white/80 mx-1 border border-white/20">Alt</kbd> anywhere in the OS to invoke Kivi and translate your speech.
+                      Hold <kbd className="px-2 py-1 bg-white/10 rounded-md text-white/80 mx-1 border border-white/20">Alt</kbd> anywhere in the OS to invoke Whispurr and translate your speech.
                     </p>
                   </div>
                   
