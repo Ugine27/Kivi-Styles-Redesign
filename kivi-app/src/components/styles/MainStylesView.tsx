@@ -9,7 +9,8 @@ import {
   Palette,
   X,
   Search,
-  Zap
+  Zap,
+  SlidersHorizontal
 } from 'lucide-react';
 import { StyleItem, WeeklyStats } from './StylesData';
 
@@ -384,13 +385,13 @@ function ContextOptionsRenderer({
         </div>
       </div>
 
-      {/* Preset Cards */}
-      <div className="flex gap-3 w-full shrink-0 min-h-[110px]">
+      {/* Preset Cards with Larger Examples */}
+      <div className="flex gap-3.5 w-full shrink-0 min-h-[140px]">
         {currentModes.map((opt, i) => (
           <div 
             key={i}
             onClick={() => setSelectedIndex(i)}
-            className={`relative flex-1 rounded-2xl border-2 p-3 cursor-pointer transition-all flex flex-col justify-end min-h-0 ${
+            className={`relative flex-1 rounded-2xl border-2 p-3.5 cursor-pointer transition-all flex flex-col justify-end min-h-0 ${
               selectedIndex === i
                 ? 'border-[#8d6e63] bg-[#8d6e63]/20 text-[#f4ece1] shadow-lg' 
                 : 'border-[#5d4037]/30 bg-[#190f0b]/50 text-[#d7ccc8]/70 hover:border-[#5d4037]/80 hover:bg-[#2b1f1a]'
@@ -401,19 +402,29 @@ function ContextOptionsRenderer({
                 <Check size={14} strokeWidth={3} />
               </div>
             )}
-            <div className={`flex-1 rounded-xl mb-2 p-2 flex flex-col justify-center border min-h-0 overflow-hidden ${selectedIndex === i ? 'bg-[#f4ece1]/20 border-[#f4ece1]/30' : 'bg-[#f4ece1]/10 border-[#f4ece1]/10'}`}>
-              <p className={`text-xs font-sans leading-tight italic whitespace-pre-wrap line-clamp-2 ${selectedIndex === i ? 'text-white font-medium' : 'text-[#f4ece1]/90'}`}>
+            <div className={`flex-1 rounded-xl mb-3 p-3 flex flex-col justify-center border min-h-0 overflow-hidden ${selectedIndex === i ? 'bg-[#f4ece1]/20 border-[#f4ece1]/30' : 'bg-[#f4ece1]/10 border-[#f4ece1]/10'}`}>
+              <p className={`text-[13px] md:text-[14px] font-sans leading-snug italic whitespace-pre-wrap line-clamp-3 ${selectedIndex === i ? 'text-white font-medium' : 'text-[#f4ece1]/90'}`}>
                 "{opt.ex}"
               </p>
             </div>
-            <h3 className="text-sm font-bold mb-0.5 font-sans text-[#f4ece1] tracking-tight shrink-0 truncate">{opt.n}</h3>
-            <p className="text-[10px] md:text-[11px] opacity-80 font-serif italic leading-tight shrink-0 line-clamp-1">{opt.d}</p>
+            <h3 className="text-sm md:text-base font-bold mb-0.5 font-sans text-[#f4ece1] tracking-tight shrink-0 truncate">{opt.n}</h3>
+            <p className="text-[11px] opacity-80 font-serif italic leading-tight shrink-0 line-clamp-1">{opt.d}</p>
           </div>
         ))}
       </div>
 
+      {/* Spacing & Section Label Pushing Custom Box Down */}
+      <div className="flex items-center gap-3 mt-4 shrink-0 px-0.5">
+        <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-[#5d4037]/40 to-transparent" />
+        <span className="text-[10px] font-bold uppercase tracking-widest text-[#d7ccc8]/50 flex items-center gap-1.5">
+          <SlidersHorizontal className="w-3 h-3 text-orange-400/80" />
+          <span>Custom Instructions</span>
+        </span>
+        <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-[#5d4037]/40 to-transparent" />
+      </div>
+
       {/* Custom Rules Box */}
-      <div className="bg-[#190f0b]/90 border border-[#5d4037]/50 rounded-2xl p-4 flex flex-col gap-3 shrink-0 shadow-inner">
+      <div className="bg-[#190f0b]/90 border border-[#5d4037]/50 rounded-2xl p-4 md:p-5 flex flex-col gap-3 shrink-0 shadow-inner">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <div className="p-1.5 bg-orange-500/15 text-orange-400 rounded-xl border border-orange-500/25 shadow-sm">
