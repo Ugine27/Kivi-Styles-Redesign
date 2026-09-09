@@ -290,28 +290,30 @@ const MockOS = memo(({ activeText, mode, setMode, degree, setDegree, isAltPresse
             className="fixed z-[100] pointer-events-none flex items-center justify-center w-0 h-0"
             style={{ left: hudPosition.x, top: hudPosition.y }}
           >
+            {/* Constant Beige gradient arc trace */}
+            <svg className="absolute pointer-events-none" style={{ width: 240, height: 240, left: -120, top: -120 }}>
+              <defs>
+                <linearGradient id="arcFadeShared" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#E8D5B5" stopOpacity="0" />
+                  <stop offset="20%" stopColor="#E8D5B5" stopOpacity="0.4" />
+                  <stop offset="50%" stopColor="#E8D5B5" stopOpacity="1" />
+                  <stop offset="80%" stopColor="#E8D5B5" stopOpacity="0.4" />
+                  <stop offset="100%" stopColor="#E8D5B5" stopOpacity="0" />
+                </linearGradient>
+              </defs>
+              <path d="M 120 10 A 110 110 0 0 1 120 230" fill="none" stroke="url(#arcFadeShared)" strokeWidth="2" strokeLinecap="round" />
+            </svg>
+
             <AnimatePresence>
               {activeDial === 0 && (
                 <motion.div 
                   key="dial-0"
-                  initial={{ x: -40, opacity: 0 }}
+                  initial={{ x: -100, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
-                  exit={{ x: -40, opacity: 0 }}
+                  exit={{ x: -100, opacity: 0 }}
                   transition={{ type: 'spring', stiffness: 300, damping: 25 }}
                   className="absolute flex items-center justify-center w-0 h-0"
                 >
-                  <svg className="absolute pointer-events-none" style={{ width: 240, height: 240, left: -120, top: -120 }}>
-                    <defs>
-                      <linearGradient id="arcFade0" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#E8D5B5" stopOpacity="0" />
-                        <stop offset="20%" stopColor="#E8D5B5" stopOpacity="0.4" />
-                        <stop offset="50%" stopColor="#E8D5B5" stopOpacity="1" />
-                        <stop offset="80%" stopColor="#E8D5B5" stopOpacity="0.4" />
-                        <stop offset="100%" stopColor="#E8D5B5" stopOpacity="0" />
-                      </linearGradient>
-                    </defs>
-                    <path d="M 120 10 A 110 110 0 0 1 120 230" fill="none" stroke="url(#arcFade0)" strokeWidth="2" strokeLinecap="round" />
-                  </svg>
                   {MODES.map((m, i) => {
                     const diff = i - modeRotation;
                     const angle = diff * 25;
@@ -331,24 +333,12 @@ const MockOS = memo(({ activeText, mode, setMode, degree, setDegree, isAltPresse
               {activeDial === 1 && (
                 <motion.div 
                   key="dial-1"
-                  initial={{ x: 40, opacity: 0 }}
+                  initial={{ x: 100, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
-                  exit={{ x: 40, opacity: 0 }}
+                  exit={{ x: 100, opacity: 0 }}
                   transition={{ type: 'spring', stiffness: 300, damping: 25 }}
                   className="absolute flex items-center justify-center w-0 h-0"
                 >
-                  <svg className="absolute pointer-events-none" style={{ width: 240, height: 240, left: -120, top: -120 }}>
-                    <defs>
-                      <linearGradient id="arcFade1" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#E8D5B5" stopOpacity="0" />
-                        <stop offset="20%" stopColor="#E8D5B5" stopOpacity="0.4" />
-                        <stop offset="50%" stopColor="#E8D5B5" stopOpacity="1" />
-                        <stop offset="80%" stopColor="#E8D5B5" stopOpacity="0.4" />
-                        <stop offset="100%" stopColor="#E8D5B5" stopOpacity="0" />
-                      </linearGradient>
-                    </defs>
-                    <path d="M 120 10 A 110 110 0 0 1 120 230" fill="none" stroke="url(#arcFade1)" strokeWidth="2" strokeLinecap="round" />
-                  </svg>
                   {LANGS.map((m, i) => {
                     const diff = i - langRotation;
                     const angle = diff * 25;
