@@ -6,7 +6,9 @@ import {
   ChevronRight,
   Check,
   Plus,
-  Palette
+  Palette,
+  X,
+  Search
 } from 'lucide-react';
 import { StyleItem, WeeklyStats } from './StylesData';
 
@@ -22,6 +24,14 @@ interface MainStylesViewProps {
   onToggleAdaptive?: () => void;
 }
 
+const DEFAULT_CONTEXT_APPS: Record<string, string[]> = {
+  "Formal": ["Teams", "Outlook", "LinkedIn"],
+  "Casual": ["Slack", "Discord", "WhatsApp"],
+  "Developer": ["VS Code", "Terminal", "GitHub"],
+  "Prompts": ["ChatGPT", "Claude", "Midjourney"],
+  "Other apps": ["Chrome", "Notion", "Obsidian"]
+};
+
 export default function MainStylesView({
   activeStyleName,
   onSelectActiveStyle,
@@ -29,6 +39,51 @@ export default function MainStylesView({
   onToggleAdaptive
 }: MainStylesViewProps) {
   const [showAdaptInfo, setShowAdaptInfo] = useState(false);
+  const [isAddAppsOpen, setIsAddAppsOpen] = useState(false);
+  const [contextApps, setContextApps] = useState<Record<string, string[]>>(() => {
+    try {
+      const saved = localStorage.getItem('whispurr_context_apps');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {
+      console.error(e);
+    }
+    return DEFAULT_CONTEXT_APPS;
+  });
+
+  const handleAddApp = (contextName: string, appName: string) => {
+    const trimmed = appName.trim();
+    if (!trimmed) return;
+    setContextApps(prev => {
+      const current = prev[contextName] || DEFAULT_CONTEXT_APPS[contextName] || [];
+      if (current.some(a => a.toLowerCase() === trimmed.toLowerCase())) {
+        return prev;
+      }
+      const updated = {
+        ...prev,
+        [contextName]: [...current, trimmed]
+      };
+      try {
+        localStorage.setItem('whispurr_context_apps', JSON.stringify(updated));
+      } catch (e) {}
+      return updated;
+    });
+  };
+
+  const handleRemoveApp = (contextName: string, appName: string) => {
+    setContextApps(prev => {
+      const current = prev[contextName] || DEFAULT_CONTEXT_APPS[contextName] || [];
+      const updated = {
+        ...prev,
+        [contextName]: current.filter(a => a.toLowerCase() !== appName.toLowerCase())
+      };
+      try {
+        localStorage.setItem('whispurr_context_apps', JSON.stringify(updated));
+      } catch (e) {}
+      return updated;
+    });
+  };
+
+  const activeApps = contextApps[activeStyleName] || DEFAULT_CONTEXT_APPS[activeStyleName] || [];
 
   return (
     <div className="flex-1 w-full h-full relative p-4">
@@ -87,14 +142,24 @@ export default function MainStylesView({
                     </div>
                     <h2 className="text-3xl font-bold text-[#f4ece1] tracking-tight">{activeStyleName}</h2>
                   </div>
-                  <button className="flex items-center gap-2 px-4 py-2 bg-[#5d4037]/20 hover:bg-[#5d4037]/40 text-[#f4ece1] rounded-xl font-medium transition-colors border border-[#5d4037]/30">
-                    <Plus className="w-4 h-4" />
+                  <button 
+                    type="button"
+                    onClick={() => setIsAddAppsOpen(true)}
+                    className="flex items-center gap-2 px-4 py-2 bg-[#5d4037]/20 hover:bg-[#5d4037]/40 active:scale-95 text-[#f4ece1] rounded-xl font-medium transition-all border border-[#5d4037]/30 hover:border-[#8d6e63] cursor-pointer"
+                    title={`Add apps to ${activeStyleName}`}
+                  >
+                    <Plus className="w-4 h-4 text-orange-400" />
                     <span>Add Apps</span>
                   </button>
                 </div>
                 
                 <div className="flex-1 bg-[#2b1f1a]/50 rounded-2xl border border-[#5d4037]/30 p-4 lg:p-6 overflow-hidden min-h-0">
-                  <ContextOptionsRenderer activeStyleName={activeStyleName} />
+                  <ContextOptionsRenderer 
+                    activeStyleName={activeStyleName} 
+                    apps={activeApps}
+                    onRemoveApp={(app) => handleRemoveApp(activeStyleName, app)}
+                    onOpenAddApps={() => setIsAddAppsOpen(true)}
+                  />
                 </div>
               </motion.div>
             </AnimatePresence>
@@ -158,71 +223,101 @@ export default function MainStylesView({
         </div>
 
       </div>
+
+      {/* Add Apps Modal */}
+      <AddAppsModal 
+        isOpen={isAddAppsOpen}
+        onClose={() => setIsAddAppsOpen(false)}
+        contextName={activeStyleName}
+        currentApps={activeApps}
+        onAddApp={(app) => handleAddApp(activeStyleName, app)}
+        onRemoveApp={(app) => handleRemoveApp(activeStyleName, app)}
+      />
     </div>
   );
 }
 
-function ContextOptionsRenderer({ activeStyleName }: { activeStyleName: string }) {
-  const contextOptions: Record<string, {apps: string[], modes: {n: string, d: string, ex: string}[]}> = {
-    "Formal": {
-      apps: ["Teams", "Outlook", "LinkedIn"],
-      modes: [
-        { n: 'clear', d: 'clean sentences, shorthand kept.', ex: 'Please take a look at this.' },
-        { n: 'casual', d: 'lowercase workplace shorthand.', ex: 'can you check this out' },
-        { n: 'formal', d: 'everything spelled out, properly.', ex: 'I kindly request that you review this material.' }
-      ]
-    },
-    "Casual": {
-      apps: ["Slack", "Discord", "WhatsApp"],
-      modes: [
-        { n: 'natural', d: 'light cleanup, your voice kept.', ex: 'I am going to be a bit late.' },
-        { n: 'very casual', d: 'lowercase, shorthand, zero fuss.', ex: 'running late' },
-        { n: 'polished', d: 'full punctuation and grammar.', ex: 'I will be arriving later than expected.' }
-      ]
-    },
-    "Developer": {
-      apps: ["VS Code", "Terminal", "GitHub"],
-      modes: [
-        { n: 'clear', d: 'the full instruction, plainly.', ex: 'Fix the bug in the login module.' },
-        { n: 'concise', d: 'the fewest words that still say it.', ex: 'Fix login bug.' },
-        { n: 'structured', d: 'goal, changes, validation.', ex: 'Task: Resolve login bug.\nImpact: Critical.' }
-      ]
-    },
-    "Prompts": {
-      apps: ["ChatGPT", "Claude", "Midjourney"],
-      modes: [
-        { n: 'direct', d: 'straight to the instruction.', ex: 'Write a Python script.' },
-        { n: 'detailed', d: 'all constraints mapped out.', ex: 'Write a robust Python script using type hints.' },
-        { n: 'creative', d: 'open-ended and descriptive.', ex: 'Act as an expert engineer and create...' }
-      ]
-    },
-    "Other apps": {
-      apps: ["Chrome", "Notion", "Obsidian"],
-      modes: [
-        { n: 'balanced', d: 'cleaned, but still yours.', ex: 'Yeah, that sounds good to me.' },
-        { n: 'minimal', d: 'compressed to fragments.', ex: 'Sounds good.' },
-        { n: 'polished', d: 'composed, complete sentences.', ex: 'That sounds perfectly fine with me.' }
-      ]
-    }
+interface ContextOptionsRendererProps {
+  activeStyleName: string;
+  apps: string[];
+  onRemoveApp: (app: string) => void;
+  onOpenAddApps: () => void;
+}
+
+function ContextOptionsRenderer({ 
+  activeStyleName, 
+  apps,
+  onRemoveApp,
+  onOpenAddApps 
+}: ContextOptionsRendererProps) {
+  const contextModes: Record<string, {n: string, d: string, ex: string}[]> = {
+    "Formal": [
+      { n: 'clear', d: 'clean sentences, shorthand kept.', ex: 'Please take a look at this.' },
+      { n: 'casual', d: 'lowercase workplace shorthand.', ex: 'can you check this out' },
+      { n: 'formal', d: 'everything spelled out, properly.', ex: 'I kindly request that you review this material.' }
+    ],
+    "Casual": [
+      { n: 'natural', d: 'light cleanup, your voice kept.', ex: 'I am going to be a bit late.' },
+      { n: 'very casual', d: 'lowercase, shorthand, zero fuss.', ex: 'running late' },
+      { n: 'polished', d: 'full punctuation and grammar.', ex: 'I will be arriving later than expected.' }
+    ],
+    "Developer": [
+      { n: 'clear', d: 'the full instruction, plainly.', ex: 'Fix the bug in the login module.' },
+      { n: 'concise', d: 'the fewest words that still say it.', ex: 'Fix login bug.' },
+      { n: 'structured', d: 'goal, changes, validation.', ex: 'Task: Resolve login bug.\nImpact: Critical.' }
+    ],
+    "Prompts": [
+      { n: 'direct', d: 'straight to the instruction.', ex: 'Write a Python script.' },
+      { n: 'detailed', d: 'all constraints mapped out.', ex: 'Write a robust Python script using type hints.' },
+      { n: 'creative', d: 'open-ended and descriptive.', ex: 'Act as an expert engineer and create...' }
+    ],
+    "Other apps": [
+      { n: 'balanced', d: 'cleaned, but still yours.', ex: 'Yeah, that sounds good to me.' },
+      { n: 'minimal', d: 'compressed to fragments.', ex: 'Sounds good.' },
+      { n: 'polished', d: 'composed, complete sentences.', ex: 'That sounds perfectly fine with me.' }
+    ]
   };
 
-  const currentOption = contextOptions[activeStyleName] || contextOptions["Other apps"];
+  const currentModes = contextModes[activeStyleName] || contextModes["Other apps"];
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   return (
     <div className="flex flex-col gap-4 w-full h-full min-h-0">
-      <div className="flex items-center gap-3 shrink-0">
+      <div className="flex items-center gap-3 shrink-0 flex-wrap">
         <span className="text-[#d7ccc8]/50 text-xs font-bold uppercase tracking-widest">Active In:</span>
-        <div className="flex gap-2">
-          {currentOption.apps.map(app => (
-            <span key={app} className="px-3 py-1 bg-[#f4ece1]/5 border border-white/5 rounded-lg text-xs text-[#d7ccc8] font-medium shadow-sm">
-              {app}
+        <div className="flex gap-2 flex-wrap items-center">
+          {apps.map(app => (
+            <span 
+              key={app} 
+              className="group inline-flex items-center gap-1.5 px-3 py-1 bg-[#f4ece1]/5 hover:bg-[#f4ece1]/10 border border-white/10 hover:border-[#8d6e63]/60 rounded-lg text-xs text-[#d7ccc8] hover:text-[#f4ece1] font-medium shadow-sm transition-all"
+            >
+              <span>{app}</span>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onRemoveApp(app);
+                }}
+                className="opacity-40 group-hover:opacity-100 hover:text-red-400 p-0.5 rounded transition-all cursor-pointer"
+                title={`Remove ${app}`}
+              >
+                <X className="w-3 h-3" />
+              </button>
             </span>
           ))}
+          <button
+            type="button"
+            onClick={onOpenAddApps}
+            className="inline-flex items-center gap-1 px-2.5 py-1 bg-[#8d6e63]/20 hover:bg-[#8d6e63]/40 border border-[#8d6e63]/40 hover:border-[#8d6e63] text-xs text-[#f4ece1] rounded-lg transition-colors cursor-pointer"
+            title="Add more apps to this context"
+          >
+            <Plus className="w-3 h-3 text-orange-400" />
+            <span>Add</span>
+          </button>
         </div>
       </div>
       <div className="flex gap-4 w-full flex-1 min-h-0">
-        {currentOption.modes.map((opt, i) => (
+        {currentModes.map((opt, i) => (
           <div 
             key={i}
             onClick={() => setSelectedIndex(i)}
@@ -246,6 +341,174 @@ function ContextOptionsRenderer({ activeStyleName }: { activeStyleName: string }
             <p className="text-[10px] md:text-[11px] opacity-80 font-serif italic leading-tight shrink-0 line-clamp-2">{opt.d}</p>
           </div>
         ))}
+      </div>
+    </div>
+  );
+}
+
+interface AddAppsModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  contextName: string;
+  currentApps: string[];
+  onAddApp: (appName: string) => void;
+  onRemoveApp: (appName: string) => void;
+}
+
+function AddAppsModal({
+  isOpen,
+  onClose,
+  contextName,
+  currentApps,
+  onAddApp,
+  onRemoveApp
+}: AddAppsModalProps) {
+  const [inputValue, setInputValue] = useState('');
+
+  const suggestedApps = [
+    "Slack", "Discord", "Teams", "Outlook", "Apple Mail", "Gmail",
+    "VS Code", "Terminal", "iTerm2", "Cursor", "GitHub", "Xcode",
+    "Notion", "Obsidian", "Figma", "Linear", "Jira", "Trello",
+    "Chrome", "Safari", "Arc", "Firefox", "Brave",
+    "ChatGPT", "Claude", "Perplexity", "Midjourney",
+    "WhatsApp", "Telegram", "Zoom", "Google Meet", "Word", "Excel"
+  ];
+
+  if (!isOpen) return null;
+
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (inputValue.trim()) {
+      onAddApp(inputValue.trim());
+      setInputValue('');
+    }
+  };
+
+  const filteredSuggested = suggestedApps.filter(app => 
+    !currentApps.some(c => c.toLowerCase() === app.toLowerCase()) &&
+    (!inputValue.trim() || app.toLowerCase().includes(inputValue.toLowerCase()))
+  );
+
+  return (
+    <div 
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/75 backdrop-blur-md"
+      onClick={onClose}
+    >
+      <div 
+        className="bg-[#190f0b] border border-[#5d4037] rounded-3xl p-6 md:p-8 max-w-lg w-full shadow-2xl flex flex-col gap-6 text-[#f4ece1] relative max-h-[85vh] overflow-hidden"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="flex items-start justify-between border-b border-[#5d4037]/40 pb-4 shrink-0">
+          <div>
+            <h3 className="text-2xl font-bold text-[#f4ece1] flex items-center gap-2.5">
+              <span>Add Apps to</span>
+              <span className="text-orange-400 font-extrabold">{contextName}</span>
+            </h3>
+            <p className="text-xs text-[#d7ccc8]/70 mt-1">
+              Select or type apps that should automatically trigger the {contextName} context.
+            </p>
+          </div>
+          <button 
+            type="button"
+            onClick={onClose}
+            className="p-2 text-[#d7ccc8]/60 hover:text-white hover:bg-white/5 rounded-full transition-colors cursor-pointer"
+            title="Close"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Input Bar */}
+        <form onSubmit={handleFormSubmit} className="flex gap-2 shrink-0">
+          <div className="relative flex-1">
+            <Search className="w-4 h-4 text-[#d7ccc8]/40 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <input 
+              type="text"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              placeholder="Search or enter app name (e.g. Safari, Figma, Cursor)..."
+              className="w-full bg-[#2b1f1a] border border-[#5d4037]/60 rounded-xl pl-10 pr-4 py-2.5 text-sm text-[#f4ece1] placeholder:text-[#d7ccc8]/40 focus:border-orange-400 focus:outline-none transition-all"
+              autoFocus
+            />
+          </div>
+          <button 
+            type="submit"
+            disabled={!inputValue.trim()}
+            className="px-4 py-2.5 bg-[#8d6e63] hover:bg-[#795548] disabled:opacity-40 disabled:cursor-not-allowed text-[#f4ece1] font-semibold text-sm rounded-xl transition-all flex items-center gap-1.5 shrink-0 cursor-pointer"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Add</span>
+          </button>
+        </form>
+
+        {/* Content Body: Scrollable */}
+        <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-5 min-h-0">
+          {/* Currently Assigned */}
+          <div>
+            <div className="text-xs font-bold uppercase tracking-wider text-[#d7ccc8]/60 mb-2.5 flex items-center justify-between">
+              <span>Currently Assigned ({currentApps.length})</span>
+            </div>
+            {currentApps.length === 0 ? (
+              <p className="text-xs text-white/40 italic bg-white/5 p-3 rounded-xl">No apps assigned yet. Add some below!</p>
+            ) : (
+              <div className="flex flex-wrap gap-2">
+                {currentApps.map(app => (
+                  <span 
+                    key={app}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#5d4037]/30 border border-[#5d4037]/60 rounded-xl text-xs font-semibold text-[#f4ece1]"
+                  >
+                    <span>{app}</span>
+                    <button 
+                      type="button"
+                      onClick={() => onRemoveApp(app)}
+                      className="text-white/40 hover:text-red-400 transition-colors p-0.5 cursor-pointer"
+                      title={`Remove ${app}`}
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Quick Add Suggestions */}
+          <div>
+            <div className="text-xs font-bold uppercase tracking-wider text-[#d7ccc8]/60 mb-2.5">
+              <span>Popular & Suggested Apps</span>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {filteredSuggested.map(app => (
+                <button
+                  key={app}
+                  type="button"
+                  onClick={() => onAddApp(app)}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#2b1f1a]/80 hover:bg-[#5d4037]/40 border border-[#5d4037]/30 hover:border-orange-400/50 rounded-xl text-xs text-[#d7ccc8] hover:text-[#f4ece1] font-medium transition-all cursor-pointer"
+                >
+                  <Plus className="w-3 h-3 text-orange-400/70" />
+                  <span>{app}</span>
+                </button>
+              ))}
+              {filteredSuggested.length === 0 && (
+                <p className="text-xs text-white/40 italic">
+                  {inputValue.trim() ? `Press Enter or click Add to add "${inputValue.trim()}".` : 'All suggested apps are currently added.'}
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="border-t border-[#5d4037]/40 pt-4 flex justify-end shrink-0">
+          <button 
+            type="button"
+            onClick={onClose}
+            className="px-6 py-2 bg-[#8d6e63] hover:bg-[#795548] text-[#f4ece1] font-semibold text-sm rounded-xl transition-all shadow-md active:scale-95 cursor-pointer"
+          >
+            Done
+          </button>
+        </div>
       </div>
     </div>
   );
