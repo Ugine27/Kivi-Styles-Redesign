@@ -77,11 +77,11 @@ export default function FloatingDictationHUD({
   return (
     <AnimatePresence>
       <motion.div
-        initial={{ opacity: 0, y: -25, x: "-50%", scale: 0.96 }}
+        initial={{ opacity: 0, y: 25, x: "-50%", scale: 0.96 }}
         animate={{ opacity: 1, y: 0, x: "-50%", scale: 1 }}
-        exit={{ opacity: 0, y: -25, x: "-50%", scale: 0.96 }}
+        exit={{ opacity: 0, y: 25, x: "-50%", scale: 0.96 }}
         transition={{ type: "spring", stiffness: 450, damping: 30 }}
-        className="fixed top-8 md:top-12 left-1/2 z-[9999] w-[92vw] max-w-lg select-none"
+        className="fixed bottom-16 md:bottom-20 left-1/2 z-[9999] w-[92vw] max-w-lg select-none"
       >
         <div className="bg-[#190f0b]/95 backdrop-blur-2xl border border-[#5d4037]/80 rounded-3xl p-5 md:p-6 shadow-[0_25px_70px_rgba(0,0,0,0.85),0_0_40px_rgba(249,115,22,0.15)] text-[#f4ece1] flex flex-col gap-4 relative overflow-hidden">
           {/* Subtle glowing aura */}
