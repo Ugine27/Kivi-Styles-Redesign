@@ -94,27 +94,61 @@ const MockOS = memo(({
   const [showModeHud, setShowModeHud] = useState(false);
   const [hudPosition, setHudPosition] = useState({ x: 0, y: 0 });
   
+  const [dialLangs, setDialLangs] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem('whispurr_dial_languages');
+      return saved ? JSON.parse(saved) : ['AutoDetect', 'English', 'Hindi'];
+    } catch (e) {
+      return ['AutoDetect', 'English', 'Hindi'];
+    }
+  });
+
+  const [dialModes, setDialModes] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem('whispurr_dial_modes');
+      return saved ? JSON.parse(saved) : ['Formal', 'Casual', 'Developer', 'Prompts'];
+    } catch (e) {
+      return ['Formal', 'Casual', 'Developer', 'Prompts'];
+    }
+  });
+
   const [modeRotation, setModeRotation] = useState(0);
   const [activeDial, setActiveDial] = useState<0 | 1>(0);
   const [langRotation, setLangRotation] = useState(0);
-  
-  const LANGS = ['AutoDetect', 'English', 'Hindi'];
-  const MODES = ['Formal', 'Casual', 'Developer', 'Prompts'];
   
   const modeRef = useRef(mode);
   modeRef.current = mode;
   const activeDialRef = useRef(activeDial);
   activeDialRef.current = activeDial;
+  const dialModesRef = useRef(dialModes);
+  dialModesRef.current = dialModes;
+  const dialLangsRef = useRef(dialLangs);
+  dialLangsRef.current = dialLangs;
+
+  // Listen for dynamic dial customizations from WhispurrApp Shortcuts tab
+  useEffect(() => {
+    const handleDialConfigChange = () => {
+      try {
+        const savedLangs = localStorage.getItem('whispurr_dial_languages');
+        if (savedLangs) setDialLangs(JSON.parse(savedLangs));
+        const savedModes = localStorage.getItem('whispurr_dial_modes');
+        if (savedModes) setDialModes(JSON.parse(savedModes));
+      } catch (e) {}
+    };
+    window.addEventListener('whispurr_dial_config_changed', handleDialConfigChange);
+    return () => window.removeEventListener('whispurr_dial_config_changed', handleDialConfigChange);
+  }, []);
   
   useEffect(() => {
     if (isAltPressed) {
-      const idx = MODES.indexOf(modeRef.current as string);
+      const idx = dialModesRef.current.indexOf(modeRef.current as string);
       setModeRotation(idx >= 0 ? idx : 0);
       setActiveDial(0);
+      activeDialRef.current = 0;
     }
   }, [isAltPressed]);
 
-  // Alt+Scroll or Alt+Arrow to change mode/lang
+  // Alt+Scroll or Alt+Arrow / Alt+Right-Click to change mode/lang
   useEffect(() => {
     if (!isAltPressed) return;
     
@@ -139,21 +173,25 @@ const MockOS = memo(({
     
     const cycleMode = (direction: 1 | -1, overrideX?: number, overrideY?: number) => {
       if (!setMode) return;
+      const modesList = dialModesRef.current;
       setModeRotation(prev => {
         let nextRot = prev + direction;
         if (nextRot < 0) nextRot = 0;
-        if (nextRot > MODES.length - 1) nextRot = MODES.length - 1;
-        setMode(MODES[nextRot]);
+        if (nextRot > modesList.length - 1) nextRot = Math.max(0, modesList.length - 1);
+        if (modesList[nextRot]) {
+          setMode(modesList[nextRot]);
+        }
         return nextRot;
       });
       updateHudPosition(overrideX, overrideY);
     };
 
     const cycleLang = (direction: 1 | -1, overrideX?: number, overrideY?: number) => {
+      const langsList = dialLangsRef.current;
       setLangRotation(prev => {
         let nextRot = prev + direction;
         if (nextRot < 0) nextRot = 0;
-        if (nextRot > LANGS.length - 1) nextRot = LANGS.length - 1;
+        if (nextRot > langsList.length - 1) nextRot = Math.max(0, langsList.length - 1);
         return nextRot;
       });
       updateHudPosition(overrideX, overrideY);
@@ -163,6 +201,16 @@ const MockOS = memo(({
       e.preventDefault();
       if (activeDialRef.current === 0) cycleMode(e.deltaY > 0 ? 1 : -1, e.clientX, e.clientY);
       else cycleLang(e.deltaY > 0 ? 1 : -1, e.clientX, e.clientY);
+    };
+
+    const handleContextMenu = (e: MouseEvent) => {
+      e.preventDefault();
+      setActiveDial(prev => {
+        const next = (prev === 0 ? 1 : 0) as 0 | 1;
+        activeDialRef.current = next;
+        return next;
+      });
+      updateHudPosition(e.clientX, e.clientY);
     };
 
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -177,18 +225,22 @@ const MockOS = memo(({
       } else if (e.key === 'ArrowLeft') {
         e.preventDefault();
         setActiveDial(1);
+        activeDialRef.current = 1;
         updateHudPosition();
       } else if (e.key === 'ArrowRight') {
         e.preventDefault();
         setActiveDial(0);
+        activeDialRef.current = 0;
         updateHudPosition();
       }
     };
     
     window.addEventListener('wheel', handleWheel, { passive: false });
+    window.addEventListener('contextmenu', handleContextMenu);
     window.addEventListener('keydown', handleKeyDown);
     return () => {
       window.removeEventListener('wheel', handleWheel);
+      window.removeEventListener('contextmenu', handleContextMenu);
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, [isAltPressed, setMode]);
@@ -443,7 +495,7 @@ const MockOS = memo(({
                     </defs>
                     <path d="M 120 10 A 110 110 0 0 1 120 230" fill="none" stroke="url(#arcFadeShared0)" strokeWidth="2" strokeLinecap="round" />
                   </svg>
-                  {MODES.map((m, i) => {
+                  {dialModes.map((m, i) => {
                     const diff = i - modeRotation;
                     const angle = diff * 25;
                     const angleRad = angle * (Math.PI / 180);
@@ -451,8 +503,16 @@ const MockOS = memo(({
                     const x = Math.cos(angleRad) * radius;
                     const y = Math.sin(angleRad) * radius;
                     const isActive = diff === 0;
+                    const distance = Math.abs(diff);
+                    const opacity = distance === 0 ? 1 : distance === 1 ? 0.65 : distance === 2 ? 0.25 : 0;
                     return (
-                      <motion.div key={m} className="absolute" animate={{ x, y, scale: isActive ? 1.15 : 0.85, opacity: isActive ? 1 : 0.4 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}>
+                      <motion.div 
+                        key={m} 
+                        className="absolute" 
+                        animate={{ x, y, scale: isActive ? 1.15 : 0.85, opacity }} 
+                        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                        style={{ pointerEvents: distance > 2 ? 'none' : 'auto' }}
+                      >
                         <div className={`-translate-y-1/2 px-4 py-2 whitespace-nowrap font-bold transition-all ${isActive ? 'rounded-2xl shadow-xl backdrop-blur-3xl bg-[#5D4037]/90 text-[#E8D5B5] border border-[#3E2723]/50' : 'text-[#E8D5B5] drop-shadow-md'}`}>{m}</div>
                       </motion.div>
                     );
@@ -480,7 +540,7 @@ const MockOS = memo(({
                     </defs>
                     <path d="M 120 10 A 110 110 0 0 0 120 230" fill="none" stroke="url(#arcFadeShared1)" strokeWidth="2" strokeLinecap="round" />
                   </svg>
-                  {LANGS.map((m, i) => {
+                  {dialLangs.map((m, i) => {
                     const diff = i - langRotation;
                     // Mirror to the left side and invert the vertical progression
                     const angle = 180 - diff * 25;
@@ -489,8 +549,16 @@ const MockOS = memo(({
                     const x = Math.cos(angleRad) * radius;
                     const y = Math.sin(angleRad) * radius;
                     const isActive = diff === 0;
+                    const distance = Math.abs(diff);
+                    const opacity = distance === 0 ? 1 : distance === 1 ? 0.65 : distance === 2 ? 0.25 : 0;
                     return (
-                      <motion.div key={m} className="absolute right-0" animate={{ x, y, scale: isActive ? 1.15 : 0.85, opacity: isActive ? 1 : 0.4 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}>
+                      <motion.div 
+                        key={m} 
+                        className="absolute right-0" 
+                        animate={{ x, y, scale: isActive ? 1.15 : 0.85, opacity }} 
+                        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                        style={{ pointerEvents: distance > 2 ? 'none' : 'auto' }}
+                      >
                         <div className={`-translate-y-1/2 px-4 py-2 whitespace-nowrap font-bold transition-all ${isActive ? 'rounded-2xl shadow-xl backdrop-blur-3xl bg-[#5D4037]/90 text-[#E8D5B5] border border-[#3E2723]/50' : 'text-[#E8D5B5] drop-shadow-md'}`}>{m}</div>
                       </motion.div>
                     );

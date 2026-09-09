@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { PanelLeftClose, Keyboard, PanelLeft, Home, BookOpen, Zap, Palette, Clock, FileText, X, Mic, Pencil, User, Settings, Shield, LayoutTemplate, CreditCard, PlayCircle, Square, Trash2, Sparkles, Copy, Check, Info, PawPrint } from 'lucide-react';
+import { PanelLeftClose, Keyboard, PanelLeft, Home, BookOpen, Zap, Palette, Clock, FileText, X, Mic, Pencil, User, Settings, Shield, LayoutTemplate, CreditCard, PlayCircle, Square, Trash2, Sparkles, Copy, Check, Info, PawPrint, Plus } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Tutorial from './Tutorial';
 import StylesManager from './styles/StylesManager';
@@ -250,6 +250,87 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
   const [quickEditShortcut, setQuickEditShortcut] = useState(() => localStorage.getItem('whispurr_quickedit') || 'Alt + Ctrl');
   const [isRecordingQuickEdit, setIsRecordingQuickEdit] = useState(false);
   const [isSeamlessSwitchEnabled, setIsSeamlessSwitchEnabled] = useState(() => localStorage.getItem('whispurr_seamless_switch') !== 'false');
+
+  const ALL_DIAL_LANGUAGES = [
+    'AutoDetect',
+    'English',
+    'Hindi',
+    'Spanish',
+    'French',
+    'German',
+    'Japanese',
+    'Mandarin',
+    'Italian',
+    'Portuguese',
+    'Russian',
+    'Arabic',
+    'Korean',
+    'Dutch'
+  ];
+
+  const ALL_DIAL_MODES = [
+    'Formal',
+    'Casual',
+    'Developer',
+    'Prompts',
+    'Other apps',
+    'Academic',
+    'Concise',
+    'Warm',
+    'Technical'
+  ];
+
+  const [dialLanguages, setDialLanguages] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem('whispurr_dial_languages');
+      return saved ? JSON.parse(saved) : ['AutoDetect', 'English', 'Hindi'];
+    } catch (e) {
+      return ['AutoDetect', 'English', 'Hindi'];
+    }
+  });
+
+  const [dialModes, setDialModes] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem('whispurr_dial_modes');
+      return saved ? JSON.parse(saved) : ['Formal', 'Casual', 'Developer', 'Prompts'];
+    } catch (e) {
+      return ['Formal', 'Casual', 'Developer', 'Prompts'];
+    }
+  });
+
+  const toggleDialLanguage = (lang: string) => {
+    setDialLanguages(prev => {
+      let next: string[];
+      if (prev.includes(lang)) {
+        if (prev.length <= 1) return prev;
+        next = prev.filter(l => l !== lang);
+      } else {
+        next = [...prev, lang];
+      }
+      try {
+        localStorage.setItem('whispurr_dial_languages', JSON.stringify(next));
+        window.dispatchEvent(new CustomEvent('whispurr_dial_config_changed'));
+      } catch (e) {}
+      return next;
+    });
+  };
+
+  const toggleDialMode = (m: string) => {
+    setDialModes(prev => {
+      let next: string[];
+      if (prev.includes(m)) {
+        if (prev.length <= 1) return prev;
+        next = prev.filter(item => item !== m);
+      } else {
+        next = [...prev, m];
+      }
+      try {
+        localStorage.setItem('whispurr_dial_modes', JSON.stringify(next));
+        window.dispatchEvent(new CustomEvent('whispurr_dial_config_changed'));
+      } catch (e) {}
+      return next;
+    });
+  };
 
   useEffect(() => {
     if (isRecordingShortcut) {
@@ -1438,8 +1519,8 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
             )}
           
                         {activeTab === 'Shortcuts' && (
-              <motion.div key="shortcuts" variants={tabVariants} initial="initial" animate="animate" exit="exit" className="absolute inset-4 flex gap-4">
-                <div className="flex-1 flex flex-col gap-6 max-w-4xl mx-auto">
+              <motion.div id="shortcuts-tab-scroll" key="shortcuts" variants={tabVariants} initial="initial" animate="animate" exit="exit" className="absolute inset-4 overflow-y-auto pr-2 pb-16 custom-scrollbar">
+                <div className="flex flex-col gap-6 max-w-4xl mx-auto">
                   <div className="px-2 mt-4">
                     <h1 className="text-3xl font-bold tracking-tight mb-2 text-white">Keyboard Shortcuts</h1>
                     <p className="text-white/50 text-sm">Customize how you interact with WhisPURR via your keyboard.</p>
@@ -1497,26 +1578,154 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                       </button>
                     </div>
 
-                    <div className="flex items-center justify-between">
-                      <div className="flex flex-col gap-1.5">
-                        <span className="text-xl font-bold text-white tracking-tight">Seamless Switch</span>
-                        <span className="text-[15px] text-white/50">Easily switch between modes without ever having to open the app</span>
-                        <span className="text-xs text-orange-400 font-mono mt-1 uppercase tracking-widest">Shortcut: Arrow Up/Down & Mouse Scroll</span>
+                    {/* Seamless Switch & Radial Dials */}
+                    <div className="flex flex-col gap-5 pt-6 border-t border-white/5">
+                      <div className="flex items-center justify-between">
+                        <div className="flex flex-col gap-1.5">
+                          <div className="flex items-center gap-2">
+                            <span className="text-xl font-bold text-white tracking-tight">Seamless Switch (Dual Radial Dials)</span>
+                            <span className="text-[10px] uppercase font-bold tracking-widest px-2 py-0.5 rounded-md bg-orange-500/20 text-orange-300 border border-orange-500/30">
+                              OS HUD
+                            </span>
+                          </div>
+                          <span className="text-[15px] text-white/50">
+                            Switch between tone modes and target languages directly from anywhere on your desktop.
+                          </span>
+                        </div>
+                        <button 
+                          onClick={() => {
+                            const next = !isSeamlessSwitchEnabled;
+                            setIsSeamlessSwitchEnabled(next);
+                            localStorage.setItem('whispurr_seamless_switch', String(next));
+                          }}
+                          className={`relative w-[68px] h-[36px] rounded-full transition-colors shadow-inner shrink-0 ${
+                            isSeamlessSwitchEnabled ? 'bg-orange-500' : 'bg-white/10'
+                          }`}
+                        >
+                          <div className={`absolute top-1 bottom-1 w-7 bg-white rounded-full transition-transform shadow-md ${
+                            isSeamlessSwitchEnabled ? 'left-[36px]' : 'left-1'
+                          }`} />
+                        </button>
                       </div>
-                      <button 
-                        onClick={() => {
-                          const next = !isSeamlessSwitchEnabled;
-                          setIsSeamlessSwitchEnabled(next);
-                          localStorage.setItem('whispurr_seamless_switch', String(next));
-                        }}
-                        className={`relative w-[68px] h-[36px] rounded-full transition-colors shadow-inner ${
-                          isSeamlessSwitchEnabled ? 'bg-orange-500' : 'bg-white/10'
-                        }`}
-                      >
-                        <div className={`absolute top-1 bottom-1 w-7 bg-white rounded-full transition-transform shadow-md ${
-                          isSeamlessSwitchEnabled ? 'left-[36px]' : 'left-1'
-                        }`} />
-                      </button>
+
+                      {/* Instructions Cards */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
+                        {/* Right Dial: Modes */}
+                        <div className="bg-[#1a1a1a]/80 border border-white/10 rounded-2xl p-4 flex flex-col gap-2 shadow-inner">
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs font-bold uppercase tracking-wider text-orange-400">Right Dial: Modes</span>
+                            <span className="px-2 py-0.5 bg-orange-500/15 border border-orange-500/30 text-orange-300 rounded font-mono text-[11px] font-bold">
+                              Alt + Scroll
+                            </span>
+                          </div>
+                          <p className="text-xs text-white/75 leading-relaxed">
+                            Hold <kbd className="px-1.5 py-0.5 bg-white/10 border border-white/20 rounded text-[#f4ece1] font-mono text-[11px]">Alt</kbd> anywhere and <strong>scroll</strong> (or press <kbd className="px-1.5 py-0.5 bg-white/10 border border-white/20 rounded text-[#f4ece1] font-mono text-[11px]">↑</kbd> / <kbd className="px-1.5 py-0.5 bg-white/10 border border-white/20 rounded text-[#f4ece1] font-mono text-[11px]">↓</kbd>) to cycle through your tone modes on the right radial dial.
+                          </p>
+                        </div>
+
+                        {/* Left Dial: Languages */}
+                        <div className="bg-[#1a1a1a]/80 border border-white/10 rounded-2xl p-4 flex flex-col gap-2 shadow-inner">
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs font-bold uppercase tracking-wider text-amber-400">Left Dial: Languages</span>
+                            <span className="px-2 py-0.5 bg-amber-500/15 border border-amber-500/30 text-amber-300 rounded font-mono text-[11px] font-bold">
+                              Alt + Right Click / →
+                            </span>
+                          </div>
+                          <p className="text-xs text-white/75 leading-relaxed">
+                            Hold <kbd className="px-1.5 py-0.5 bg-white/10 border border-white/20 rounded text-[#f4ece1] font-mono text-[11px]">Alt</kbd> and <strong>right-click</strong> (or press <kbd className="px-1.5 py-0.5 bg-white/10 border border-white/20 rounded text-[#f4ece1] font-mono text-[11px]">→</kbd> / <kbd className="px-1.5 py-0.5 bg-white/10 border border-white/20 rounded text-[#f4ece1] font-mono text-[11px]">←</kbd>) to switch to the languages dial, then <strong>scroll</strong> to select your language.
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Customise Languages to Showcase */}
+                      <div className="flex flex-col gap-3 bg-[#1a1a1a]/50 border border-white/10 rounded-2xl p-4 md:p-5 mt-1">
+                        <div className="flex items-center justify-between flex-wrap gap-2">
+                          <div>
+                            <h3 className="text-sm font-bold text-white tracking-tight flex items-center gap-2">
+                              <span>Showcased Languages on Dial</span>
+                              <span className="text-xs text-amber-400 font-mono">({dialLanguages.length} active)</span>
+                            </h3>
+                            <p className="text-xs text-white/50 mt-0.5">
+                              Click languages to customize which ones are showcased on the left radial dial.
+                            </p>
+                          </div>
+                          <button 
+                            onClick={() => {
+                              const resetLangs = ['AutoDetect', 'English', 'Hindi'];
+                              setDialLanguages(resetLangs);
+                              localStorage.setItem('whispurr_dial_languages', JSON.stringify(resetLangs));
+                              window.dispatchEvent(new CustomEvent('whispurr_dial_config_changed'));
+                            }}
+                            className="text-[11px] text-white/40 hover:text-white/80 transition-colors underline cursor-pointer"
+                          >
+                            Reset to defaults
+                          </button>
+                        </div>
+                        <div className="flex flex-wrap gap-2 pt-1">
+                          {ALL_DIAL_LANGUAGES.map(lang => {
+                            const isSelected = dialLanguages.includes(lang);
+                            return (
+                              <button
+                                key={lang}
+                                onClick={() => toggleDialLanguage(lang)}
+                                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium transition-all cursor-pointer border ${
+                                  isSelected
+                                    ? 'bg-amber-500/20 text-amber-300 border-amber-500/50 shadow-[0_0_10px_rgba(245,158,11,0.15)] font-semibold'
+                                    : 'bg-white/5 text-white/50 border-white/5 hover:bg-white/10 hover:text-white/80 hover:border-white/15'
+                                }`}
+                              >
+                                {isSelected ? <Check className="w-3.5 h-3.5 text-amber-400" /> : <Plus className="w-3.5 h-3.5 opacity-40" />}
+                                <span>{lang}</span>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+
+                      {/* Customise Modes to Showcase */}
+                      <div className="flex flex-col gap-3 bg-[#1a1a1a]/50 border border-white/10 rounded-2xl p-4 md:p-5">
+                        <div className="flex items-center justify-between flex-wrap gap-2">
+                          <div>
+                            <h3 className="text-sm font-bold text-white tracking-tight flex items-center gap-2">
+                              <span>Showcased Modes on Dial</span>
+                              <span className="text-xs text-orange-400 font-mono">({dialModes.length} active)</span>
+                            </h3>
+                            <p className="text-xs text-white/50 mt-0.5">
+                              Click modes to customize which ones are showcased on the right radial dial.
+                            </p>
+                          </div>
+                          <button 
+                            onClick={() => {
+                              const resetModes = ['Formal', 'Casual', 'Developer', 'Prompts'];
+                              setDialModes(resetModes);
+                              localStorage.setItem('whispurr_dial_modes', JSON.stringify(resetModes));
+                              window.dispatchEvent(new CustomEvent('whispurr_dial_config_changed'));
+                            }}
+                            className="text-[11px] text-white/40 hover:text-white/80 transition-colors underline cursor-pointer"
+                          >
+                            Reset to defaults
+                          </button>
+                        </div>
+                        <div className="flex flex-wrap gap-2 pt-1">
+                          {ALL_DIAL_MODES.map(m => {
+                            const isSelected = dialModes.includes(m);
+                            return (
+                              <button
+                                key={m}
+                                onClick={() => toggleDialMode(m)}
+                                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium transition-all cursor-pointer border ${
+                                  isSelected
+                                    ? 'bg-orange-500/20 text-orange-300 border-orange-500/50 shadow-[0_0_10px_rgba(249,115,22,0.15)] font-semibold'
+                                    : 'bg-white/5 text-white/50 border-white/5 hover:bg-white/10 hover:text-white/80 hover:border-white/15'
+                                }`}
+                              >
+                                {isSelected ? <Check className="w-3.5 h-3.5 text-orange-400" /> : <Plus className="w-3.5 h-3.5 opacity-40" />}
+                                <span>{m}</span>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
