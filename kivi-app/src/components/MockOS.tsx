@@ -54,34 +54,32 @@ const MockOS = memo(({ activeText, mode, setMode, degree, setDegree, isAltPresse
 
   const [showModeHud, setShowModeHud] = useState(false);
   const [hudPosition, setHudPosition] = useState({ x: 0, y: 0 });
+  
   const [modeRotation, setModeRotation] = useState(0);
+  const [activeDial, setActiveDial] = useState<0 | 1>(0);
+  const [langRotation, setLangRotation] = useState(0);
+  
+  const LANGS = ['AutoDetect', 'English', 'Hindi'];
+  const MODES = ['Formal', 'Casual', 'Developer', 'Prompts'];
+  
   const modeRef = useRef(mode);
   modeRef.current = mode;
-  
-  const MODES = ['Formal', 'Casual', 'Developer', 'Prompts'];
+  const activeDialRef = useRef(activeDial);
+  activeDialRef.current = activeDial;
   
   useEffect(() => {
     if (isAltPressed) {
       const idx = MODES.indexOf(modeRef.current as string);
       setModeRotation(idx >= 0 ? idx : 0);
+      setActiveDial(0);
     }
   }, [isAltPressed]);
 
-  // Alt+Scroll or Alt+Arrow to change mode
+  // Alt+Scroll or Alt+Arrow to change mode/lang
   useEffect(() => {
     if (!isAltPressed) return;
     
-    const cycleMode = (direction: 1 | -1, overrideX?: number, overrideY?: number) => {
-      if (!setMode) return;
-      
-      setModeRotation(prev => {
-        let nextRot = prev + direction;
-        if (nextRot < 0) nextRot = 0;
-        if (nextRot > MODES.length - 1) nextRot = MODES.length - 1;
-        setMode(MODES[nextRot]);
-        return nextRot;
-      });
-      
+    const updateHudPosition = (overrideX?: number, overrideY?: number) => {
       const currentX = overrideX !== undefined ? overrideX : globalMouseX;
       const currentY = overrideY !== undefined ? overrideY : globalMouseY;
 
@@ -99,19 +97,52 @@ const MockOS = memo(({ activeText, mode, setMode, degree, setDegree, isAltPresse
       setHudPosition({ x: rawX, y: rawY });
       setShowModeHud(true);
     };
+    
+    const cycleMode = (direction: 1 | -1, overrideX?: number, overrideY?: number) => {
+      if (!setMode) return;
+      setModeRotation(prev => {
+        let nextRot = prev + direction;
+        if (nextRot < 0) nextRot = 0;
+        if (nextRot > MODES.length - 1) nextRot = MODES.length - 1;
+        setMode(MODES[nextRot]);
+        return nextRot;
+      });
+      updateHudPosition(overrideX, overrideY);
+    };
+
+    const cycleLang = (direction: 1 | -1, overrideX?: number, overrideY?: number) => {
+      setLangRotation(prev => {
+        let nextRot = prev + direction;
+        if (nextRot < 0) nextRot = 0;
+        if (nextRot > LANGS.length - 1) nextRot = LANGS.length - 1;
+        return nextRot;
+      });
+      updateHudPosition(overrideX, overrideY);
+    };
 
     const handleWheel = (e: WheelEvent) => {
       e.preventDefault();
-      cycleMode(e.deltaY > 0 ? 1 : -1, e.clientX, e.clientY);
+      if (activeDialRef.current === 0) cycleMode(e.deltaY > 0 ? 1 : -1, e.clientX, e.clientY);
+      else cycleLang(e.deltaY > 0 ? 1 : -1, e.clientX, e.clientY);
     };
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'ArrowDown') {
         e.preventDefault();
-        cycleMode(1);
+        if (activeDialRef.current === 0) cycleMode(1);
+        else cycleLang(1);
       } else if (e.key === 'ArrowUp') {
         e.preventDefault();
-        cycleMode(-1);
+        if (activeDialRef.current === 0) cycleMode(-1);
+        else cycleLang(-1);
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        setActiveDial(1);
+        updateHudPosition();
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        setActiveDial(0);
+        updateHudPosition();
       }
     };
     
@@ -134,7 +165,7 @@ const MockOS = memo(({ activeText, mode, setMode, degree, setDegree, isAltPresse
       const timer = setTimeout(() => setShowModeHud(false), 1500);
       return () => clearTimeout(timer);
     }
-  }, [showModeHud, mode, isAltPressed]);
+  }, [showModeHud, mode, isAltPressed, activeDial, langRotation]);
 
   // Local state for native typing
   const [emailText, setEmailText] = useState('');
@@ -259,59 +290,82 @@ const MockOS = memo(({ activeText, mode, setMode, degree, setDegree, isAltPresse
             className="fixed z-[100] pointer-events-none flex items-center justify-center w-0 h-0"
             style={{ left: hudPosition.x, top: hudPosition.y }}
           >
-            <div className="absolute flex items-center justify-center w-0 h-0">
-              {/* Beige gradient arc trace */}
-              <svg className="absolute pointer-events-none" style={{ width: 240, height: 240, left: -120, top: -120 }}>
-                <defs>
-                  <linearGradient id="arcFade" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#E8D5B5" stopOpacity="0" />
-                    <stop offset="20%" stopColor="#E8D5B5" stopOpacity="0.4" />
-                    <stop offset="50%" stopColor="#E8D5B5" stopOpacity="1" />
-                    <stop offset="80%" stopColor="#E8D5B5" stopOpacity="0.4" />
-                    <stop offset="100%" stopColor="#E8D5B5" stopOpacity="0" />
-                  </linearGradient>
-                </defs>
-                <path d="M 120 10 A 110 110 0 0 1 120 230" fill="none" stroke="url(#arcFade)" strokeWidth="2" strokeLinecap="round" />
-              </svg>
-
-              {['Formal', 'Casual', 'Developer', 'Prompts'].map((m, i) => {
-                const diff = i - modeRotation;
-                
-                // 25 degree arc spacing
-                const angle = diff * 25;
-                const angleRad = angle * (Math.PI / 180);
-                
-                // Place options slightly further outside the arc to ensure no clipping
-                const radius = 145; 
-                
-                const x = Math.cos(angleRad) * radius;
-                const y = Math.sin(angleRad) * radius;
-                
-                const isActive = diff === 0;
-                
-                return (
-                  <motion.div 
-                    key={m}
-                    className="absolute"
-                    animate={{ 
-                      x, 
-                      y, 
-                      scale: isActive ? 1.15 : 0.85,
-                      opacity: isActive ? 1 : 0.4
-                    }}
-                    transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                  >
-                    <div className={`-translate-y-1/2 px-4 py-2 whitespace-nowrap font-bold transition-all ${
-                      isActive 
-                        ? 'rounded-2xl shadow-xl backdrop-blur-3xl bg-[#5D4037]/90 text-[#E8D5B5] border border-[#3E2723]/50' 
-                        : 'text-[#E8D5B5] drop-shadow-md'
-                    }`}>
-                      {m}
-                    </div>
-                  </motion.div>
-                );
-              })}
-            </div>
+            <AnimatePresence>
+              {activeDial === 0 && (
+                <motion.div 
+                  key="dial-0"
+                  initial={{ x: -40, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  exit={{ x: -40, opacity: 0 }}
+                  transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+                  className="absolute flex items-center justify-center w-0 h-0"
+                >
+                  <svg className="absolute pointer-events-none" style={{ width: 240, height: 240, left: -120, top: -120 }}>
+                    <defs>
+                      <linearGradient id="arcFade0" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#E8D5B5" stopOpacity="0" />
+                        <stop offset="20%" stopColor="#E8D5B5" stopOpacity="0.4" />
+                        <stop offset="50%" stopColor="#E8D5B5" stopOpacity="1" />
+                        <stop offset="80%" stopColor="#E8D5B5" stopOpacity="0.4" />
+                        <stop offset="100%" stopColor="#E8D5B5" stopOpacity="0" />
+                      </linearGradient>
+                    </defs>
+                    <path d="M 120 10 A 110 110 0 0 1 120 230" fill="none" stroke="url(#arcFade0)" strokeWidth="2" strokeLinecap="round" />
+                  </svg>
+                  {MODES.map((m, i) => {
+                    const diff = i - modeRotation;
+                    const angle = diff * 25;
+                    const angleRad = angle * (Math.PI / 180);
+                    const radius = 145; 
+                    const x = Math.cos(angleRad) * radius;
+                    const y = Math.sin(angleRad) * radius;
+                    const isActive = diff === 0;
+                    return (
+                      <motion.div key={m} className="absolute" animate={{ x, y, scale: isActive ? 1.15 : 0.85, opacity: isActive ? 1 : 0.4 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}>
+                        <div className={`-translate-y-1/2 px-4 py-2 whitespace-nowrap font-bold transition-all ${isActive ? 'rounded-2xl shadow-xl backdrop-blur-3xl bg-[#5D4037]/90 text-[#E8D5B5] border border-[#3E2723]/50' : 'text-[#E8D5B5] drop-shadow-md'}`}>{m}</div>
+                      </motion.div>
+                    );
+                  })}
+                </motion.div>
+              )}
+              {activeDial === 1 && (
+                <motion.div 
+                  key="dial-1"
+                  initial={{ x: 40, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  exit={{ x: 40, opacity: 0 }}
+                  transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+                  className="absolute flex items-center justify-center w-0 h-0"
+                >
+                  <svg className="absolute pointer-events-none" style={{ width: 240, height: 240, left: -120, top: -120 }}>
+                    <defs>
+                      <linearGradient id="arcFade1" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#E8D5B5" stopOpacity="0" />
+                        <stop offset="20%" stopColor="#E8D5B5" stopOpacity="0.4" />
+                        <stop offset="50%" stopColor="#E8D5B5" stopOpacity="1" />
+                        <stop offset="80%" stopColor="#E8D5B5" stopOpacity="0.4" />
+                        <stop offset="100%" stopColor="#E8D5B5" stopOpacity="0" />
+                      </linearGradient>
+                    </defs>
+                    <path d="M 120 10 A 110 110 0 0 1 120 230" fill="none" stroke="url(#arcFade1)" strokeWidth="2" strokeLinecap="round" />
+                  </svg>
+                  {LANGS.map((m, i) => {
+                    const diff = i - langRotation;
+                    const angle = diff * 25;
+                    const angleRad = angle * (Math.PI / 180);
+                    const radius = 145; 
+                    const x = Math.cos(angleRad) * radius;
+                    const y = Math.sin(angleRad) * radius;
+                    const isActive = diff === 0;
+                    return (
+                      <motion.div key={m} className="absolute" animate={{ x, y, scale: isActive ? 1.15 : 0.85, opacity: isActive ? 1 : 0.4 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}>
+                        <div className={`-translate-y-1/2 px-4 py-2 whitespace-nowrap font-bold transition-all ${isActive ? 'rounded-2xl shadow-xl backdrop-blur-3xl bg-[#5D4037]/90 text-[#E8D5B5] border border-[#3E2723]/50' : 'text-[#E8D5B5] drop-shadow-md'}`}>{m}</div>
+                      </motion.div>
+                    );
+                  })}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </motion.div>
         )}
       </AnimatePresence>
