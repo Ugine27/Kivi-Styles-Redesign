@@ -289,6 +289,7 @@ const MockOS = memo(({ activeText, mode, setMode, degree, setDegree, isAltPresse
             transition={{ type: 'spring', stiffness: 400, damping: 25 }}
             className="fixed z-[100] pointer-events-none flex items-center justify-center w-0 h-0"
             style={{ left: hudPosition.x, top: hudPosition.y }}
+          >
             <AnimatePresence>
               {activeDial === 0 && (
                 <motion.div 
