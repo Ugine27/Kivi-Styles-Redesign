@@ -32,16 +32,24 @@ const TOUR_STEPS = [
     { id: 'CatFacts', title: 'Cat Facts', text: 'Because who doesn\'t need a fun, random cat fact to brighten their workday?' }
   ];
 
+const VIDEOS = ['/cat.mp4', '/cat2.mp4', '/cat3.mp4'];
+
 export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: string, setMode?: (m: any) => void }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('Home');
-  const [homeVideo, setHomeVideo] = useState(() => Math.random() > 0.5 ? '/cat.mp4' : '/cat2.mp4');
+  const [homeVideo, setHomeVideo] = useState(() => VIDEOS[Math.floor(Math.random() * VIDEOS.length)]);
   const [videoKey, setVideoKey] = useState(0);
 
   useEffect(() => {
     if (activeTab === 'Home') {
-      setHomeVideo(Math.random() > 0.5 ? '/cat.mp4' : '/cat2.mp4');
+      setHomeVideo(prev => {
+        let next;
+        do {
+          next = VIDEOS[Math.floor(Math.random() * VIDEOS.length)];
+        } while (next === prev);
+        return next;
+      });
       setVideoKey(prev => prev + 1);
     }
   }, [activeTab]);
@@ -960,7 +968,16 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                       }}
                       src={homeVideo} 
                       autoPlay 
-                      loop 
+                      onEnded={() => {
+                        setHomeVideo(prev => {
+                          let next;
+                          do {
+                            next = VIDEOS[Math.floor(Math.random() * VIDEOS.length)];
+                          } while (next === prev);
+                          return next;
+                        });
+                        setVideoKey(prev => prev + 1);
+                      }}
                       muted 
                       playsInline 
                       className="absolute inset-0 w-full h-full object-cover object-center"
