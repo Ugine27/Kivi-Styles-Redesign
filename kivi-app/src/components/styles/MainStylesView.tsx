@@ -10,6 +10,7 @@ import {
   Search,
   Zap,
   SlidersHorizontal,
+  Sparkles,
   Briefcase,
   Coffee,
   Code2,
@@ -66,7 +67,8 @@ export default function MainStylesView({
   activeStyleName,
   onSelectActiveStyle,
   isAdaptiveMode = true,
-  onToggleAdaptive
+  onToggleAdaptive,
+  onRevisitIntro
 }: MainStylesViewProps) {
   const [showAdaptInfo, setShowAdaptInfo] = useState(false);
   const [isAddAppsOpen, setIsAddAppsOpen] = useState(false);
@@ -134,8 +136,20 @@ export default function MainStylesView({
           </div>
         </div>
 
-        {/* Adapt Toggle Bar */}
-        <div className="flex items-center gap-3 bg-[#190f0b]/90 border border-[#5d4037]/60 py-1.5 px-3.5 rounded-2xl shadow-inner shrink-0 relative">
+        <div className="flex items-center gap-2.5">
+          {onRevisitIntro && (
+            <button
+              onClick={onRevisitIntro}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-orange-500/15 border border-orange-500/30 text-orange-300 text-xs font-bold hover:bg-orange-500/25 transition-all cursor-pointer shadow-sm"
+              title="Open interactive Meet Styles demo"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-orange-400" />
+              <span>Demo</span>
+            </button>
+          )}
+
+          {/* Adapt Toggle Bar */}
+          <div className="flex items-center gap-3 bg-[#190f0b]/90 border border-[#5d4037]/60 py-1.5 px-3.5 rounded-2xl shadow-inner shrink-0 relative">
           <div className="flex flex-col text-right">
             <span className="text-[11px] font-bold uppercase tracking-wider text-[#d7ccc8]">
               Auto-Adapt
@@ -189,6 +203,7 @@ export default function MainStylesView({
             </AnimatePresence>
           </div>
         </div>
+      </div>
       </div>
 
       {/* Main 2-Column Area */}

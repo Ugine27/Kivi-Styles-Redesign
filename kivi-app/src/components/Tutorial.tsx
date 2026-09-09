@@ -318,6 +318,97 @@ function RadialDialsDemoSlide() {
   const [modeRotation, setModeRotation] = useState(0);
   const [langRotation, setLangRotation] = useState(0);
 
+  const [moodsEnabled, setMoodsEnabled] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem('whispurr_moods') === 'true';
+    } catch (e) {
+      return false;
+    }
+  });
+
+  useEffect(() => {
+    const handleMoodsChanged = (e: Event) => {
+      const custom = e as CustomEvent;
+      if (custom.detail && typeof custom.detail.enabled === 'boolean') {
+        setMoodsEnabled(custom.detail.enabled);
+      } else {
+        try {
+          setMoodsEnabled(localStorage.getItem('whispurr_moods') === 'true');
+        } catch {}
+      }
+    };
+    window.addEventListener('whispurr_moods_changed', handleMoodsChanged);
+    return () => window.removeEventListener('whispurr_moods_changed', handleMoodsChanged);
+  }, []);
+
+  const toggleMoods = () => {
+    const next = !moodsEnabled;
+    setMoodsEnabled(next);
+    try {
+      localStorage.setItem('whispurr_moods', String(next));
+      window.dispatchEvent(new CustomEvent('whispurr_moods_changed', { detail: { enabled: next } }));
+    } catch (e) {}
+  };
+
+  const MODE_EMOJIS: Record<string, string> = {
+    Formal: '🤝',
+    Casual: '☕',
+    Developer: '💻',
+    Prompts: '🤖',
+    'Other apps': '📂',
+    Academic: '🎓',
+    Concise: '⚡',
+    Warm: '💖'
+  };
+
+  const MODE_SAMPLES: Record<string, { plain: string; mood: string }> = {
+    Formal: {
+      plain: "Let's align our deliverables by next Tuesday.",
+      mood: "Let's align our deliverables by next Tuesday. 🤝📅"
+    },
+    Casual: {
+      plain: "Hey, sounds awesome, count me in!",
+      mood: "Hey, sounds awesome, count me in! 🙌✨"
+    },
+    Developer: {
+      plain: "Refactored the async hook and merged the PR.",
+      mood: "Refactored the async hook and merged the PR. 🚀💻"
+    },
+    Prompts: {
+      plain: "Act as a senior system architect and evaluate trade-offs.",
+      mood: "Act as a senior system architect and evaluate trade-offs. 🧠🤖"
+    },
+    'Other apps': {
+      plain: "Pasted formatted summary into Notion notes.",
+      mood: "Pasted formatted summary into Notion notes. 📂✨"
+    },
+    Academic: {
+      plain: "Empirical analysis demonstrates statistically significant variance.",
+      mood: "Empirical analysis demonstrates statistically significant variance. 📚🎓"
+    },
+    Concise: {
+      plain: "Done. Fixed bug in auth flow.",
+      mood: "Done. Fixed bug in auth flow. 👍"
+    },
+    Warm: {
+      plain: "Thank you so much for your thoughtful feedback, really appreciate it!",
+      mood: "Thank you so much for your thoughtful feedback, really appreciate it! 💖🌸"
+    }
+  };
+
+  const LANG_SAMPLES: Record<string, string> = {
+    AutoDetect: 'Auto-detecting your spoken language in real-time... 🌐',
+    English: 'Hello! How can I help you today? 👋',
+    Hindi: 'नमस्ते! आज मैं आपकी क्या सहायता कर सकता हूँ? 🙏',
+    Spanish: '¡Hola! ¿En qué puedo ayudarte hoy? 🇪🇸',
+    French: "Bonjour ! Comment puis-je vous aider aujourd'hui ? 🇫🇷",
+    German: 'Hallo! Wie kann ich Ihnen heute helfen? 🇩🇪',
+    Japanese: 'こんにちは！今日はどのようなご用件でしょうか？ 🇯🇵',
+    Mandarin: '你好！今天有什么我可以帮你的吗？ 🇨🇳',
+    Italian: 'Ciao! Come posso aiutarti oggi? 🇮🇹',
+    Portuguese: 'Olá! Como posso ajudar você hoje? 🇵🇹'
+  };
+
   const ALL_DIAL_LANGUAGES = [
     'AutoDetect',
     'English',
@@ -422,6 +513,9 @@ function RadialDialsDemoSlide() {
     setActiveDial(prev => (prev === 0 ? 1 : 0));
   };
 
+  const currentMode = dialModes[modeRotation] || 'Formal';
+  const currentLang = dialLanguages[langRotation] || 'English';
+
   return (
     <div className="flex flex-col items-center w-full max-w-4xl text-center select-none">
       <h1 className="text-3xl md:text-4xl font-serif font-medium tracking-tight mb-1 text-[#3e2723] flex items-center justify-center gap-2.5">
@@ -443,36 +537,53 @@ function RadialDialsDemoSlide() {
       >
         {/* Dial Switcher Bar */}
         <div className="flex items-center justify-between border-b border-[#3e2723]/10 pb-2.5 flex-wrap gap-2">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <button
               onClick={() => setActiveDial(0)}
-              className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                 activeDial === 0
                   ? 'bg-[#5D4037] text-[#E8D5B5] shadow-md scale-[1.02]'
                   : 'bg-[#3e2723]/5 text-[#3e2723]/70 hover:bg-[#3e2723]/10'
               }`}
             >
               <Compass className="w-3.5 h-3.5" />
-              <span>Right Dial: Modes</span>
-              <span className="px-1.5 py-0.5 rounded bg-black/20 text-[10px] font-mono">Alt + Scroll</span>
+              <span>Modes</span>
+              <span className="px-1.5 py-0.5 rounded bg-black/20 text-[10px] font-mono font-normal">Alt + Scroll</span>
             </button>
 
             <button
               onClick={() => setActiveDial(1)}
-              className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                 activeDial === 1
                   ? 'bg-[#5D4037] text-[#E8D5B5] shadow-md scale-[1.02]'
                   : 'bg-[#3e2723]/5 text-[#3e2723]/70 hover:bg-[#3e2723]/10'
               }`}
             >
               <Globe className="w-3.5 h-3.5" />
-              <span>Left Dial: Languages</span>
-              <span className="px-1.5 py-0.5 rounded bg-black/20 text-[10px] font-mono">Alt + Right Click / →</span>
+              <span>Languages</span>
+              <span className="px-1.5 py-0.5 rounded bg-black/20 text-[10px] font-mono font-normal">Alt + → / Right-Click</span>
+            </button>
+
+            <button
+              type="button"
+              role="switch"
+              aria-checked={moodsEnabled}
+              onClick={toggleMoods}
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer border ${
+                moodsEnabled
+                  ? 'bg-[#5D4037] text-[#E8D5B5] border-[#3E2723] shadow-md scale-[1.02]'
+                  : 'bg-[#3e2723]/5 text-[#3e2723]/70 border-transparent hover:bg-[#3e2723]/10'
+              }`}
+              title="Toggle Moods: adds expressive emojis based on your emotions and undertones"
+            >
+              <Sparkles className={`w-3.5 h-3.5 ${moodsEnabled ? 'text-amber-300' : 'text-[#8d6e63]'}`} />
+              <span>Moods: {moodsEnabled ? 'ON' : 'OFF'}</span>
+              <span>{moodsEnabled ? '✨' : '🎭'}</span>
             </button>
           </div>
 
-          <span className="text-[11px] text-[#3e2723]/50 font-serif italic hidden sm:inline">
-            Tip: Scroll wheel or right-click directly in this box to interact
+          <span className="text-[11px] text-[#3e2723]/50 font-serif italic hidden lg:inline">
+            Scroll or right-click to spin
           </span>
         </div>
 
@@ -509,6 +620,8 @@ function RadialDialsDemoSlide() {
                   const y = Math.sin(angleRad) * radius;
                   const isActive = diff === 0;
                   const opacity = distance === 0 ? 1 : distance === 1 ? 0.65 : distance === 2 ? 0.25 : 0;
+                  const emoji = MODE_EMOJIS[m] || '✨';
+                  const displayLabel = moodsEnabled ? `${m} ${emoji}` : m;
                   return (
                     <motion.div
                       key={m}
@@ -521,7 +634,7 @@ function RadialDialsDemoSlide() {
                           ? 'rounded-xl shadow-lg bg-[#5D4037] text-[#E8D5B5] border border-[#3E2723]'
                           : 'text-[#5D4037] drop-shadow-xs'
                       }`}>
-                        {m}
+                        {displayLabel}
                       </div>
                     </motion.div>
                   );
@@ -582,6 +695,27 @@ function RadialDialsDemoSlide() {
           </div>
         </div>
 
+        {/* Live Output Preview Strip */}
+        <div className="flex items-center justify-between px-3.5 py-2 rounded-xl bg-gradient-to-r from-[#f4ece1]/80 to-[#e8d5b5]/50 border border-[#3e2723]/10 text-xs">
+          <div className="flex items-center gap-2 overflow-hidden text-left flex-1 mr-2">
+            <span className="px-2 py-0.5 rounded-md bg-[#5D4037] text-[#E8D5B5] text-[10px] font-mono font-bold uppercase shrink-0">
+              {activeDial === 0 ? currentMode : currentLang}
+            </span>
+            <span className="text-[#3e2723] font-medium truncate font-sans">
+              {activeDial === 0
+                ? (moodsEnabled
+                    ? (MODE_SAMPLES[currentMode]?.mood || `${MODE_SAMPLES[currentMode]?.plain || 'Your adapted thoughts will flow here.'} ✨`)
+                    : (MODE_SAMPLES[currentMode]?.plain || 'Your adapted thoughts will flow here.'))
+                : (LANG_SAMPLES[currentLang] || 'Your translated voice appears here in real-time.')}
+            </span>
+          </div>
+          {activeDial === 0 && (
+            <span className="text-[10px] font-mono text-[#8d6e63] font-bold shrink-0 hidden sm:inline">
+              {moodsEnabled ? '✨ Moods Active' : 'Neutral Tone'}
+            </span>
+          )}
+        </div>
+
         {/* Customization Chips Section */}
         <div className="flex flex-col gap-2 pt-2 border-t border-[#3e2723]/10 text-left">
           <div className="flex items-center justify-between">
@@ -597,6 +731,7 @@ function RadialDialsDemoSlide() {
             {activeDial === 0 ? (
               ALL_DIAL_MODES.map(m => {
                 const isSelected = dialModes.includes(m);
+                const emoji = MODE_EMOJIS[m] || '✨';
                 return (
                   <button
                     key={m}
@@ -608,7 +743,7 @@ function RadialDialsDemoSlide() {
                     }`}
                   >
                     {isSelected ? <Check className="w-3 h-3 text-[#5D4037]" /> : <Plus className="w-3 h-3 opacity-40" />}
-                    <span>{m}</span>
+                    <span>{m} {moodsEnabled ? emoji : ''}</span>
                   </button>
                 );
               })
