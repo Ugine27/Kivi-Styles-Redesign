@@ -110,6 +110,14 @@ export default function MeetStylesIntro({ onProceed, onSkip }: MeetStylesIntroPr
           </div>
         </motion.div>
 
+        {/* Quick Dial Tip */}
+        <div className="flex items-center gap-2 text-xs text-amber-200/80 bg-amber-500/10 border border-amber-500/20 px-4 py-2.5 rounded-xl">
+          <Sparkles className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+          <span>
+            <strong>Desktop Dial:</strong> Hold <kbd className="px-1.5 py-0.5 bg-black/40 rounded border border-white/20 font-mono text-[11px] text-white">Alt</kbd> + <strong>Scroll</strong> anywhere to cycle modes, or <kbd className="px-1.5 py-0.5 bg-black/40 rounded border border-white/20 font-mono text-[11px] text-white">Alt</kbd> + <strong>Right Click</strong> to cycle languages.
+          </span>
+        </div>
+
         {/* Bottom Banner */}
         <div className="pt-2 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-sm text-white/50 text-center sm:text-left">
