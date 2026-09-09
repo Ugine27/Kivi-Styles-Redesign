@@ -1391,7 +1391,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
             )}
 
             {activeTab === 'Context' && (
-              <motion.div key="context" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col gap-6 p-6 md:p-8 overflow-y-auto ${glassPanel}`}>
+              <motion.div key="context" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col p-4 md:p-6 overflow-hidden ${glassPanel}`}>
                 <StylesManager 
                   currentMode={mode || 'Professional'} 
                   setMode={setMode}
