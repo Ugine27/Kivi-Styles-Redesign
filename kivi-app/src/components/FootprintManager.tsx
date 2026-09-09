@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PawPrint } from 'lucide-react';
 
@@ -136,7 +136,7 @@ const FootprintManager = React.memo(({
       const perpAngle = newAngle + (walker.isRight ? Math.PI / 2 : -Math.PI / 2);
       const pawX = Math.max(20, Math.min(w - 20, nextX + Math.cos(perpAngle) * lateralOffset));
       const pawY = Math.max(20, Math.min(h - 20, nextY + Math.sin(perpAngle) * lateralOffset));
-      const pawRotation = (newAngle * 180) / Math.PI + 90;
+      const pawRotation = (newAngle * 180) / Math.PI + 45;
 
       // Update walker state
       walker.x = nextX;
