@@ -99,6 +99,79 @@ const TOUR_STEPS = [
 
 const VIDEOS = ['/cat.mp4', '/cat2.mp4', '/cat3.mp4'];
 
+/**
+ * Parses time strings like "1h 42m", "45m", "2h", or numbers into total minutes.
+ */
+function parseTimeToMinutes(timeStr: string | number): number {
+  if (typeof timeStr === 'number') return timeStr;
+  if (!timeStr) return 0;
+  
+  const str = String(timeStr).toLowerCase().trim();
+  let totalMinutes = 0;
+  
+  const hoursMatch = str.match(/(\d+(?:\.\d+)?)\s*(?:h|hr|hrs|hour|hours)/);
+  if (hoursMatch) {
+    totalMinutes += parseFloat(hoursMatch[1]) * 60;
+  }
+  
+  const minsMatch = str.match(/(\d+(?:\.\d+)?)\s*(?:m|min|mins|minute|minutes)/);
+  if (minsMatch) {
+    totalMinutes += parseFloat(minsMatch[1]);
+  }
+  
+  if (!hoursMatch && !minsMatch) {
+    const num = parseFloat(str);
+    if (!isNaN(num)) return num;
+  }
+  
+  return totalMinutes;
+}
+
+/**
+ * Translates saved minutes into relatable, positive messages tailored for Professional or Casual mode.
+ */
+function getTimeSavedRelatableMessage(minutes: number, isCasual: boolean): string {
+  if (minutes < 5) {
+    return isCasual 
+      ? "A quick breath of fresh air ☕" 
+      : "A few valuable minutes saved.";
+  }
+  if (minutes < 15) {
+    // 5–15 minutes
+    return isCasual 
+      ? "Coffee break earned ☕" 
+      : "Enough time for a coffee.";
+  }
+  if (minutes < 30) {
+    // 15–30 minutes
+    return isCasual 
+      ? "That's a chapter of your book 📖" 
+      : "Enough time to read a chapter.";
+  }
+  if (minutes < 60) {
+    // 30–60 minutes
+    return isCasual 
+      ? "Enough time to watch an episode 🎬" 
+      : "Enough time to watch an episode.";
+  }
+  if (minutes < 120) {
+    // 1–2 hours
+    return isCasual 
+      ? "That's a whole movie + popcorn 🍿" 
+      : "Enough time to watch a movie.";
+  }
+  if (minutes < 240) {
+    // 2–4 hours
+    return isCasual 
+      ? "Enough time to make 3 presentations 📊" 
+      : "Enough time to complete ~3 presentations.";
+  }
+  // 4+ hours
+  return isCasual 
+    ? "That's almost half a workday back ✨" 
+    : "That's almost half a workday back.";
+}
+
 export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: string, setMode?: (m: any) => void }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -683,6 +756,65 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
   };
 
   const timeSavedWeekHrs = 15;
+
+  const [timeSavedToday, setTimeSavedToday] = useState<string>(() => {
+    try {
+      return localStorage.getItem('whispurr_time_saved_today') || '1h 42m';
+    } catch {
+      return '1h 42m';
+    }
+  });
+
+  useEffect(() => {
+    const handleTimeSavedChange = (e: Event) => {
+      const custom = e as CustomEvent;
+      if (custom.detail && typeof custom.detail.timeSaved === 'string') {
+        setTimeSavedToday(custom.detail.timeSaved);
+      } else {
+        try {
+          const saved = localStorage.getItem('whispurr_time_saved_today');
+          if (saved) setTimeSavedToday(saved);
+        } catch {}
+      }
+    };
+    window.addEventListener('whispurr_time_saved_changed', handleTimeSavedChange);
+    window.addEventListener('storage', handleTimeSavedChange);
+    return () => {
+      window.removeEventListener('whispurr_time_saved_changed', handleTimeSavedChange);
+      window.removeEventListener('storage', handleTimeSavedChange);
+    };
+  }, []);
+
+  const [activeMode, setActiveMode] = useState<string>(() => {
+    try {
+      return mode || localStorage.getItem('whispurr_mode') || 'Professional';
+    } catch {
+      return mode || 'Professional';
+    }
+  });
+
+  useEffect(() => {
+    if (mode) setActiveMode(mode);
+  }, [mode]);
+
+  useEffect(() => {
+    const handleModeChange = () => {
+      try {
+        const saved = localStorage.getItem('whispurr_mode');
+        if (saved) setActiveMode(saved);
+      } catch {}
+    };
+    window.addEventListener('storage', handleModeChange);
+    window.addEventListener('whispurr_dial_config_changed', handleModeChange);
+    return () => {
+      window.removeEventListener('storage', handleModeChange);
+      window.removeEventListener('whispurr_dial_config_changed', handleModeChange);
+    };
+  }, []);
+
+  const isCasualMode = (activeMode || '').toLowerCase() === 'casual';
+  const minutesSaved = parseTimeToMinutes(timeSavedToday);
+  const timeSavedRelatableMessage = getTimeSavedRelatableMessage(minutesSaved, isCasualMode);
   
   // Animation variants
   const tabVariants = {
@@ -1263,7 +1395,10 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                   <div className="flex flex-col gap-4 items-center">
                     <div className="flex flex-col items-center justify-center p-4 w-full rounded-2xl bg-orange-500/10 border border-orange-500/20 shadow-[0_0_20px_rgba(249,115,22,0.05)]">
                       <div className="text-xs text-orange-100/70 mb-1 uppercase tracking-wider font-semibold">Time Saved Today</div>
-                      <div className="font-bold text-4xl text-orange-400">1h 42m</div>
+                      <div className="font-bold text-4xl text-orange-400">{timeSavedToday}</div>
+                      <div className="text-xs text-orange-200/70 mt-1 font-medium text-center tracking-tight px-1">
+                        {timeSavedRelatableMessage}
+                      </div>
                       <div className="text-xs text-orange-200/40 mt-2">Weekly Total: {timeSavedWeekHrs} Hours</div>
                     </div>
                     <div className="flex w-full gap-3">
