@@ -36,10 +36,10 @@ export default function MainStylesView({
       <div className="px-2 shrink-0 mb-10">
         <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
           <Palette className="text-orange-400 w-8 h-8" />
-          Context
+          Modes
         </h1>
         <p className="text-white/50 text-sm">
-          Context decides how your words land. Choose your Tone and Mood for each and every App!
+          Modes decide how your words land. Choose your Tone and Mood for each and every App!
         </p>
       </div>
 
