@@ -69,7 +69,7 @@ export default function MainStylesView({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 10 }}
             transition={{ type: "spring", stiffness: 400, damping: 30 }}
-            className="absolute bottom-4 right-4 top-[180px] left-[420px] bg-[#190f0b]/90 border border-[#5d4037]/60 rounded-3xl p-8 shadow-2xl flex flex-col overflow-hidden backdrop-blur-xl"
+            className="absolute bottom-4 right-4 top-[80px] left-[420px] bg-[#190f0b]/90 border border-[#5d4037]/60 rounded-3xl p-8 shadow-2xl flex flex-col overflow-hidden backdrop-blur-xl"
           >
             <AnimatePresence mode="wait">
               <motion.div 
@@ -208,6 +208,9 @@ function ContextOptionsRenderer({ activeStyleName }: { activeStyleName: string }
 
   const currentOption = contextOptions[activeStyleName] || contextOptions["Other apps"];
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [customRules, setCustomRules] = useState<Record<string, string>>({});
+  
+  const rulesKey = `${activeStyleName}_${selectedIndex}`;
 
   return (
     <div className="flex flex-col gap-4 w-full h-full min-h-0">
@@ -246,6 +249,15 @@ function ContextOptionsRenderer({ activeStyleName }: { activeStyleName: string }
             <p className="text-[10px] md:text-[11px] opacity-80 font-serif italic leading-tight shrink-0 line-clamp-2">{opt.d}</p>
           </div>
         ))}
+      </div>
+      <div className="mt-2 shrink-0 flex flex-col gap-2">
+        <span className="text-[#d7ccc8]/50 text-[10px] font-bold uppercase tracking-widest">Custom Rules</span>
+        <textarea
+          value={customRules[rulesKey] || ''}
+          onChange={(e) => setCustomRules(prev => ({ ...prev, [rulesKey]: e.target.value }))}
+          placeholder="Add custom rules... (e.g., Use bullet points, keep it under 2 sentences)"
+          className="w-full h-20 bg-[#190f0b]/50 border border-[#5d4037]/40 rounded-xl p-3 text-sm text-[#f4ece1] placeholder:text-[#d7ccc8]/30 focus:outline-none focus:border-[#8d6e63] transition-colors resize-none shadow-inner"
+        />
       </div>
     </div>
   );
