@@ -91,8 +91,8 @@ const TOUR_STEPS = [
     { id: 'History', title: 'Chat Registers', text: 'Look back at everything you\'ve said. You can easily copy or reuse your past words here.' },
     { id: 'Dictionary', title: 'Your Custom Dictionary', text: 'Teach WhisPURR your unique vocabulary, like tricky names, special acronyms, or work-specific words.' },
     { id: 'ShortHand', title: 'ShortHand Macros', text: 'Create quick voice shortcuts! For example, say "sig" to automatically type out your entire email signature.' },
-    { id: 'Context', title: 'Global Context', text: 'Set up custom styles so WhisPURR always uses the right tone for your current task, like writing emails, chatting, or coding.' },
-    { id: 'ScratchPad', title: 'ScratchPad', text: 'Your personal sandbox! Quickly jot down ideas or play around to test your new custom styles.' },
+    { id: 'Modes', title: 'Global Modes', text: 'Set up custom modes so WhisPURR always uses the right tone for your current task, like writing emails, chatting, or coding.' },
+    { id: 'ScratchPad', title: 'ScratchPad', text: 'Your personal sandbox! Quickly jot down ideas or play around to test your new custom modes.' },
     { id: 'Profile', title: 'Your Profile', text: 'Manage your account details, billing, and tweak your overall settings just the way you like them.' },
     { id: 'CatFacts', title: 'Cat Facts', text: 'Because who doesn\'t need a fun, random cat fact to brighten their workday?' }
   ];
@@ -711,7 +711,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
           {[
             { name: 'Dictionary', icon: BookOpen },
             { name: 'ShortHand', icon: Zap },
-            { name: 'Context', icon: Palette },
+            { name: 'Modes', icon: Palette },
             { name: 'ScratchPad', icon: FileText },
           ].map((tab) => (
             <div key={tab.name} onClick={() => {
@@ -1385,7 +1385,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
               </motion.div>
             )}
 
-            {activeTab === 'Context' && (
+            {activeTab === 'Modes' && (
               <motion.div key="context" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col gap-6 p-6 md:p-8 overflow-y-auto ${glassPanel}`}>
                 <StylesManager 
                   currentMode={mode || 'Professional'} 
@@ -1457,7 +1457,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                     <div className="flex items-center justify-between">
                       <div className="flex flex-col gap-1.5">
                         <span className="text-xl font-bold text-white tracking-tight">Seamless Switch</span>
-                        <span className="text-[15px] text-white/50">Easily switch between contexts/modes without ever having to open the app</span>
+                        <span className="text-[15px] text-white/50">Easily switch between modes without ever having to open the app</span>
                         <span className="text-xs text-orange-400 font-mono mt-1 uppercase tracking-widest">Shortcut: Arrow Up/Down & Mouse Scroll</span>
                       </div>
                       <button 
@@ -1529,7 +1529,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                 </div>
                 <h1 className="text-3xl font-bold text-white tracking-tight">WhisPURR Tutorial</h1>
                 <p className="text-white/80 text-center max-w-md text-lg mb-4 font-medium">
-                  Need a refresher? Replay the interactive setup tutorial to learn about WhisPURR's features, shortcuts, and context modes.
+                  Need a refresher? Replay the interactive setup tutorial to learn about WhisPURR's features, shortcuts, and modes.
                 </p>
                 <button
                   onClick={() => setShowTutorial(true)}
@@ -1611,7 +1611,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                       <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-[#8d6e63]" /> Unlimited Words</li>
                       <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-[#8d6e63]" /> Advanced AI Engine</li>
                       <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-[#8d6e63]" /> Priority Support</li>
-                      <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-[#8d6e63]" /> Adaptive Contexts</li>
+                      <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-[#8d6e63]" /> Adaptive Modes</li>
                     </ul>
                     <button className="w-full py-3 rounded-xl bg-[#8d6e63] text-[#f4ece1] hover:bg-[#795548] transition-colors font-bold shadow-md">Upgrade to Lion</button>
                   </div>
@@ -1693,7 +1693,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                     </div>
                     <div className="bg-white/[0.02] border border-white/5 p-4 rounded-2xl flex flex-col items-center justify-center text-center shadow-sm hover:bg-white/[0.04] transition-colors">
                       <div className="text-2xl font-bold text-white mb-1">Formal</div>
-                      <div className="text-[10px] text-white/40 uppercase tracking-wider font-semibold">Top Context</div>
+                      <div className="text-[10px] text-white/40 uppercase tracking-wider font-semibold">Top Mode</div>
                     </div>
                     <div className="bg-white/[0.02] border border-white/5 p-4 rounded-2xl flex flex-col items-center justify-center text-center shadow-sm hover:bg-white/[0.04] transition-colors">
                       <div className="text-2xl font-bold text-white mb-1">342</div>
@@ -1708,7 +1708,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
               </motion.div>
             )}
 
-            {!['Home', 'History', 'Dictionary', 'ShortHand', 'ScratchPad', 'Context', 'Theme', 'Tutorial', 'Shortcuts', 'Settings', 'Plans & Billing', 'User Policy', 'Profile'].includes(activeTab) && (
+            {!['Home', 'History', 'Dictionary', 'ShortHand', 'ScratchPad', 'Modes', 'Theme', 'Tutorial', 'Shortcuts', 'Settings', 'Plans & Billing', 'User Policy', 'Profile'].includes(activeTab) && (
               <motion.div key="fallback" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col items-center justify-center gap-4 p-8 ${glassPanel}`}>
                 <Settings className="w-16 h-16 text-white/10" />
                 <h1 className="text-2xl font-bold text-white/50">{activeTab}</h1>
