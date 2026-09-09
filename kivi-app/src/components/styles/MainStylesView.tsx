@@ -6,7 +6,8 @@ import {
   ChevronRight,
   Check,
   Plus,
-  Palette
+  Palette,
+  ChevronDown
 } from 'lucide-react';
 import { StyleItem, WeeklyStats } from './StylesData';
 
@@ -29,9 +30,12 @@ export default function MainStylesView({
   onToggleAdaptive
 }: MainStylesViewProps) {
   const [showAdaptInfo, setShowAdaptInfo] = useState(false);
+  const [isAppsDropdownOpen, setIsAppsDropdownOpen] = useState(false);
+
+  const currentOptionApps = (CONTEXT_OPTIONS[activeStyleName] || CONTEXT_OPTIONS["Other apps"]).apps;
 
   return (
-    <div className="flex-1 w-full h-full relative p-4">
+    <div className="flex-1 w-full h-full relative p-4" onClick={() => setIsAppsDropdownOpen(false)}>
       {/* Title and Description */}
       <div className="px-2 shrink-0 mb-10">
         <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
@@ -70,6 +74,7 @@ export default function MainStylesView({
             exit={{ opacity: 0, scale: 0.95, y: 10 }}
             transition={{ type: "spring", stiffness: 400, damping: 30 }}
             className="absolute bottom-4 right-4 top-[120px] left-[420px] bg-[#190f0b]/90 border border-[#5d4037]/60 rounded-3xl p-8 shadow-2xl flex flex-col overflow-hidden backdrop-blur-xl"
+            onClick={(e) => e.stopPropagation()}
           >
             <AnimatePresence mode="wait">
               <motion.div 
@@ -87,10 +92,37 @@ export default function MainStylesView({
                     </div>
                     <h2 className="text-3xl font-bold text-[#f4ece1] tracking-tight">{activeStyleName}</h2>
                   </div>
-                  <button className="flex items-center gap-2 px-4 py-2 bg-[#5d4037]/20 hover:bg-[#5d4037]/40 text-[#f4ece1] rounded-xl font-medium transition-colors border border-[#5d4037]/30">
-                    <Plus className="w-4 h-4" />
-                    <span>Add Apps</span>
-                  </button>
+                  <div className="flex items-center gap-3">
+                    <div className="relative">
+                      <div 
+                        onClick={() => setIsAppsDropdownOpen(!isAppsDropdownOpen)}
+                        className="flex items-center gap-2 px-4 py-2 bg-[#190f0b]/50 border border-[#5d4037]/30 rounded-xl cursor-pointer hover:bg-[#2b1f1a] transition-colors"
+                      >
+                        <span className="text-[#d7ccc8]/70 text-sm font-bold uppercase tracking-widest">Active In...</span>
+                        <ChevronDown className="w-4 h-4 text-[#d7ccc8]/70" />
+                      </div>
+                      <AnimatePresence>
+                        {isAppsDropdownOpen && (
+                          <motion.div 
+                            initial={{ opacity: 0, y: -5 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -5 }}
+                            className="absolute top-full right-0 mt-2 flex flex-col gap-1 bg-[#2b1f1a] border border-[#5d4037]/50 rounded-xl p-2 shadow-xl z-50 w-48"
+                          >
+                            {currentOptionApps.map(app => (
+                              <div key={app} className="px-3 py-1.5 text-sm text-[#f4ece1] hover:bg-[#5d4037]/30 rounded-lg cursor-default">
+                                {app}
+                              </div>
+                            ))}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                    <button className="flex items-center gap-2 px-4 py-2 bg-[#5d4037]/20 hover:bg-[#5d4037]/40 text-[#f4ece1] rounded-xl font-medium transition-colors border border-[#5d4037]/30">
+                      <Plus className="w-4 h-4" />
+                      <span>Add Apps</span>
+                    </button>
+                  </div>
                 </div>
                 
                 <div className="flex-1 bg-[#2b1f1a]/50 rounded-2xl border border-[#5d4037]/30 p-4 lg:p-6 overflow-hidden min-h-0">
@@ -162,51 +194,51 @@ export default function MainStylesView({
   );
 }
 
-function ContextOptionsRenderer({ activeStyleName }: { activeStyleName: string }) {
-  const contextOptions: Record<string, {apps: string[], modes: {n: string, d: string, ex: string}[]}> = {
-    "Formal": {
-      apps: ["Teams", "Outlook", "LinkedIn"],
-      modes: [
-        { n: 'clear', d: 'clean sentences, shorthand kept.', ex: 'Please take a look at this.' },
-        { n: 'casual', d: 'lowercase workplace shorthand.', ex: 'can you check this out' },
-        { n: 'formal', d: 'everything spelled out, properly.', ex: 'I kindly request that you review this material.' }
-      ]
-    },
-    "Casual": {
-      apps: ["Slack", "Discord", "WhatsApp"],
-      modes: [
-        { n: 'natural', d: 'light cleanup, your voice kept.', ex: 'I am going to be a bit late.' },
-        { n: 'very casual', d: 'lowercase, shorthand, zero fuss.', ex: 'running late' },
-        { n: 'polished', d: 'full punctuation and grammar.', ex: 'I will be arriving later than expected.' }
-      ]
-    },
-    "Developer": {
-      apps: ["VS Code", "Terminal", "GitHub"],
-      modes: [
-        { n: 'clear', d: 'the full instruction, plainly.', ex: 'Fix the bug in the login module.' },
-        { n: 'concise', d: 'the fewest words that still say it.', ex: 'Fix login bug.' },
-        { n: 'structured', d: 'goal, changes, validation.', ex: 'Task: Resolve login bug.\nImpact: Critical.' }
-      ]
-    },
-    "Prompts": {
-      apps: ["ChatGPT", "Claude", "Midjourney"],
-      modes: [
-        { n: 'direct', d: 'straight to the instruction.', ex: 'Write a Python script.' },
-        { n: 'detailed', d: 'all constraints mapped out.', ex: 'Write a robust Python script using type hints.' },
-        { n: 'creative', d: 'open-ended and descriptive.', ex: 'Act as an expert engineer and create...' }
-      ]
-    },
-    "Other apps": {
-      apps: ["Chrome", "Notion", "Obsidian"],
-      modes: [
-        { n: 'balanced', d: 'cleaned, but still yours.', ex: 'Yeah, that sounds good to me.' },
-        { n: 'minimal', d: 'compressed to fragments.', ex: 'Sounds good.' },
-        { n: 'polished', d: 'composed, complete sentences.', ex: 'That sounds perfectly fine with me.' }
-      ]
-    }
-  };
+const CONTEXT_OPTIONS: Record<string, {apps: string[], modes: {n: string, d: string, ex: string}[]}> = {
+  "Formal": {
+    apps: ["Teams", "Outlook", "LinkedIn"],
+    modes: [
+      { n: 'clear', d: 'clean sentences, shorthand kept.', ex: 'Please take a look at this.' },
+      { n: 'casual', d: 'lowercase workplace shorthand.', ex: 'can you check this out' },
+      { n: 'formal', d: 'everything spelled out, properly.', ex: 'I kindly request that you review this material.' }
+    ]
+  },
+  "Casual": {
+    apps: ["Slack", "Discord", "WhatsApp"],
+    modes: [
+      { n: 'natural', d: 'light cleanup, your voice kept.', ex: 'I am going to be a bit late.' },
+      { n: 'very casual', d: 'lowercase, shorthand, zero fuss.', ex: 'running late' },
+      { n: 'polished', d: 'full punctuation and grammar.', ex: 'I will be arriving later than expected.' }
+    ]
+  },
+  "Developer": {
+    apps: ["VS Code", "Terminal", "GitHub"],
+    modes: [
+      { n: 'clear', d: 'the full instruction, plainly.', ex: 'Fix the bug in the login module.' },
+      { n: 'concise', d: 'the fewest words that still say it.', ex: 'Fix login bug.' },
+      { n: 'structured', d: 'goal, changes, validation.', ex: 'Task: Resolve login bug.\nImpact: Critical.' }
+    ]
+  },
+  "Prompts": {
+    apps: ["ChatGPT", "Claude", "Midjourney"],
+    modes: [
+      { n: 'direct', d: 'straight to the instruction.', ex: 'Write a Python script.' },
+      { n: 'detailed', d: 'all constraints mapped out.', ex: 'Write a robust Python script using type hints.' },
+      { n: 'creative', d: 'open-ended and descriptive.', ex: 'Act as an expert engineer and create...' }
+    ]
+  },
+  "Other apps": {
+    apps: ["Chrome", "Notion", "Obsidian"],
+    modes: [
+      { n: 'balanced', d: 'cleaned, but still yours.', ex: 'Yeah, that sounds good to me.' },
+      { n: 'minimal', d: 'compressed to fragments.', ex: 'Sounds good.' },
+      { n: 'polished', d: 'composed, complete sentences.', ex: 'That sounds perfectly fine with me.' }
+    ]
+  }
+};
 
-  const currentOption = contextOptions[activeStyleName] || contextOptions["Other apps"];
+function ContextOptionsRenderer({ activeStyleName }: { activeStyleName: string }) {
+  const currentOption = CONTEXT_OPTIONS[activeStyleName] || CONTEXT_OPTIONS["Other apps"];
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [customRules, setCustomRules] = useState<Record<string, string>>({});
   
@@ -214,16 +246,6 @@ function ContextOptionsRenderer({ activeStyleName }: { activeStyleName: string }
 
   return (
     <div className="flex flex-col gap-4 w-full h-full min-h-0">
-      <div className="flex items-center gap-3 shrink-0">
-        <span className="text-[#d7ccc8]/50 text-xs font-bold uppercase tracking-widest">Active In:</span>
-        <div className="flex gap-2">
-          {currentOption.apps.map(app => (
-            <span key={app} className="px-3 py-1 bg-[#f4ece1]/5 border border-white/5 rounded-lg text-xs text-[#d7ccc8] font-medium shadow-sm">
-              {app}
-            </span>
-          ))}
-        </div>
-      </div>
       <div className="flex gap-4 w-full flex-1 min-h-0">
         {currentOption.modes.map((opt, i) => (
           <div 
