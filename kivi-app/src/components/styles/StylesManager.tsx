@@ -86,7 +86,8 @@ export default function StylesManager({
             onSelectActiveStyle={handleSelectActiveStyle}
             isAdaptiveMode={effectiveAdaptiveMode}
             onToggleAdaptive={handleToggleAdaptive}
-                                  />
+            onRevisitIntro={() => setViewMode('intro')}
+          />
         )}
       </AnimatePresence>
     </div>
