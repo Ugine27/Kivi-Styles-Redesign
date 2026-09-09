@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Settings2, 
   Info,
   ChevronRight,
   Check,
@@ -10,7 +9,12 @@ import {
   X,
   Search,
   Zap,
-  SlidersHorizontal
+  SlidersHorizontal,
+  Briefcase,
+  Coffee,
+  Code2,
+  Bot,
+  Layers
 } from 'lucide-react';
 import { StyleItem, WeeklyStats } from './StylesData';
 
@@ -25,6 +29,30 @@ interface MainStylesViewProps {
   isAdaptiveMode?: boolean;
   onToggleAdaptive?: () => void;
 }
+
+const CONTEXT_ITEMS = [
+  { name: "Formal", icon: Briefcase, desc: "Workplace & business" },
+  { name: "Casual", icon: Coffee, desc: "Chats & social" },
+  { name: "Developer", icon: Code2, desc: "Code, git & bugs" },
+  { name: "Prompts", icon: Bot, desc: "AI assistant instructions" },
+  { name: "Other apps", icon: Layers, desc: "Everyday general typing" },
+];
+
+const CONTEXT_ICONS: Record<string, any> = {
+  "Formal": Briefcase,
+  "Casual": Coffee,
+  "Developer": Code2,
+  "Prompts": Bot,
+  "Other apps": Layers
+};
+
+const CONTEXT_TAGLINES: Record<string, string> = {
+  "Formal": "Polished workplace and professional communications.",
+  "Casual": "Relaxed, natural conversations and team chats.",
+  "Developer": "Precise engineering syntax, code snippets, and bug reports.",
+  "Prompts": "Structured constraints and clear AI instructions.",
+  "Other apps": "Clean, balanced wording for everyday typing."
+};
 
 const DEFAULT_CONTEXT_APPS: Record<string, string[]> = {
   "Formal": ["Teams", "Outlook", "LinkedIn"],
@@ -86,144 +114,195 @@ export default function MainStylesView({
   };
 
   const activeApps = contextApps[activeStyleName] || DEFAULT_CONTEXT_APPS[activeStyleName] || [];
+  const ActiveIcon = CONTEXT_ICONS[activeStyleName] || Palette;
 
   return (
-    <div className="flex-1 w-full h-full relative p-4">
-      {/* Title and Description */}
-      <div className="px-2 shrink-0 mb-3">
-        <h1 className="text-3xl font-bold text-white mb-1.5 flex items-center gap-3">
-          <Palette className="text-orange-400 w-8 h-8" />
-          Context
-        </h1>
-        <p className="text-white/50 text-sm">
-          Context decides how your words land. Choose your Tone and Mood for each and every App!
-        </p>
-      </div>
-
-      {/* Context List */}
-      <div className="flex flex-col gap-3 max-w-sm mt-3">
-        {["Formal", "Casual", "Developer", "Prompts", "Other apps"].map((item) => (
-          <button 
-            key={item}
-            onClick={() => onSelectActiveStyle(item)}
-            className={`flex items-center justify-between p-4 rounded-2xl border transition-all text-left ${
-              activeStyleName === item 
-                ? 'bg-orange-500/10 border-orange-500/40 text-orange-100 shadow-[0_0_15px_rgba(249,115,22,0.15)]' 
-                : 'bg-black/20 border-white/5 text-white/60 hover:bg-black/40 hover:text-white/90 hover:border-white/10'
-            }`}
-          >
-            <span className="text-lg font-semibold">{item}</span>
-            {activeStyleName === item && <ChevronRight className="w-5 h-5 text-orange-400" />}
-          </button>
-        ))}
-      </div>
-
-      {/* Selected Context Dialogue Window */}
-      <AnimatePresence>
-        {activeStyleName && ["Formal", "Casual", "Developer", "Prompts", "Other apps"].includes(activeStyleName) && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 10 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 10 }}
-            transition={{ type: "spring", stiffness: 400, damping: 30 }}
-            className="absolute bottom-2.5 right-2.5 top-[96px] left-[390px] bg-[#190f0b]/90 border border-[#5d4037]/60 rounded-3xl p-4 md:p-5 shadow-2xl flex flex-col overflow-hidden backdrop-blur-xl"
-          >
-            <AnimatePresence mode="wait">
-              <motion.div 
-                key={activeStyleName}
-                initial={{ opacity: 0, x: -15 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 15 }}
-                transition={{ duration: 0.2, ease: "easeOut" }}
-                className="flex flex-col h-full w-full min-h-0 overflow-hidden"
-              >
-                <div className="flex items-center justify-between mb-3 shrink-0">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-[#5d4037]/20 rounded-xl">
-                      <Settings2 className="w-5 h-5 text-[#d7ccc8]" />
-                    </div>
-                    <h2 className="text-2xl font-bold text-[#f4ece1] tracking-tight">{activeStyleName}</h2>
-                  </div>
-                  <button 
-                    type="button"
-                    onClick={() => setIsAddAppsOpen(true)}
-                    className="flex items-center gap-2 px-3.5 py-1.5 bg-[#5d4037]/20 hover:bg-[#5d4037]/40 active:scale-95 text-[#f4ece1] rounded-xl font-medium transition-all border border-[#5d4037]/30 hover:border-[#8d6e63] cursor-pointer text-sm"
-                    title={`Add apps to ${activeStyleName}`}
-                  >
-                    <Plus className="w-4 h-4 text-orange-400" />
-                    <span>Add Apps</span>
-                  </button>
-                </div>
-                
-                <div className="flex-1 bg-[#2b1f1a]/50 rounded-2xl border border-[#5d4037]/30 p-3.5 overflow-hidden min-h-0 flex flex-col">
-                  <ContextOptionsRenderer 
-                    activeStyleName={activeStyleName} 
-                    apps={activeApps}
-                    onRemoveApp={(app) => handleRemoveApp(activeStyleName, app)}
-                    onOpenAddApps={() => setIsAddAppsOpen(true)}
-                  />
-                </div>
-              </motion.div>
-            </AnimatePresence>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <div className="absolute top-4 right-4 flex flex-col gap-4 items-end">
-        
-        {/* Adapt Toggle */}
-        <div className="flex flex-col items-end gap-2 mt-4">
-          <div className="flex items-center gap-4 bg-[#190f0b]/90 border border-[#5d4037]/60 p-2.5 px-4 rounded-2xl shadow-inner w-fit">
-            <span className="text-xs font-bold uppercase tracking-wider text-[#d7ccc8]">
-              Adapt
-            </span>
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                role="switch"
-                aria-checked={isAdaptiveMode}
-                onClick={onToggleAdaptive}
-                className={`relative inline-flex h-9 w-16 shrink-0 cursor-pointer rounded-full border-2 transition-all duration-300 ease-in-out p-0.5 items-center focus:outline-none ${
-                  isAdaptiveMode
-                    ? 'bg-gradient-to-r from-[#8d6e63] to-[#6d4c41] border-[#a1887f] shadow-[0_0_18px_rgba(141,110,99,0.5)]'
-                    : 'bg-[#2b1f1a] border-[#5d4037]/60'
-                }`}
-                title={isAdaptiveMode ? "Disable Adaptive Mode" : "Enable Adaptive Mode"}
-              >
-                <span className="sr-only">Toggle Adaptive Mode</span>
-                <motion.span
-                  layout
-                  transition={{ type: "spring", stiffness: 600, damping: 35 }}
-                  className={`pointer-events-none inline-block h-7 w-7 transform rounded-full bg-[#f4ece1] shadow-md flex items-center justify-center ${
-                    isAdaptiveMode ? 'ml-auto text-[#3e2723]' : 'mr-auto text-[#8d6e63]'
-                  }`}
-                >
-                  <span className={`w-2.5 h-2.5 rounded-full ${isAdaptiveMode ? 'bg-[#5d4037]' : 'bg-[#8d6e63]/60'}`} />
-                </motion.span>
-              </button>
-              <button 
-                onClick={() => setShowAdaptInfo(!showAdaptInfo)}
-                className="p-1.5 rounded-full text-[#8d6e63] hover:text-[#d7ccc8] hover:bg-[#5d4037]/40 transition-colors"
-                title="Info"
-              >
-                <Info className="w-5 h-5" />
-              </button>
-            </div>
+    <div className="flex-1 w-full h-full flex flex-col p-1 md:p-1.5 overflow-hidden gap-3 select-none">
+      {/* Top Header Bar */}
+      <div className="flex items-center justify-between px-1 shrink-0">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-2xl bg-orange-500/15 border border-orange-500/30 flex items-center justify-center shadow-[0_0_15px_rgba(249,115,22,0.15)] shrink-0">
+            <Palette className="text-orange-400 w-5 h-5" />
           </div>
-          <AnimatePresence>
-            {showAdaptInfo && (
-              <motion.span 
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                className="text-[11px] text-white/50 max-w-[280px] text-right font-medium overflow-hidden"
-              >
-                WhisPURR adapts your speech by automatically detecting the app you are currently using
-              </motion.span>
-            )}
-          </AnimatePresence>
+          <div>
+            <h1 className="text-xl md:text-2xl font-bold text-white tracking-tight flex items-center gap-2">
+              Context Studio
+            </h1>
+            <p className="text-white/50 text-xs hidden sm:block">
+              Tone, formatting, and custom rules tailored to your apps.
+            </p>
+          </div>
         </div>
 
+        {/* Adapt Toggle Bar */}
+        <div className="flex items-center gap-3 bg-[#190f0b]/90 border border-[#5d4037]/60 py-1.5 px-3.5 rounded-2xl shadow-inner shrink-0 relative">
+          <div className="flex flex-col text-right">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#d7ccc8]">
+              Auto-Adapt
+            </span>
+            <span className="text-[9.5px] text-[#d7ccc8]/60">
+              {isAdaptiveMode ? 'App Sensing Active' : 'Manual Mode'}
+            </span>
+          </div>
+          <button
+            type="button"
+            role="switch"
+            aria-checked={isAdaptiveMode}
+            onClick={onToggleAdaptive}
+            className={`relative inline-flex h-7 w-13 shrink-0 cursor-pointer rounded-full border transition-all duration-300 ease-in-out p-0.5 items-center focus:outline-none ${
+              isAdaptiveMode
+                ? 'bg-gradient-to-r from-[#8d6e63] to-[#6d4c41] border-[#a1887f] shadow-[0_0_15px_rgba(141,110,99,0.4)]'
+                : 'bg-[#2b1f1a] border-[#5d4037]/60'
+            }`}
+            title={isAdaptiveMode ? "Disable Adaptive Mode" : "Enable Adaptive Mode"}
+          >
+            <span className="sr-only">Toggle Adaptive Mode</span>
+            <motion.span
+              layout
+              transition={{ type: "spring", stiffness: 600, damping: 35 }}
+              className={`pointer-events-none inline-block h-5.5 w-5.5 transform rounded-full bg-[#f4ece1] shadow-md flex items-center justify-center ${
+                isAdaptiveMode ? 'ml-auto text-[#3e2723]' : 'mr-auto text-[#8d6e63]'
+              }`}
+            >
+              <span className={`w-2 h-2 rounded-full ${isAdaptiveMode ? 'bg-[#5d4037]' : 'bg-[#8d6e63]/60'}`} />
+            </motion.span>
+          </button>
+          <div className="relative">
+            <button 
+              onClick={() => setShowAdaptInfo(!showAdaptInfo)}
+              className="p-1 rounded-full text-[#8d6e63] hover:text-[#d7ccc8] hover:bg-[#5d4037]/40 transition-colors cursor-pointer"
+              title="Adaptive Mode Info"
+            >
+              <Info className="w-4 h-4" />
+            </button>
+            <AnimatePresence>
+              {showAdaptInfo && (
+                <motion.div 
+                  initial={{ opacity: 0, y: -5, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -5, scale: 0.95 }}
+                  className="absolute top-full mt-2 right-0 w-64 bg-[#2b1f1a] border border-[#5d4037] rounded-xl p-3 shadow-2xl z-50 text-[11px] text-[#f4ece1] leading-relaxed"
+                >
+                  WhisPURR adapts your tone and formatting automatically by sensing which foreground app you are currently typing in.
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        </div>
+      </div>
+
+      {/* Main 2-Column Area */}
+      <div className="flex-1 min-h-0 flex gap-3.5 overflow-hidden">
+        {/* Left Column: Contexts List + Adaptive Status Card */}
+        <div className="w-[260px] md:w-[280px] shrink-0 flex flex-col justify-between h-full overflow-hidden gap-2.5">
+          {/* Profiles */}
+          <div className="flex flex-col gap-2 shrink-0">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#8d6e63] dark:text-[#d7ccc8]/60 px-1">
+              Context Profiles
+            </span>
+            {CONTEXT_ITEMS.map(({ name, icon: Icon }) => {
+              const isActive = activeStyleName === name;
+              const apps = contextApps[name] || DEFAULT_CONTEXT_APPS[name] || [];
+              return (
+                <button 
+                  key={name}
+                  type="button"
+                  onClick={() => onSelectActiveStyle(name)}
+                  className={`group flex items-center justify-between p-2.5 px-3 rounded-2xl border transition-all text-left cursor-pointer ${
+                    isActive 
+                      ? 'bg-orange-500/15 border-orange-500/60 shadow-[0_0_15px_rgba(249,115,22,0.15)]' 
+                      : 'bg-black/20 border-white/5 text-white/60 hover:bg-black/40 hover:text-white/90 hover:border-white/10'
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <div className={`p-1.5 rounded-xl transition-colors shrink-0 ${
+                      isActive ? 'bg-orange-500/25 text-orange-400 border border-orange-500/30' : 'bg-[#2b1f1a] text-[#8d6e63] group-hover:text-[#d7ccc8]'
+                    }`}>
+                      <Icon className="w-4 h-4" />
+                    </div>
+                    <div className="min-w-0 flex flex-col">
+                      <span className="text-sm font-bold tracking-tight truncate text-white">{name}</span>
+                      <span className="text-[10.5px] truncate text-white/60">
+                        {apps.slice(0, 3).join(', ')}{apps.length > 3 ? ` +${apps.length - 3}` : ''}
+                      </span>
+                    </div>
+                  </div>
+                  {isActive ? (
+                    <div className="w-2 h-2 rounded-full bg-orange-400 shadow-[0_0_8px_rgba(249,115,22,0.8)] shrink-0 mr-1" />
+                  ) : (
+                    <ChevronRight className="w-4 h-4 text-[#8d6e63]/40 group-hover:text-[#d7ccc8]/70 shrink-0" />
+                  )}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Adaptive App Detection / Status Card */}
+          <div className="bg-[#190f0b]/90 border border-[#5d4037]/50 rounded-2xl p-3 flex flex-col gap-2 shrink-0 shadow-inner">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
+                <span className="text-[10.5px] font-bold uppercase tracking-wider text-[#d7ccc8]">
+                  Active Detection
+                </span>
+              </div>
+              <span className="text-[9.5px] font-semibold text-orange-300 bg-orange-500/15 px-2 py-0.5 rounded-md border border-orange-500/20">
+                {activeStyleName}
+              </span>
+            </div>
+            <p className="text-[11px] text-[#d7ccc8]/75 leading-relaxed">
+              WhisPURR switches context when you switch apps, formatting your speech for each target environment.
+            </p>
+          </div>
+        </div>
+
+        {/* Right Column: Unified Context Studio Box */}
+        <div className="flex-1 min-h-0 h-full flex flex-col bg-[#190f0b]/90 border border-[#5d4037]/60 rounded-3xl p-3.5 md:p-4 shadow-2xl backdrop-blur-xl overflow-hidden">
+          <AnimatePresence mode="wait">
+            <motion.div 
+              key={activeStyleName}
+              initial={{ opacity: 0, x: -8 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 8 }}
+              transition={{ duration: 0.18, ease: "easeOut" }}
+              className="flex flex-col h-full w-full min-h-0 overflow-hidden gap-2.5"
+            >
+              {/* Context Header */}
+              <div className="flex items-center justify-between shrink-0 pb-2 border-b border-[#5d4037]/40">
+                <div className="flex items-center gap-2.5">
+                  <div className="p-2 bg-orange-500/15 text-orange-400 rounded-xl border border-orange-500/30 shadow-sm shrink-0">
+                    <ActiveIcon className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h2 className="text-lg md:text-xl font-bold text-[#f4ece1] tracking-tight leading-tight">
+                      {activeStyleName} Context
+                    </h2>
+                    <p className="text-xs text-[#d7ccc8]/65 font-sans leading-tight">
+                      {CONTEXT_TAGLINES[activeStyleName] || "Tailored tone, examples, and custom instructions."}
+                    </p>
+                  </div>
+                </div>
+                <button 
+                  type="button"
+                  onClick={() => setIsAddAppsOpen(true)}
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-[#5d4037]/20 hover:bg-[#5d4037]/40 active:scale-95 text-[#f4ece1] rounded-xl font-medium transition-all border border-[#5d4037]/30 hover:border-[#8d6e63] cursor-pointer text-xs shrink-0"
+                  title={`Add apps to ${activeStyleName}`}
+                >
+                  <Plus className="w-3.5 h-3.5 text-orange-400" />
+                  <span>Add Apps</span>
+                </button>
+              </div>
+
+              {/* Context Options Body */}
+              <ContextOptionsRenderer 
+                activeStyleName={activeStyleName} 
+                apps={activeApps}
+                onRemoveApp={(app) => handleRemoveApp(activeStyleName, app)}
+                onOpenAddApps={() => setIsAddAppsOpen(true)}
+              />
+            </motion.div>
+          </AnimatePresence>
+        </div>
       </div>
 
       {/* Add Apps Modal */}
@@ -349,7 +428,7 @@ function ContextOptionsRenderer({
   };
 
   return (
-    <div className="flex flex-col justify-between w-full h-full min-h-0 overflow-hidden select-text gap-2.5">
+    <div className="flex flex-col w-full h-full min-h-0 overflow-hidden select-text gap-3">
       {/* Active Apps Row */}
       <div className="flex items-center gap-2.5 shrink-0 flex-wrap">
         <span className="text-[#d7ccc8]/50 text-xs font-bold uppercase tracking-widest">Active In:</span>
@@ -386,7 +465,7 @@ function ContextOptionsRenderer({
       </div>
 
       {/* Preset Cards with Larger Examples */}
-      <div className="flex gap-3 w-full flex-1 min-h-[110px] max-h-[145px]">
+      <div className="flex gap-3 w-full flex-1 min-h-[120px] max-h-[165px]">
         {currentModes.map((opt, i) => (
           <div 
             key={i}
@@ -398,18 +477,18 @@ function ContextOptionsRenderer({
             }`}
           >
             {selectedIndex === i && (
-              <div className="absolute -top-2 -right-2 w-6 h-6 bg-[#8d6e63] rounded-full flex items-center justify-center text-[#f4ece1] shadow-md z-10 shrink-0">
-                <Check size={14} strokeWidth={3} />
+              <div className="absolute -top-2 -right-2 w-5.5 h-5.5 bg-[#8d6e63] rounded-full flex items-center justify-center text-[#f4ece1] shadow-md z-10 shrink-0">
+                <Check size={13} strokeWidth={3} />
               </div>
             )}
-            <div className={`flex-1 rounded-xl mb-2 p-2.5 flex flex-col justify-center border min-h-0 overflow-hidden ${selectedIndex === i ? 'bg-[#f4ece1]/20 border-[#f4ece1]/30' : 'bg-[#f4ece1]/10 border-[#f4ece1]/10'}`}>
-              <p className={`text-[13px] md:text-[14px] font-sans leading-snug italic whitespace-pre-wrap line-clamp-3 ${selectedIndex === i ? 'text-white font-medium' : 'text-[#f4ece1]/90'}`}>
+            <div className="shrink-0 mb-1 flex items-baseline justify-between gap-1">
+              <h3 className="text-sm font-bold font-sans text-[#f4ece1] tracking-tight truncate">{opt.n}</h3>
+              <span className="text-[10px] opacity-75 font-serif italic truncate">{opt.d}</span>
+            </div>
+            <div className={`flex-1 rounded-xl p-3 flex flex-col justify-center border min-h-0 overflow-hidden ${selectedIndex === i ? 'bg-[#f4ece1]/20 border-[#f4ece1]/30' : 'bg-[#f4ece1]/10 border-[#f4ece1]/10'}`}>
+              <p className={`text-[13.5px] md:text-[14.5px] font-sans leading-relaxed italic whitespace-pre-wrap line-clamp-3 ${selectedIndex === i ? 'text-white font-medium' : 'text-[#f4ece1]/90'}`}>
                 "{opt.ex}"
               </p>
-            </div>
-            <div className="shrink-0">
-              <h3 className="text-sm font-bold font-sans text-[#f4ece1] tracking-tight truncate">{opt.n}</h3>
-              <p className="text-[10.5px] opacity-80 font-serif italic leading-tight truncate">{opt.d}</p>
             </div>
           </div>
         ))}
@@ -420,13 +499,13 @@ function ContextOptionsRenderer({
         <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-[#5d4037]/40 to-transparent" />
         <span className="text-[10px] font-bold uppercase tracking-widest text-[#d7ccc8]/50 flex items-center gap-1.5">
           <SlidersHorizontal className="w-3 h-3 text-orange-400/80" />
-          <span>Custom Instructions</span>
+          <span>Custom Instructions & Formatting</span>
         </span>
         <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-[#5d4037]/40 to-transparent" />
       </div>
 
       {/* Custom Rules Box */}
-      <div className="bg-[#190f0b]/90 border border-[#5d4037]/50 rounded-2xl p-3 md:p-3.5 flex flex-col gap-2 shrink-0 shadow-inner">
+      <div className="bg-[#2b1f1a]/60 border border-[#5d4037]/50 rounded-2xl p-3 md:p-3.5 flex flex-col gap-2 shrink-0 shadow-inner">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="p-1.5 bg-orange-500/15 text-orange-400 rounded-lg border border-orange-500/25 shadow-sm">
@@ -467,7 +546,7 @@ function ContextOptionsRenderer({
             onChange={(e) => handleRuleChange(e.target.value)}
             placeholder={CONTEXT_PLACEHOLDERS[activeStyleName] || "Enter custom rules for this context..."}
             rows={2}
-            className="w-full bg-[#2b1f1a] border border-[#5d4037]/60 focus:border-orange-400/80 rounded-xl p-2.5 text-xs md:text-sm text-[#f4ece1] placeholder:text-[#d7ccc8]/35 resize-none outline-none font-sans leading-relaxed transition-all shadow-inner"
+            className="w-full bg-[#190f0b]/80 border border-[#5d4037]/60 focus:border-orange-400/80 rounded-xl p-2.5 text-xs md:text-sm text-[#f4ece1] placeholder:text-[#d7ccc8]/35 resize-none outline-none font-sans leading-relaxed transition-all shadow-inner"
           />
         </div>
 
@@ -483,10 +562,10 @@ function ContextOptionsRenderer({
                 key={chip}
                 type="button"
                 onClick={() => handleAddChip(chip)}
-                className={`text-[10.5px] px-2 py-0.5 rounded-lg border transition-all cursor-pointer font-medium ${
+                className={`text-[10.5px] px-2.5 py-0.5 rounded-lg border transition-all cursor-pointer font-medium ${
                   isChipActive
                     ? 'bg-orange-500/25 border-orange-400/60 text-orange-200 shadow-sm'
-                    : 'bg-[#2b1f1a]/80 hover:bg-[#5d4037]/40 border-[#5d4037]/50 text-[#d7ccc8]/70 hover:text-[#f4ece1]'
+                    : 'bg-[#190f0b]/70 hover:bg-[#5d4037]/40 border-[#5d4037]/50 text-[#d7ccc8]/70 hover:text-[#f4ece1]'
                 }`}
                 title={isChipActive ? "Click to remove" : "Click to add rule"}
               >

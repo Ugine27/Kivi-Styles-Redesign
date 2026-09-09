@@ -100,7 +100,13 @@ const TOUR_STEPS = [
 export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: string, setMode?: (m: any) => void }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState('Home');
+  const [activeTab, setActiveTab] = useState(() => {
+    try {
+      return new URLSearchParams(window.location.search).get('tab') || 'Home';
+    } catch (e) {
+      return 'Home';
+    }
+  });
   const [homeVideo, setHomeVideo] = useState(() => Math.random() > 0.5 ? '/cat.mp4' : '/cat2.mp4');
   const [videoKey, setVideoKey] = useState(0);
 
@@ -223,7 +229,12 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
       document.removeEventListener('keydown', handleKeyDown);
     };
   }, [showCatFactPopup]);
-  const [showTutorial, setShowTutorial] = useState(() => !hasShownTutorialThisSession);
+  const [showTutorial, setShowTutorial] = useState(() => {
+    try {
+      if (new URLSearchParams(window.location.search).has('tab')) return false;
+    } catch (e) {}
+    return !hasShownTutorialThisSession;
+  });
   const [talkShortcut, setTalkShortcut] = useState(() => localStorage.getItem('whispurr_talk') || 'Alt');
   const [isRecordingShortcut, setIsRecordingShortcut] = useState(false);
   const [quicklaunchShortcut, setQuicklaunchShortcut] = useState(() => localStorage.getItem('whispurr_quicklaunch') || 'Ctrl');

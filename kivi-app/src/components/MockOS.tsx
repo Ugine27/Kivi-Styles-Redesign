@@ -15,9 +15,17 @@ if (typeof window !== 'undefined') {
     globalMouseY = e.clientY;
   });
 }
-
 const MockOS = memo(({ activeText, mode, setMode, degree, setDegree, isAltPressed, isLoading, toggleListening }: { activeText: string, mode?: string, setMode?: any, degree?: number, setDegree?: any, isAltPressed?: boolean, isLoading?: boolean, toggleListening?: any }) => {
-  const [openApp, setOpenApp] = useState<AppType>(null);
+  const [openApp, setOpenApp] = useState<AppType>(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('app')) return params.get('app') as AppType;
+      if (params.has('tab')) return 'whispurr';
+      return null;
+    } catch (e) {
+      return null;
+    }
+  });
   const [isStartMenuOpen, setIsStartMenuOpen] = useState(false);
   
   // Floating Strip State
