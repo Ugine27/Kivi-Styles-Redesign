@@ -81,3 +81,15 @@ This document tracks every single change made to the project.
 - **[Bug Fix]**: Re-applied the Radial Control Strip sizing and placement fixes that were lost during the snapshot rollback. The Cat icon is correctly shrunk back to \w-8 h-8\, docked perfectly above the taskbar at \ottom-[-64px]\, and elevated to \z-[80]\ so it remains fully visible and accessible even when apps are launched in Full Screen mode.
 
 - **[Feature]**: Built a sleek, glassmorphic 'Demo / Tutorial' welcome screen that auto-triggers immediately upon launching the WhisPURR app. Features the animated Cat icon with rich radial gradients, explaining how to trigger Kivi (the Alt keybind), matching the core design language.
+
+- **[Feature - Dual Radial Dials]**: Added seamless dual radial dials for both Modes (`Alt + Scroll`) and Languages (`Alt + Right-Click` / `Alt + →`). Included custom chip selectors in Shortcuts and Demo slides allowing users to customize which modes and languages are showcased on their live dials.
+
+- **[Feature - Emotion Moods]**: Integrated expressive emotion moods engine (`whispurr_moods`). Automatically adds expressive, context-aware emojis and tone adjustments to speech based on emotional undertones. Added global toggle switches across the shortcuts dashboard and interactive demo.
+
+- **[UX - Time Saved Human Milestones]**: Added secondary human-relatable activity translations directly beneath the live Time Saved metric (e.g. coffee break, reading a chapter, watching an episode or movie, building presentations, half a workday back), dynamically adapting based on the user's recorded savings.
+
+- **[UI - Contrast & Legibility Pass]**: Darkened all ultra-light text shades and borders across the Coffee theme to guarantee accessibility and effortless readability.
+
+- **[UX - Outside-Click & Escape Dismissals]**: Added global `mousedown` and `Escape` listeners to automatically close info dialogues, popovers, and helper modals when clicking anywhere outside.
+
+- **[Redesign - Vibrant Multi-Color Tutorial]**: Re-engineered the 10-slide tutorial with a rich, multi-color aesthetic (Sky Blue, Coral, Warm Sunshine Yellow, Mint, Soft Lavender, and Coffee Brown). Added a luminous atmospheric mesh aura, 3D tactile sky blue `Alt` keycap, live interactive Radial Dials simulator, tactile shortcut cards, and color-coded onboarding survey slides.
