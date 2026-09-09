@@ -135,11 +135,11 @@ const MockOS = memo(({ activeText, mode, setMode, degree, setDegree, isAltPresse
         e.preventDefault();
         if (activeDialRef.current === 0) cycleMode(-1);
         else cycleLang(-1);
-      } else if (e.key === 'ArrowRight') {
+      } else if (e.key === 'ArrowLeft') {
         e.preventDefault();
         setActiveDial(1);
         updateHudPosition();
-      } else if (e.key === 'ArrowLeft') {
+      } else if (e.key === 'ArrowRight') {
         e.preventDefault();
         setActiveDial(0);
         updateHudPosition();
@@ -351,8 +351,8 @@ const MockOS = memo(({ activeText, mode, setMode, degree, setDegree, isAltPresse
                   </svg>
                   {LANGS.map((m, i) => {
                     const diff = i - langRotation;
-                    // Mirror to the left side
-                    const angle = 180 + diff * 25;
+                    // Mirror to the left side and invert the vertical progression
+                    const angle = 180 - diff * 25;
                     const angleRad = angle * (Math.PI / 180);
                     const radius = 145; 
                     const x = Math.cos(angleRad) * radius;
@@ -360,7 +360,7 @@ const MockOS = memo(({ activeText, mode, setMode, degree, setDegree, isAltPresse
                     const isActive = diff === 0;
                     return (
                       <motion.div key={m} className="absolute" animate={{ x, y, scale: isActive ? 1.15 : 0.85, opacity: isActive ? 1 : 0.4 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}>
-                        <div className={`-translate-y-1/2 px-4 py-2 whitespace-nowrap font-bold transition-all ${isActive ? 'rounded-2xl shadow-xl backdrop-blur-3xl bg-[#5D4037]/90 text-[#E8D5B5] border border-[#3E2723]/50' : 'text-[#E8D5B5] drop-shadow-md'}`}>{m}</div>
+                        <div className={`-translate-x-full -translate-y-1/2 px-4 py-2 whitespace-nowrap font-bold transition-all ${isActive ? 'rounded-2xl shadow-xl backdrop-blur-3xl bg-[#5D4037]/90 text-[#E8D5B5] border border-[#3E2723]/50' : 'text-[#E8D5B5] drop-shadow-md'}`}>{m}</div>
                       </motion.div>
                     );
                   })}
