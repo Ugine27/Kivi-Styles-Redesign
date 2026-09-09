@@ -77,6 +77,8 @@ body {
 .theme-coffee .text-orange-400 { color: #795548 !important; }
 .theme-coffee .text-orange-500 { color: #8d6e63 !important; }
 .theme-coffee .text-orange-500\/50 { color: rgba(141, 110, 99, 0.75) !important; }
+.theme-coffee [class*="text-[#d7ccc8]"] { color: #5d4037 !important; }
+.theme-coffee [class*="text-[#f4ece1]"] { color: #3e2723 !important; }
 
 .theme-coffee .bg-orange-300 { background-color: #795548 !important; }
 .theme-coffee .bg-orange-400 { background-color: #8d6e63 !important; }
