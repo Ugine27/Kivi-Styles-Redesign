@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { PanelLeftClose, Keyboard, PanelLeft, Home, BookOpen, Zap, Palette, Clock, FileText, X, Mic, Pencil, User, Settings, Shield, LayoutTemplate, CreditCard, PlayCircle, Square, Trash2, Sparkles, Copy, Check, Info } from 'lucide-react';
+import { PanelLeftClose, Keyboard, PanelLeft, Home, BookOpen, Zap, Palette, Clock, FileText, X, Mic, Pencil, User, Settings, Shield, LayoutTemplate, CreditCard, PlayCircle, Square, Trash2, Sparkles, Copy, Check, Info, PawPrint } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Tutorial from './Tutorial';
 import StylesManager from './styles/StylesManager';
@@ -20,6 +20,79 @@ const CAT_FACTS = [
   "Just like we are left- or right-handed, cats tend to have a preferred paw. Behavioral studies suggest that male cats often favor their left paw, while female cats tend to favor their right."
 ];
 let hasShownTutorialThisSession = false;
+
+const FUN_SUBTITLES = [
+  "Your invisible translation layer is purring and ready to pounce.",
+  "Ears perked, whiskers twitching, standing by to transcribe.",
+  "Translating your thoughts at the speed of 3 AM zoomies ⚡",
+  "99.9% speech accuracy, 0.1% cat nap energy 😴",
+  "Kneading your spoken words into purr-fect prose ✨",
+  "Ready to catch every word like a red laser dot 🔴",
+  "Fueled by curiosity, warm coffee, and clean audio ☕",
+  "Zero hisses, all purrs. Speak whenever you're ready! 🐾"
+];
+
+const CAT_MOODS = [
+  { emoji: '😸', label: 'Purring along', phrase: 'Purr-fectly in sync' },
+  { emoji: '⚡', label: 'Zoomies active', phrase: 'Ready for fast speech' },
+  { emoji: '🥐', label: 'Kneading thoughts', phrase: 'Baking audio into text' },
+  { emoji: '🎯', label: 'Laser-focused', phrase: 'Catching every syllable' },
+  { emoji: '☕', label: 'Cozy catnap', phrase: 'Chilled & standing by' },
+];
+
+const BOOP_REACTIONS = [
+  '🐾 *purr*',
+  '💖 +10 Purrs!',
+  '✨ Boop!',
+  '😸 Purr-fect!',
+  '🧶 *happy squeak*',
+  '🐾 Pounce!'
+];
+
+const getTimeGreeting = () => {
+  const hour = new Date().getHours();
+  if (hour >= 5 && hour < 12) return { text: 'Good morning', icon: '☀️' };
+  if (hour >= 12 && hour < 17) return { text: 'Good afternoon', icon: '🌤️' };
+  if (hour >= 17 && hour < 22) return { text: 'Good evening', icon: '🌙' };
+  return { text: 'Late night creativity', icon: '✨' };
+};
+
+const playCatChime = () => {
+  try {
+    const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+    if (!AudioContextClass) return;
+    const ctx = new AudioContextClass();
+    const now = ctx.currentTime;
+    
+    // Note 1: gentle warm chirp
+    const osc1 = ctx.createOscillator();
+    const gain1 = ctx.createGain();
+    osc1.type = 'sine';
+    osc1.frequency.setValueAtTime(523.25, now);
+    osc1.frequency.exponentialRampToValueAtTime(659.25, now + 0.08);
+    gain1.gain.setValueAtTime(0.08, now);
+    gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+    osc1.connect(gain1);
+    gain1.connect(ctx.destination);
+    osc1.start(now);
+    osc1.stop(now + 0.18);
+
+    // Note 2: high sparkle chime
+    const osc2 = ctx.createOscillator();
+    const gain2 = ctx.createGain();
+    osc2.type = 'sine';
+    osc2.frequency.setValueAtTime(783.99, now + 0.1);
+    osc2.frequency.exponentialRampToValueAtTime(1046.5, now + 0.22);
+    gain2.gain.setValueAtTime(0.09, now + 0.1);
+    gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.32);
+    osc2.connect(gain2);
+    gain2.connect(ctx.destination);
+    osc2.start(now + 0.1);
+    osc2.stop(now + 0.32);
+  } catch {
+    // Silently ignore
+  }
+};
 
 const TOUR_STEPS = [
     { id: 'Home', title: 'The Home Base', text: 'Watch WhisPURR in action! See your speech turn into text live and access your quick controls.' },
@@ -45,6 +118,31 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
       setVideoKey(prev => prev + 1);
     }
   }, [activeTab]);
+
+  const [catMoodIndex, setCatMoodIndex] = useState(0);
+  const [funSubtitleIndex, setFunSubtitleIndex] = useState(0);
+  const [boopParticles, setBoopParticles] = useState<{ id: number; text: string; x: number }[]>([]);
+  const [isBooping, setIsBooping] = useState(false);
+
+  const handleBoop = () => {
+    playCatChime();
+    setIsBooping(true);
+    setTimeout(() => setIsBooping(false), 500);
+
+    setCatMoodIndex(prev => (prev + 1) % CAT_MOODS.length);
+    setFunSubtitleIndex(prev => (prev + 1) % FUN_SUBTITLES.length);
+
+    const reaction = BOOP_REACTIONS[Math.floor(Math.random() * BOOP_REACTIONS.length)];
+    const newParticle = {
+      id: Date.now() + Math.random(),
+      text: reaction,
+      x: (Math.random() - 0.5) * 50,
+    };
+    setBoopParticles(prev => [...prev.slice(-3), newParticle]);
+    setTimeout(() => {
+      setBoopParticles(prev => prev.filter(p => p.id !== newParticle.id));
+    }, 1100);
+  };
 
   const [isTourActive, setIsTourActive] = useState(false);
   const [tourStep, setTourStep] = useState(0);
@@ -758,11 +856,95 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
           <AnimatePresence mode="wait">
               {activeTab === 'Home' && (
               <motion.div key="home" variants={tabVariants} initial="initial" animate="animate" exit="exit" className="absolute inset-4 flex gap-4">
-                <div className="flex-1 flex flex-col gap-6 relative z-10">
+                <div className="flex-1 flex flex-col gap-4 relative z-10">
                   <FootprintManager contained={true} />
-                  <div className="px-2 pointer-events-none relative z-10">
-                    <h1 className="text-3xl font-bold tracking-tight mb-2 text-white">Good afternoon, Ugine.</h1>
-                    <p className="text-white/50 text-sm">Your invisible translation layer is active and standing by.</p>
+                  {/* Centered Fun Greeting Section */}
+                  <div className="w-full flex flex-col items-center justify-center text-center relative z-20 pt-1 pb-1 select-none">
+                    {/* Interactive Top Status Pill / Fun Cat Mood Badge */}
+                    <motion.button
+                      type="button"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.96 }}
+                      onClick={handleBoop}
+                      className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-[#5d4037]/50 via-[#8d6e63]/30 to-[#5d4037]/50 border border-[#8d6e63]/50 text-orange-200 text-xs font-medium mb-2.5 shadow-[0_4px_16px_rgba(0,0,0,0.25)] backdrop-blur-md cursor-pointer hover:border-orange-400/60 hover:bg-[#8d6e63]/40 transition-all group"
+                      title="Click to boop & change kitty mood!"
+                    >
+                      <span className="relative flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                      </span>
+                      <span className="font-semibold text-[#f4ece1] flex items-center gap-1.5">
+                        <Sparkles className="w-3.5 h-3.5 text-orange-400" />
+                        Whispurr AI Active
+                      </span>
+                      <span className="text-white/20">•</span>
+                      <span className="text-orange-300 flex items-center gap-1 font-normal">
+                        <span>{CAT_MOODS[catMoodIndex].emoji}</span>
+                        <span>{CAT_MOODS[catMoodIndex].label}</span>
+                      </span>
+                      <span className="text-[10px] bg-orange-500/20 text-orange-200 px-1.5 py-0.5 rounded-md border border-orange-500/30 group-hover:bg-orange-500/30 transition-colors font-medium flex items-center gap-1">
+                        Boop! 🐾
+                      </span>
+                    </motion.button>
+
+                    {/* Centered Greeting Heading with Interactive Paw Button */}
+                    <div className="relative inline-flex items-center justify-center gap-3">
+                      <h1 className="text-3xl lg:text-4xl font-extrabold tracking-tight text-white flex items-center gap-2 drop-shadow-sm">
+                        <span>{getTimeGreeting().text},</span>
+                        <span className="bg-gradient-to-r from-orange-300 via-amber-200 to-orange-400 bg-clip-text text-transparent">
+                          Ugine
+                        </span>
+                        <span className="text-2xl">{getTimeGreeting().icon}</span>
+                      </h1>
+
+                      {/* Interactive Bouncing Paw Button */}
+                      <div className="relative">
+                        <motion.button
+                          type="button"
+                          animate={isBooping ? { rotate: [-20, 20, -15, 15, 0], scale: [1, 1.25, 1] } : {}}
+                          transition={{ duration: 0.45 }}
+                          whileHover={{ scale: 1.15, rotate: 10 }}
+                          whileTap={{ scale: 0.9 }}
+                          onClick={handleBoop}
+                          className="p-2 rounded-2xl bg-[#5d4037]/50 hover:bg-orange-500/25 border border-[#8d6e63]/50 hover:border-orange-400/60 text-orange-300 shadow-md transition-all cursor-pointer flex items-center justify-center group"
+                          title="Boop for a purr!"
+                        >
+                          <PawPrint className="w-5 h-5 text-orange-400 group-hover:text-orange-200 transition-colors drop-shadow" />
+                        </motion.button>
+
+                        {/* Floating Boop Reaction Particles */}
+                        <AnimatePresence>
+                          {boopParticles.map(particle => (
+                            <motion.div
+                              key={particle.id}
+                              initial={{ opacity: 1, y: 0, scale: 0.8, x: particle.x }}
+                              animate={{ opacity: 0, y: -40, scale: 1.15 }}
+                              exit={{ opacity: 0 }}
+                              transition={{ duration: 1, ease: 'easeOut' }}
+                              className="absolute -top-3 left-1/2 -translate-x-1/2 pointer-events-none whitespace-nowrap text-xs font-bold text-orange-200 bg-[#1e130f]/95 px-2.5 py-0.5 rounded-full border border-orange-500/40 shadow-xl backdrop-blur-sm z-50"
+                            >
+                              {particle.text}
+                            </motion.div>
+                          ))}
+                        </AnimatePresence>
+                      </div>
+                    </div>
+
+                    {/* Fun Interactive Playful Subtitle */}
+                    <motion.div 
+                      key={funSubtitleIndex}
+                      initial={{ opacity: 0, y: 3 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.25 }}
+                      onClick={handleBoop}
+                      className="mt-2 text-white/60 hover:text-white/90 text-sm max-w-xl cursor-pointer flex items-center justify-center gap-1.5 transition-colors group px-2"
+                      title="Click to shuffle fun kitty thoughts!"
+                    >
+                      <p className="leading-relaxed">
+                        {FUN_SUBTITLES[funSubtitleIndex]}
+                      </p>
+                      <Sparkles className="w-3.5 h-3.5 text-orange-400/50 group-hover:text-orange-400 transition-colors shrink-0" />
+                    </motion.div>
                   </div>
                   {/* Voice-to-Text Chat Box */}
                   <div className={`h-fit ${glassPanel} p-6 flex flex-col relative z-10 overflow-hidden shadow-2xl border border-white/10`}>
