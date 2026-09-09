@@ -9,6 +9,13 @@
   .glass-dark {
     @apply bg-black/40 backdrop-blur-xl border border-white/10 shadow-2xl;
   }
+  .gradient-text {
+    display: inline-block;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
 }
 
 body {
