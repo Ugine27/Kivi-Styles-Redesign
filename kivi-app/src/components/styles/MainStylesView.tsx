@@ -90,8 +90,8 @@ export default function MainStylesView({
   return (
     <div className="flex-1 w-full h-full relative p-4">
       {/* Title and Description */}
-      <div className="px-2 shrink-0 mb-10">
-        <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
+      <div className="px-2 shrink-0 mb-3">
+        <h1 className="text-3xl font-bold text-white mb-1.5 flex items-center gap-3">
           <Palette className="text-orange-400 w-8 h-8" />
           Context
         </h1>
@@ -101,7 +101,7 @@ export default function MainStylesView({
       </div>
 
       {/* Context List */}
-      <div className="flex flex-col gap-3 max-w-sm mt-4">
+      <div className="flex flex-col gap-3 max-w-sm mt-3">
         {["Formal", "Casual", "Developer", "Prompts", "Other apps"].map((item) => (
           <button 
             key={item}
@@ -126,7 +126,7 @@ export default function MainStylesView({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 10 }}
             transition={{ type: "spring", stiffness: 400, damping: 30 }}
-            className="absolute bottom-4 right-4 top-[140px] left-[420px] bg-[#190f0b]/90 border border-[#5d4037]/60 rounded-3xl p-6 lg:p-8 shadow-2xl flex flex-col overflow-hidden backdrop-blur-xl"
+            className="absolute bottom-2.5 right-2.5 top-[96px] left-[390px] bg-[#190f0b]/90 border border-[#5d4037]/60 rounded-3xl p-4 md:p-5 shadow-2xl flex flex-col overflow-hidden backdrop-blur-xl"
           >
             <AnimatePresence mode="wait">
               <motion.div 
@@ -135,19 +135,19 @@ export default function MainStylesView({
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 15 }}
                 transition={{ duration: 0.2, ease: "easeOut" }}
-                className="flex flex-col h-full w-full min-h-0"
+                className="flex flex-col h-full w-full min-h-0 overflow-hidden"
               >
-                <div className="flex items-center justify-between mb-4 shrink-0">
-                  <div className="flex items-center gap-4">
-                    <div className="p-2.5 bg-[#5d4037]/20 rounded-xl">
-                      <Settings2 className="w-6 h-6 text-[#d7ccc8]" />
+                <div className="flex items-center justify-between mb-3 shrink-0">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-[#5d4037]/20 rounded-xl">
+                      <Settings2 className="w-5 h-5 text-[#d7ccc8]" />
                     </div>
-                    <h2 className="text-2xl lg:text-3xl font-bold text-[#f4ece1] tracking-tight">{activeStyleName}</h2>
+                    <h2 className="text-2xl font-bold text-[#f4ece1] tracking-tight">{activeStyleName}</h2>
                   </div>
                   <button 
                     type="button"
                     onClick={() => setIsAddAppsOpen(true)}
-                    className="flex items-center gap-2 px-4 py-2 bg-[#5d4037]/20 hover:bg-[#5d4037]/40 active:scale-95 text-[#f4ece1] rounded-xl font-medium transition-all border border-[#5d4037]/30 hover:border-[#8d6e63] cursor-pointer"
+                    className="flex items-center gap-2 px-3.5 py-1.5 bg-[#5d4037]/20 hover:bg-[#5d4037]/40 active:scale-95 text-[#f4ece1] rounded-xl font-medium transition-all border border-[#5d4037]/30 hover:border-[#8d6e63] cursor-pointer text-sm"
                     title={`Add apps to ${activeStyleName}`}
                   >
                     <Plus className="w-4 h-4 text-orange-400" />
@@ -155,7 +155,7 @@ export default function MainStylesView({
                   </button>
                 </div>
                 
-                <div className="flex-1 bg-[#2b1f1a]/50 rounded-2xl border border-[#5d4037]/30 p-4 lg:p-5 overflow-hidden min-h-0 flex flex-col">
+                <div className="flex-1 bg-[#2b1f1a]/50 rounded-2xl border border-[#5d4037]/30 p-3.5 overflow-hidden min-h-0 flex flex-col">
                   <ContextOptionsRenderer 
                     activeStyleName={activeStyleName} 
                     apps={activeApps}
@@ -349,15 +349,15 @@ function ContextOptionsRenderer({
   };
 
   return (
-    <div className="flex flex-col gap-4 w-full h-full min-h-0 overflow-y-auto pr-1 select-text">
+    <div className="flex flex-col justify-between w-full h-full min-h-0 overflow-hidden select-text gap-2.5">
       {/* Active Apps Row */}
-      <div className="flex items-center gap-3 shrink-0 flex-wrap">
+      <div className="flex items-center gap-2.5 shrink-0 flex-wrap">
         <span className="text-[#d7ccc8]/50 text-xs font-bold uppercase tracking-widest">Active In:</span>
         <div className="flex gap-2 flex-wrap items-center">
           {apps.map(app => (
             <span 
               key={app} 
-              className="group inline-flex items-center gap-1.5 px-3 py-1 bg-[#f4ece1]/5 hover:bg-[#f4ece1]/10 border border-white/10 hover:border-[#8d6e63]/60 rounded-lg text-xs text-[#d7ccc8] hover:text-[#f4ece1] font-medium shadow-sm transition-all"
+              className="group inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-[#f4ece1]/5 hover:bg-[#f4ece1]/10 border border-white/10 hover:border-[#8d6e63]/60 rounded-lg text-xs text-[#d7ccc8] hover:text-[#f4ece1] font-medium shadow-sm transition-all"
             >
               <span>{app}</span>
               <button
@@ -376,7 +376,7 @@ function ContextOptionsRenderer({
           <button
             type="button"
             onClick={onOpenAddApps}
-            className="inline-flex items-center gap-1 px-2.5 py-1 bg-[#8d6e63]/20 hover:bg-[#8d6e63]/40 border border-[#8d6e63]/40 hover:border-[#8d6e63] text-xs text-[#f4ece1] rounded-lg transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1 px-2 py-0.5 bg-[#8d6e63]/20 hover:bg-[#8d6e63]/40 border border-[#8d6e63]/40 hover:border-[#8d6e63] text-xs text-[#f4ece1] rounded-lg transition-colors cursor-pointer"
             title="Add more apps to this context"
           >
             <Plus className="w-3 h-3 text-orange-400" />
@@ -386,12 +386,12 @@ function ContextOptionsRenderer({
       </div>
 
       {/* Preset Cards with Larger Examples */}
-      <div className="flex gap-3.5 w-full shrink-0 min-h-[140px]">
+      <div className="flex gap-3 w-full flex-1 min-h-[110px] max-h-[145px]">
         {currentModes.map((opt, i) => (
           <div 
             key={i}
             onClick={() => setSelectedIndex(i)}
-            className={`relative flex-1 rounded-2xl border-2 p-3.5 cursor-pointer transition-all flex flex-col justify-end min-h-0 ${
+            className={`relative flex-1 rounded-2xl border-2 p-3 cursor-pointer transition-all flex flex-col justify-between min-h-0 ${
               selectedIndex === i
                 ? 'border-[#8d6e63] bg-[#8d6e63]/20 text-[#f4ece1] shadow-lg' 
                 : 'border-[#5d4037]/30 bg-[#190f0b]/50 text-[#d7ccc8]/70 hover:border-[#5d4037]/80 hover:bg-[#2b1f1a]'
@@ -402,19 +402,21 @@ function ContextOptionsRenderer({
                 <Check size={14} strokeWidth={3} />
               </div>
             )}
-            <div className={`flex-1 rounded-xl mb-3 p-3 flex flex-col justify-center border min-h-0 overflow-hidden ${selectedIndex === i ? 'bg-[#f4ece1]/20 border-[#f4ece1]/30' : 'bg-[#f4ece1]/10 border-[#f4ece1]/10'}`}>
+            <div className={`flex-1 rounded-xl mb-2 p-2.5 flex flex-col justify-center border min-h-0 overflow-hidden ${selectedIndex === i ? 'bg-[#f4ece1]/20 border-[#f4ece1]/30' : 'bg-[#f4ece1]/10 border-[#f4ece1]/10'}`}>
               <p className={`text-[13px] md:text-[14px] font-sans leading-snug italic whitespace-pre-wrap line-clamp-3 ${selectedIndex === i ? 'text-white font-medium' : 'text-[#f4ece1]/90'}`}>
                 "{opt.ex}"
               </p>
             </div>
-            <h3 className="text-sm md:text-base font-bold mb-0.5 font-sans text-[#f4ece1] tracking-tight shrink-0 truncate">{opt.n}</h3>
-            <p className="text-[11px] opacity-80 font-serif italic leading-tight shrink-0 line-clamp-1">{opt.d}</p>
+            <div className="shrink-0">
+              <h3 className="text-sm font-bold font-sans text-[#f4ece1] tracking-tight truncate">{opt.n}</h3>
+              <p className="text-[10.5px] opacity-80 font-serif italic leading-tight truncate">{opt.d}</p>
+            </div>
           </div>
         ))}
       </div>
 
-      {/* Spacing & Section Label Pushing Custom Box Down */}
-      <div className="flex items-center gap-3 mt-4 shrink-0 px-0.5">
+      {/* Section Divider */}
+      <div className="flex items-center gap-3 shrink-0 px-0.5">
         <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-[#5d4037]/40 to-transparent" />
         <span className="text-[10px] font-bold uppercase tracking-widest text-[#d7ccc8]/50 flex items-center gap-1.5">
           <SlidersHorizontal className="w-3 h-3 text-orange-400/80" />
@@ -424,11 +426,11 @@ function ContextOptionsRenderer({
       </div>
 
       {/* Custom Rules Box */}
-      <div className="bg-[#190f0b]/90 border border-[#5d4037]/50 rounded-2xl p-4 md:p-5 flex flex-col gap-3 shrink-0 shadow-inner">
+      <div className="bg-[#190f0b]/90 border border-[#5d4037]/50 rounded-2xl p-3 md:p-3.5 flex flex-col gap-2 shrink-0 shadow-inner">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="p-1.5 bg-orange-500/15 text-orange-400 rounded-xl border border-orange-500/25 shadow-sm">
-              <Zap className="w-4 h-4" />
+          <div className="flex items-center gap-2">
+            <div className="p-1.5 bg-orange-500/15 text-orange-400 rounded-lg border border-orange-500/25 shadow-sm">
+              <Zap className="w-3.5 h-3.5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
@@ -441,7 +443,7 @@ function ContextOptionsRenderer({
                   </span>
                 )}
               </div>
-              <p className="text-[11px] text-[#d7ccc8]/60 mt-0.5">
+              <p className="text-[10.5px] text-[#d7ccc8]/60 mt-0.5">
                 Instruct WhisPURR to consistently apply specific formatting rules whenever {activeStyleName} is active.
               </p>
             </div>
@@ -450,7 +452,7 @@ function ContextOptionsRenderer({
             <button
               type="button"
               onClick={() => handleRuleChange('')}
-              className="text-[11px] text-[#d7ccc8]/50 hover:text-red-400 hover:bg-white/5 transition-colors px-2 py-1 rounded-md cursor-pointer"
+              className="text-[10.5px] text-[#d7ccc8]/50 hover:text-red-400 hover:bg-white/5 transition-colors px-2 py-0.5 rounded-md cursor-pointer"
               title="Clear rules for this context"
             >
               Clear
@@ -465,7 +467,7 @@ function ContextOptionsRenderer({
             onChange={(e) => handleRuleChange(e.target.value)}
             placeholder={CONTEXT_PLACEHOLDERS[activeStyleName] || "Enter custom rules for this context..."}
             rows={2}
-            className="w-full bg-[#2b1f1a] border border-[#5d4037]/60 focus:border-orange-400/80 rounded-xl p-3 text-xs md:text-sm text-[#f4ece1] placeholder:text-[#d7ccc8]/35 resize-none outline-none font-sans leading-relaxed transition-all shadow-inner"
+            className="w-full bg-[#2b1f1a] border border-[#5d4037]/60 focus:border-orange-400/80 rounded-xl p-2.5 text-xs md:text-sm text-[#f4ece1] placeholder:text-[#d7ccc8]/35 resize-none outline-none font-sans leading-relaxed transition-all shadow-inner"
           />
         </div>
 
@@ -481,7 +483,7 @@ function ContextOptionsRenderer({
                 key={chip}
                 type="button"
                 onClick={() => handleAddChip(chip)}
-                className={`text-[11px] px-2.5 py-1 rounded-lg border transition-all cursor-pointer font-medium ${
+                className={`text-[10.5px] px-2 py-0.5 rounded-lg border transition-all cursor-pointer font-medium ${
                   isChipActive
                     ? 'bg-orange-500/25 border-orange-400/60 text-orange-200 shadow-sm'
                     : 'bg-[#2b1f1a]/80 hover:bg-[#5d4037]/40 border-[#5d4037]/50 text-[#d7ccc8]/70 hover:text-[#f4ece1]'
