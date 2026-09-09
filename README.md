@@ -12,7 +12,7 @@
 | 📄 **Product Positioning Statement** | [**`docs/product-positioning.pdf`**](docs/product-positioning.pdf) | Market problem, Geoffrey Moore positioning statement, user personas & competitive matrix |
 | 🔮 **Product Vision & Roadmap** | [**`docs/product-vision.pdf`**](docs/product-vision.pdf) | Long-term vision, 3 architectural pillars, and strategic 3-phase roadmap |
 | 🖼️ **Permanent Screen Reference** | [**`prototype/screens.pdf`**](prototype/screens.pdf) | High-resolution exported screen deck with design annotations across all core flows |
-| ⚡ **Direct Interactive Prototype** | **`[INTERACTIVE_PROTOTYPE_URL_PLACEHOLDER]`**<br>*(Local prototype: [http://localhost:5173/](http://localhost:5173/))* | Live interactive prototype URL (replace placeholder with deployed URL if applicable) |
+| ⚡ **Direct Interactive Prototype** | [**https://kivi-styles-redesign-ijgg.vercel.app**](https://kivi-styles-redesign-ijgg.vercel.app)<br>*(Local prototype: [http://localhost:5173/](http://localhost:5173/))* | Live interactive prototype |
 
 ---
 
