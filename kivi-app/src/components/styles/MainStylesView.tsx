@@ -148,10 +148,10 @@ export default function MainStylesView({
       {/* 1. Page Title + Compact Subtitle & Top Controls */}
       <div className="flex items-center justify-between px-1 shrink-0">
         <div>
-          <h1 className="text-xl font-semibold text-[#f4ece1] tracking-tight">
+          <h1 className="text-xl font-bold text-white tracking-tight">
             Context Studio
           </h1>
-          <p className="text-xs text-[#d7ccc8]/70 font-normal mt-0.5">
+          <p className="text-xs text-white/80 font-medium mt-0.5">
             WhisPURR understands the context and lets you control how you sound.
           </p>
         </div>
@@ -161,21 +161,21 @@ export default function MainStylesView({
             <button
               type="button"
               onClick={onRevisitIntro}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-[#5d4037]/40 text-[#d7ccc8] hover:text-[#f4ece1] text-xs font-medium transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-orange-500/15 hover:bg-orange-500/25 border border-orange-500/35 text-orange-400 text-xs font-semibold transition-colors cursor-pointer"
               title="Open interactive Meet Styles demo"
             >
-              <Sparkles className="w-3.5 h-3.5 text-orange-400/80" />
+              <Sparkles className="w-3.5 h-3.5 text-orange-400" />
               <span>Demo</span>
             </button>
           )}
 
           {/* Auto-Adapt Toggle Bar */}
-          <div className="flex items-center gap-2.5 bg-[#1a110c]/80 border border-[#5d4037]/40 py-1.5 px-3 rounded-xl shrink-0 relative">
+          <div className="flex items-center gap-2.5 bg-[#1a110c]/80 border border-[#5d4037]/50 py-1.5 px-3 rounded-xl shrink-0 relative">
             <div className="flex flex-col text-right">
-              <span className="text-xs font-medium text-[#f4ece1]">
+              <span className="text-xs font-bold text-white">
                 Auto-Adapt
               </span>
-              <span className="text-[10px] text-[#d7ccc8]/60 font-normal">
+              <span className="text-[11px] text-white/75 font-semibold">
                 {isAdaptiveMode ? 'App Sensing Active' : 'Manual'}
               </span>
             </div>
@@ -206,7 +206,7 @@ export default function MainStylesView({
               <button 
                 type="button"
                 onClick={() => setShowAdaptInfo(!showAdaptInfo)}
-                className="p-1 rounded-full text-[#8d6e63] hover:text-[#f4ece1] hover:bg-white/[0.05] transition-colors cursor-pointer"
+                className="p-1 rounded-full text-orange-400 hover:text-white hover:bg-white/[0.08] transition-colors cursor-pointer"
                 title="Adaptive Mode Info"
               >
                 <Info className="w-3.5 h-3.5" />
@@ -217,7 +217,7 @@ export default function MainStylesView({
                     initial={{ opacity: 0, y: -4, scale: 0.96 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: -4, scale: 0.96 }}
-                    className="absolute top-full mt-2 right-0 w-64 bg-[#231711] border border-[#5d4037]/70 rounded-xl p-3 shadow-2xl z-50 text-xs text-[#f4ece1] leading-relaxed font-normal"
+                    className="absolute top-full mt-2 right-0 w-64 bg-[#231711] border border-[#5d4037]/70 rounded-xl p-3 shadow-2xl z-50 text-xs text-white leading-relaxed font-normal"
                   >
                     WhisPURR adapts your tone and formatting automatically by sensing which foreground app you are currently typing in.
                   </motion.div>
@@ -230,9 +230,9 @@ export default function MainStylesView({
 
       {/* Main 2-Column Work Area */}
       <div className="flex-1 min-h-0 flex gap-4 overflow-hidden">
-        {/* 2. Left Column: Context Profiles (Clean, secondary, low density) */}
+        {/* 2. Left Column: Context Profiles */}
         <div className="w-52 md:w-56 shrink-0 flex flex-col h-full overflow-hidden">
-          <div className="text-xs font-semibold text-[#d7ccc8]/70 px-2 mb-2">
+          <div className="text-xs font-bold text-white/85 px-2 mb-2">
             Context Profiles
           </div>
           <div className="flex flex-col gap-1 overflow-y-auto pr-1">
@@ -246,21 +246,21 @@ export default function MainStylesView({
                   onClick={() => onSelectActiveStyle(name)}
                   className={`group relative flex items-center justify-between p-2.5 px-3 rounded-xl border transition-all text-left cursor-pointer ${
                     isActive 
-                      ? 'bg-[#3e2723]/50 border-[#8d6e63]/50 text-[#f4ece1] shadow-sm' 
-                      : 'bg-transparent border-transparent text-[#d7ccc8]/70 hover:bg-white/[0.04] hover:text-[#f4ece1]'
+                      ? 'bg-[#3e2723]/50 border-[#8d6e63]/60 text-white shadow-sm' 
+                      : 'bg-transparent border-transparent text-white/75 hover:bg-white/[0.06] hover:text-white'
                   }`}
                 >
                   <div className="flex items-center gap-2.5 min-w-0">
                     <div className={`p-1.5 rounded-lg transition-colors shrink-0 ${
-                      isActive ? 'bg-orange-500/20 text-orange-300' : 'bg-white/[0.04] text-[#d7ccc8]/60 group-hover:text-[#f4ece1]'
+                      isActive ? 'bg-orange-500/20 text-orange-400' : 'bg-white/[0.06] text-white/75 group-hover:text-white'
                     }`}>
                       <Icon className="w-4 h-4" />
                     </div>
                     <div className="min-w-0 flex flex-col">
-                      <span className={`text-sm font-medium tracking-tight truncate ${isActive ? 'text-[#f4ece1]' : 'text-[#d7ccc8]/85 group-hover:text-[#f4ece1]'}`}>
+                      <span className={`text-sm font-semibold tracking-tight truncate ${isActive ? 'text-white' : 'text-white/90 group-hover:text-white'}`}>
                         {name}
                       </span>
-                      <span className="text-[11px] truncate text-[#d7ccc8]/50">
+                      <span className="text-[11px] truncate text-white/75 font-medium">
                         {apps.slice(0, 2).join(', ')}{apps.length > 2 ? ` +${apps.length - 2}` : ''}
                       </span>
                     </div>
@@ -286,16 +286,16 @@ export default function MainStylesView({
               className="flex flex-col h-full w-full min-h-0 gap-5"
             >
               {/* Context Header & Active Apps */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-[#5d4037]/25 shrink-0">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-[#5d4037]/35 shrink-0">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-orange-500/10 text-orange-300 rounded-xl border border-orange-500/20 shrink-0">
+                  <div className="p-2 bg-orange-500/15 text-orange-400 rounded-xl border border-orange-500/25 shrink-0">
                     <ActiveIcon className="w-5 h-5" />
                   </div>
                   <div>
-                    <h2 className="text-lg font-semibold text-[#f4ece1] tracking-tight leading-tight">
+                    <h2 className="text-lg font-bold text-white tracking-tight leading-tight">
                       {activeStyleName}
                     </h2>
-                    <p className="text-xs text-[#d7ccc8]/70 font-normal leading-normal mt-0.5">
+                    <p className="text-xs text-white/85 font-medium leading-normal mt-0.5">
                       {CONTEXT_TAGLINES[activeStyleName] || "Tailored tone, examples, and custom instructions."}
                     </p>
                   </div>
@@ -303,17 +303,17 @@ export default function MainStylesView({
 
                 {/* Secondary Controls: Active Apps Chips & Add Button */}
                 <div className="flex items-center gap-1.5 flex-wrap shrink-0">
-                  <span className="text-xs text-[#d7ccc8]/50 font-normal mr-1">Active in:</span>
+                  <span className="text-xs text-white/75 font-semibold mr-1">Active in:</span>
                   {activeApps.slice(0, 3).map(app => (
                     <span 
                       key={app} 
-                      className="inline-flex items-center gap-1 px-2.5 py-1 bg-white/[0.04] border border-[#5d4037]/30 rounded-lg text-xs text-[#d7ccc8] font-normal"
+                      className="inline-flex items-center gap-1 px-2.5 py-1 bg-white/[0.06] border border-[#5d4037]/45 rounded-lg text-xs text-white font-medium"
                     >
                       <span>{app}</span>
                       <button
                         type="button"
                         onClick={() => handleRemoveApp(activeStyleName, app)}
-                        className="opacity-40 hover:opacity-100 hover:text-red-400 p-0.5 transition-opacity cursor-pointer"
+                        className="opacity-70 hover:opacity-100 hover:text-red-400 p-0.5 transition-opacity cursor-pointer"
                         title={`Remove ${app}`}
                       >
                         <X className="w-3 h-3" />
@@ -321,17 +321,17 @@ export default function MainStylesView({
                     </span>
                   ))}
                   {activeApps.length > 3 && (
-                    <span className="text-xs text-[#d7ccc8]/50 font-normal px-1">
+                    <span className="text-xs text-white/75 font-semibold px-1">
                       +{activeApps.length - 3}
                     </span>
                   )}
                   <button 
                     type="button"
                     onClick={() => setIsAddAppsOpen(true)}
-                    className="flex items-center gap-1 px-2.5 py-1 bg-white/[0.04] hover:bg-white/[0.08] text-[#f4ece1] rounded-lg font-medium transition-colors border border-[#5d4037]/40 hover:border-[#8d6e63] cursor-pointer text-xs shrink-0 ml-1"
+                    className="flex items-center gap-1 px-2.5 py-1 bg-white/[0.06] hover:bg-white/[0.12] text-white rounded-lg font-semibold transition-colors border border-[#5d4037]/50 hover:border-[#8d6e63] cursor-pointer text-xs shrink-0 ml-1"
                     title={`Add apps to ${activeStyleName}`}
                   >
-                    <Plus className="w-3 h-3 text-orange-400/80" />
+                    <Plus className="w-3 h-3 text-orange-400" />
                     <span>Apps</span>
                   </button>
                 </div>
@@ -465,10 +465,10 @@ function ContextOptionsRenderer({
       {/* 3. Output Examples — Visual Focus */}
       <div className="flex flex-col gap-2.5 shrink-0">
         <div className="flex items-center justify-between">
-          <span className="text-xs font-semibold text-[#d7ccc8]/80 tracking-wide">
+          <span className="text-xs font-bold text-white tracking-wide">
             Tone & Output Examples
           </span>
-          <span className="text-xs text-[#d7ccc8]/50 font-normal">
+          <span className="text-xs text-white/80 font-medium">
             Select how unscripted speech is shaped
           </span>
         </div>
@@ -482,16 +482,16 @@ function ContextOptionsRenderer({
                 onClick={() => setSelectedIndex(i)}
                 className={`relative rounded-2xl border p-4 cursor-pointer transition-all flex flex-col justify-between min-h-[155px] ${
                   isSelected
-                    ? 'border-[#a1887f] bg-[#2e1d16]/80 text-[#f4ece1] shadow-md ring-1 ring-[#a1887f]/40' 
-                    : 'border-[#5d4037]/25 bg-[#20140e]/40 text-[#d7ccc8]/75 hover:border-[#5d4037]/60 hover:bg-[#251711]/60'
+                    ? 'border-[#a1887f] bg-[#2e1d16]/90 text-white shadow-md ring-1 ring-[#a1887f]/50' 
+                    : 'border-[#5d4037]/35 bg-[#20140e]/50 text-white/90 hover:border-[#5d4037]/70 hover:bg-[#251711]/70'
                 }`}
               >
                 <div className="flex items-start justify-between gap-2 mb-2">
                   <div>
-                    <h3 className={`text-sm font-semibold tracking-tight ${isSelected ? 'text-[#f4ece1]' : 'text-[#d7ccc8]'}`}>
+                    <h3 className="text-sm font-bold tracking-tight text-white">
                       {opt.n}
                     </h3>
-                    <p className="text-xs text-[#d7ccc8]/65 font-normal leading-normal mt-0.5">
+                    <p className="text-xs text-white/80 font-medium leading-normal mt-0.5">
                       {opt.d}
                     </p>
                   </div>
@@ -503,9 +503,9 @@ function ContextOptionsRenderer({
                 </div>
 
                 <div className={`rounded-xl p-3.5 flex items-center border transition-colors ${
-                  isSelected ? 'bg-[#150d09]/70 border-[#5d4037]/40 text-[#f4ece1]' : 'bg-[#150d09]/40 border-[#5d4037]/20 text-[#d7ccc8]/85'
+                  isSelected ? 'bg-[#150d09]/80 border-[#5d4037]/50 text-white font-medium' : 'bg-[#150d09]/50 border-[#5d4037]/30 text-white'
                 }`}>
-                  <p className="text-sm font-normal leading-relaxed whitespace-pre-wrap">
+                  <p className="text-sm font-medium leading-relaxed whitespace-pre-wrap">
                     "{opt.ex}"
                   </p>
                 </div>
@@ -519,16 +519,16 @@ function ContextOptionsRenderer({
       <div className="flex flex-col gap-2.5 shrink-0">
         <div className="flex items-center justify-between">
           <div>
-            <span className="text-xs font-semibold text-[#d7ccc8]/80 tracking-wide">
+            <span className="text-xs font-bold text-white tracking-wide">
               Custom Instructions
             </span>
-            <p className="text-xs text-[#d7ccc8]/60 font-normal mt-0.5">
+            <p className="text-xs text-white/80 font-medium mt-0.5">
               Rules automatically applied whenever {activeStyleName} is active.
             </p>
           </div>
           <div className="flex items-center gap-2">
             {isSaved && (
-              <span className="text-xs text-emerald-400 font-medium flex items-center gap-1 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/25">
+              <span className="text-xs text-emerald-400 font-bold flex items-center gap-1 bg-emerald-500/20 px-2 py-0.5 rounded-md border border-emerald-500/35">
                 <Check className="w-3 h-3" /> Saved
               </span>
             )}
@@ -536,7 +536,7 @@ function ContextOptionsRenderer({
               <button
                 type="button"
                 onClick={() => handleRuleChange('')}
-                className="text-xs text-[#d7ccc8]/50 hover:text-red-400 hover:bg-white/[0.04] transition-colors px-2 py-0.5 rounded cursor-pointer"
+                className="text-xs text-white/75 hover:text-red-400 hover:bg-white/[0.08] transition-colors px-2 py-0.5 rounded cursor-pointer font-semibold"
                 title="Clear rules for this context"
               >
                 Clear
@@ -551,12 +551,12 @@ function ContextOptionsRenderer({
           onChange={(e) => handleRuleChange(e.target.value)}
           placeholder={CONTEXT_PLACEHOLDERS[activeStyleName] || "Enter custom rules for this context..."}
           rows={2}
-          className="w-full bg-[#150d09]/70 border border-[#5d4037]/40 focus:border-[#a1887f] rounded-xl p-3 text-sm text-[#f4ece1] placeholder:text-[#d7ccc8]/30 resize-none outline-none font-sans leading-relaxed transition-all shadow-inner"
+          className="w-full bg-[#150d09]/80 border border-[#5d4037]/50 focus:border-[#a1887f] rounded-xl p-3 text-sm text-white placeholder:text-white/45 resize-none outline-none font-sans leading-relaxed transition-all shadow-inner font-medium"
         />
 
         {/* Quick Rule Suggestion Chips */}
         <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
-          <span className="text-xs text-[#d7ccc8]/50 font-normal mr-1">
+          <span className="text-xs text-white/80 font-bold mr-1">
             Suggestions:
           </span>
           {(CONTEXT_SUGGESTIONS[activeStyleName] || CONTEXT_SUGGESTIONS["Other apps"]).map(chip => {
@@ -566,10 +566,10 @@ function ContextOptionsRenderer({
                 key={chip}
                 type="button"
                 onClick={() => handleAddChip(chip)}
-                className={`text-xs px-2.5 py-1 rounded-lg border transition-all cursor-pointer font-normal ${
+                className={`text-xs px-2.5 py-1 rounded-lg border transition-all cursor-pointer font-medium ${
                   isChipActive
-                    ? 'bg-orange-500/20 border-orange-500/40 text-orange-200'
-                    : 'bg-[#150d09]/60 hover:bg-white/[0.05] border-[#5d4037]/35 text-[#d7ccc8]/75 hover:text-[#f4ece1]'
+                    ? 'bg-orange-500/20 border-orange-500/50 text-orange-200'
+                    : 'bg-[#150d09]/70 hover:bg-white/[0.08] border-[#5d4037]/45 text-white/85 hover:text-white'
                 }`}
                 title={isChipActive ? "Click to remove" : "Click to add rule"}
               >
@@ -632,24 +632,24 @@ function AddAppsModal({
       onClick={onClose}
     >
       <div 
-        className="bg-[#1c120d] border border-[#5d4037]/60 rounded-3xl p-6 md:p-7 max-w-lg w-full shadow-2xl flex flex-col gap-5 text-[#f4ece1] relative max-h-[85vh] overflow-hidden font-sans"
+        className="bg-[#1c120d] border border-[#5d4037]/60 rounded-3xl p-6 md:p-7 max-w-lg w-full shadow-2xl flex flex-col gap-5 text-white relative max-h-[85vh] overflow-hidden font-sans"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-start justify-between border-b border-[#5d4037]/30 pb-3.5 shrink-0">
+        <div className="flex items-start justify-between border-b border-[#5d4037]/40 pb-3.5 shrink-0">
           <div>
-            <h3 className="text-xl font-semibold text-[#f4ece1] flex items-center gap-2">
+            <h3 className="text-xl font-bold text-white flex items-center gap-2">
               <span>Add Apps to</span>
-              <span className="text-orange-400 font-semibold">{contextName}</span>
+              <span className="text-orange-400 font-bold">{contextName}</span>
             </h3>
-            <p className="text-xs text-[#d7ccc8]/70 font-normal mt-1">
+            <p className="text-xs text-white/80 font-medium mt-1">
               Select or type apps that will automatically trigger the {contextName} context.
             </p>
           </div>
           <button 
             type="button"
             onClick={onClose}
-            className="p-1.5 text-[#d7ccc8]/60 hover:text-white hover:bg-white/5 rounded-full transition-colors cursor-pointer"
+            className="p-1.5 text-white/70 hover:text-white hover:bg-white/10 rounded-full transition-colors cursor-pointer"
             title="Close"
           >
             <X className="w-5 h-5" />
@@ -659,20 +659,20 @@ function AddAppsModal({
         {/* Input Bar */}
         <form onSubmit={handleFormSubmit} className="flex gap-2 shrink-0">
           <div className="relative flex-1">
-            <Search className="w-4 h-4 text-[#d7ccc8]/40 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <Search className="w-4 h-4 text-white/60 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input 
               type="text"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               placeholder="Search or enter app name (e.g. Safari, Figma, Cursor)..."
-              className="w-full bg-[#150d09] border border-[#5d4037]/50 rounded-xl pl-10 pr-4 py-2 text-sm text-[#f4ece1] placeholder:text-[#d7ccc8]/40 focus:border-[#a1887f] focus:outline-none transition-all"
+              className="w-full bg-[#150d09] border border-[#5d4037]/60 rounded-xl pl-10 pr-4 py-2 text-sm text-white placeholder:text-white/45 focus:border-[#a1887f] focus:outline-none transition-all font-medium"
               autoFocus
             />
           </div>
           <button 
             type="submit"
             disabled={!inputValue.trim()}
-            className="px-4 py-2 bg-[#8d6e63] hover:bg-[#795548] disabled:opacity-40 disabled:cursor-not-allowed text-[#f4ece1] font-medium text-sm rounded-xl transition-all flex items-center gap-1.5 shrink-0 cursor-pointer"
+            className="px-4 py-2 bg-[#8d6e63] hover:bg-[#795548] disabled:opacity-40 disabled:cursor-not-allowed text-white font-semibold text-sm rounded-xl transition-all flex items-center gap-1.5 shrink-0 cursor-pointer"
           >
             <Plus className="w-4 h-4" />
             <span>Add</span>
@@ -683,23 +683,23 @@ function AddAppsModal({
         <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-4 min-h-0 custom-scrollbar">
           {/* Currently Assigned */}
           <div>
-            <div className="text-xs font-semibold text-[#d7ccc8]/70 mb-2 flex items-center justify-between">
+            <div className="text-xs font-bold text-white/85 mb-2 flex items-center justify-between">
               <span>Currently Assigned ({currentApps.length})</span>
             </div>
             {currentApps.length === 0 ? (
-              <p className="text-xs text-[#d7ccc8]/50 italic bg-white/[0.03] p-3 rounded-xl">No apps assigned yet. Add some below.</p>
+              <p className="text-xs text-white/60 italic bg-white/[0.04] p-3 rounded-xl">No apps assigned yet. Add some below.</p>
             ) : (
               <div className="flex flex-wrap gap-1.5">
                 {currentApps.map(app => (
                   <span 
                     key={app} 
-                    className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/[0.04] border border-[#5d4037]/40 rounded-lg text-xs font-medium text-[#f4ece1]"
+                    className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/[0.06] border border-[#5d4037]/50 rounded-lg text-xs font-semibold text-white"
                   >
                     <span>{app}</span>
                     <button 
                       type="button"
                       onClick={() => onRemoveApp(app)}
-                      className="text-[#d7ccc8]/60 hover:text-red-400 transition-colors p-0.5 cursor-pointer"
+                      className="text-white/70 hover:text-red-400 transition-colors p-0.5 cursor-pointer"
                       title={`Remove ${app}`}
                     >
                       <X className="w-3 h-3" />
@@ -712,7 +712,7 @@ function AddAppsModal({
 
           {/* Quick Add Suggestions */}
           <div>
-            <div className="text-xs font-semibold text-[#d7ccc8]/70 mb-2">
+            <div className="text-xs font-bold text-white/85 mb-2">
               <span>Popular & Suggested Apps</span>
             </div>
             <div className="flex flex-wrap gap-1.5">
@@ -721,14 +721,14 @@ function AddAppsModal({
                   key={app}
                   type="button"
                   onClick={() => onAddApp(app)}
-                  className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-white/[0.03] hover:bg-white/[0.08] border border-[#5d4037]/30 hover:border-[#8d6e63] rounded-lg text-xs text-[#d7ccc8] hover:text-[#f4ece1] font-normal transition-all cursor-pointer"
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-white/[0.04] hover:bg-white/[0.1] border border-[#5d4037]/45 hover:border-[#8d6e63] rounded-lg text-xs text-white/90 hover:text-white font-medium transition-all cursor-pointer"
                 >
-                  <Plus className="w-3 h-3 text-orange-400/80" />
+                  <Plus className="w-3 h-3 text-orange-400" />
                   <span>{app}</span>
                 </button>
               ))}
               {filteredSuggested.length === 0 && (
-                <p className="text-xs text-[#d7ccc8]/50 italic">
+                <p className="text-xs text-white/60 italic">
                   {inputValue.trim() ? `Press Enter or click Add to add "${inputValue.trim()}".` : 'All suggested apps are currently added.'}
                 </p>
               )}
@@ -737,11 +737,11 @@ function AddAppsModal({
         </div>
 
         {/* Footer */}
-        <div className="border-t border-[#5d4037]/30 pt-3.5 flex justify-end shrink-0">
+        <div className="border-t border-[#5d4037]/40 pt-3.5 flex justify-end shrink-0">
           <button 
             type="button"
             onClick={onClose}
-            className="px-5 py-2 bg-[#8d6e63] hover:bg-[#795548] text-[#f4ece1] font-medium text-sm rounded-xl transition-all shadow-sm cursor-pointer"
+            className="px-5 py-2 bg-[#8d6e63] hover:bg-[#795548] text-white font-semibold text-sm rounded-xl transition-all shadow-sm cursor-pointer"
           >
             Done
           </button>
