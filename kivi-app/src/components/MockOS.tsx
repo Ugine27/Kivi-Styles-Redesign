@@ -359,8 +359,8 @@ const MockOS = memo(({ activeText, mode, setMode, degree, setDegree, isAltPresse
                     const y = Math.sin(angleRad) * radius;
                     const isActive = diff === 0;
                     return (
-                      <motion.div key={m} className="absolute" animate={{ x, y, scale: isActive ? 1.15 : 0.85, opacity: isActive ? 1 : 0.4 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}>
-                        <div className={`-translate-x-full -translate-y-1/2 px-4 py-2 whitespace-nowrap font-bold transition-all ${isActive ? 'rounded-2xl shadow-xl backdrop-blur-3xl bg-[#5D4037]/90 text-[#E8D5B5] border border-[#3E2723]/50' : 'text-[#E8D5B5] drop-shadow-md'}`}>{m}</div>
+                      <motion.div key={m} className="absolute right-0" animate={{ x, y, scale: isActive ? 1.15 : 0.85, opacity: isActive ? 1 : 0.4 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}>
+                        <div className={`-translate-y-1/2 px-4 py-2 whitespace-nowrap font-bold transition-all ${isActive ? 'rounded-2xl shadow-xl backdrop-blur-3xl bg-[#5D4037]/90 text-[#E8D5B5] border border-[#3E2723]/50' : 'text-[#E8D5B5] drop-shadow-md'}`}>{m}</div>
                       </motion.div>
                     );
                   })}
