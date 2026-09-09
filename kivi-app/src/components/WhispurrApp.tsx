@@ -25,7 +25,7 @@ const FUN_SUBTITLES = [
   "Your invisible translation layer is purring and ready to pounce.",
   "Ears perked, whiskers twitching, standing by to transcribe.",
   "Translating your thoughts at the speed of 3 AM zoomies ⚡",
-  "99.9% speech accuracy, 0.1% cat nap energy 😴",
+  "99.9% speech accuracy, 0.1% cat nap energy 💤",
   "Kneading your spoken words into purr-fect prose ✨",
   "Ready to catch every word like a red laser dot 🔴",
   "Fueled by curiosity, warm coffee, and clean audio ☕",
@@ -37,14 +37,14 @@ const BOOP_REACTIONS = [
   '💖 +10 Purrs!',
   '✨ Boop!',
   '😸 Purr-fect!',
-  '🧶 *happy squeak*',
+  '🐭 *happy squeak*',
   '🐾 Pounce!'
 ];
 
 const getTimeGreeting = () => {
   const hour = new Date().getHours();
   if (hour >= 5 && hour < 12) return { text: 'Good morning', icon: '☀️' };
-  if (hour >= 12 && hour < 17) return { text: 'Good afternoon', icon: '🌤️' };
+  if (hour >= 12 && hour < 17) return { text: 'Good afternoon', icon: '🌮' };
   if (hour >= 17 && hour < 22) return { text: 'Good evening', icon: '🌙' };
   return { text: 'Late night creativity', icon: '✨' };
 };
@@ -91,11 +91,13 @@ const TOUR_STEPS = [
     { id: 'History', title: 'Chat Registers', text: 'Look back at everything you\'ve said. You can easily copy or reuse your past words here.' },
     { id: 'Dictionary', title: 'Your Custom Dictionary', text: 'Teach WhisPURR your unique vocabulary, like tricky names, special acronyms, or work-specific words.' },
     { id: 'ShortHand', title: 'ShortHand Macros', text: 'Create quick voice shortcuts! For example, say "sig" to automatically type out your entire email signature.' },
-    { id: 'Context', title: 'Global Context', text: 'Set up custom styles so WhisPURR always uses the right tone for your current task, like writing emails, chatting, or coding.' },
-    { id: 'ScratchPad', title: 'ScratchPad', text: 'Your personal sandbox! Quickly jot down ideas or play around to test your new custom styles.' },
+    { id: 'Modes', title: 'Global Modes', text: 'Set up custom modes so WhisPURR always uses the right tone for your current task, like writing emails, chatting, or coding.' },
+    { id: 'ScratchPad', title: 'ScratchPad', text: 'Your personal sandbox! Quickly jot down ideas or play around to test your new custom modes.' },
     { id: 'Profile', title: 'Your Profile', text: 'Manage your account details, billing, and tweak your overall settings just the way you like them.' },
     { id: 'CatFacts', title: 'Cat Facts', text: 'Because who doesn\'t need a fun, random cat fact to brighten their workday?' }
   ];
+
+const VIDEOS = ['/cat.mp4', '/cat2.mp4', '/cat3.mp4'];
 
 export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: string, setMode?: (m: any) => void }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -107,12 +109,18 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
       return 'Home';
     }
   });
-  const [homeVideo, setHomeVideo] = useState(() => Math.random() > 0.5 ? '/cat.mp4' : '/cat2.mp4');
+  const [homeVideo, setHomeVideo] = useState(() => VIDEOS[Math.floor(Math.random() * VIDEOS.length)]);
   const [videoKey, setVideoKey] = useState(0);
 
   useEffect(() => {
     if (activeTab === 'Home') {
-      setHomeVideo(Math.random() > 0.5 ? '/cat.mp4' : '/cat2.mp4');
+      setHomeVideo(prev => {
+        let next;
+        do {
+          next = VIDEOS[Math.floor(Math.random() * VIDEOS.length)];
+        } while (next === prev);
+        return next;
+      });
       setVideoKey(prev => prev + 1);
     }
   }, [activeTab]);
@@ -714,7 +722,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
           {[
             { name: 'Dictionary', icon: BookOpen },
             { name: 'ShortHand', icon: Zap },
-            { name: 'Context', icon: Palette },
+            { name: 'Modes', icon: Palette },
             { name: 'ScratchPad', icon: FileText },
           ].map((tab) => (
             <div key={tab.name} onClick={() => {
@@ -807,6 +815,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
             </div>
             <div className="flex-1 py-6 flex flex-col gap-2 overflow-y-auto">
               {[
+                { name: 'Profile', icon: User },
                 { name: 'Settings', icon: Settings },
                   { name: 'Shortcuts', icon: Keyboard },
                 { name: 'User Policy', icon: Shield },
@@ -1144,7 +1153,16 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                       }}
                       src={homeVideo} 
                       autoPlay 
-                      loop 
+                      onEnded={() => {
+                        setHomeVideo(prev => {
+                          let next;
+                          do {
+                            next = VIDEOS[Math.floor(Math.random() * VIDEOS.length)];
+                          } while (next === prev);
+                          return next;
+                        });
+                        setVideoKey(prev => prev + 1);
+                      }}
                       muted 
                       playsInline 
                       className="absolute inset-0 w-full h-full object-cover object-center"
@@ -1401,7 +1419,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
               </motion.div>
             )}
 
-            {activeTab === 'Context' && (
+            {(activeTab === 'Modes' || activeTab === 'Context') && (
               <motion.div key="context" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col p-4 md:p-6 overflow-hidden ${glassPanel}`}>
                 <StylesManager 
                   currentMode={mode || 'Professional'} 
@@ -1473,7 +1491,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                     <div className="flex items-center justify-between">
                       <div className="flex flex-col gap-1.5">
                         <span className="text-xl font-bold text-white tracking-tight">Seamless Switch</span>
-                        <span className="text-[15px] text-white/50">Easily switch between contexts/modes without ever having to open the app</span>
+                        <span className="text-[15px] text-white/50">Easily switch between modes without ever having to open the app</span>
                         <span className="text-xs text-orange-400 font-mono mt-1 uppercase tracking-widest">Shortcut: Arrow Up/Down & Mouse Scroll</span>
                       </div>
                       <button 
@@ -1545,7 +1563,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                 </div>
                 <h1 className="text-3xl font-bold text-white tracking-tight">WhisPURR Tutorial</h1>
                 <p className="text-white/80 text-center max-w-md text-lg mb-4 font-medium">
-                  Need a refresher? Replay the interactive setup tutorial to learn about WhisPURR's features, shortcuts, and context modes.
+                  Need a refresher? Replay the interactive setup tutorial to learn about WhisPURR's features, shortcuts, and modes.
                 </p>
                 <button
                   onClick={() => setShowTutorial(true)}
@@ -1557,7 +1575,174 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
               </motion.div>
             )}
 
-            {!['Home', 'History', 'Dictionary', 'ShortHand', 'ScratchPad', 'Context', 'Theme', 'Tutorial', 'Shortcuts'].includes(activeTab) && (
+            {activeTab === 'Settings' && (
+              <motion.div key="settings" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col gap-6 p-8 overflow-y-auto ${glassPanel}`}>
+                <div className="px-2 shrink-0">
+                  <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
+                    <Settings className="text-[#8d6e63] w-8 h-8" />
+                    Settings
+                  </h1>
+                  <p className="text-white/50 text-sm">Configure your system preferences and account settings.</p>
+                </div>
+                
+                <div className="grid grid-cols-1 max-w-3xl gap-6 mt-4">
+                  <div className="bg-white/[0.02] border border-white/5 p-6 rounded-2xl shadow-sm">
+                    <h3 className="text-lg font-bold text-white mb-4">General Preferences</h3>
+                    <div className="flex flex-col gap-4">
+                      <div className="flex items-center justify-between p-4 rounded-xl bg-black/20 border border-white/5">
+                        <div>
+                          <div className="font-semibold text-white">Start on Boot</div>
+                          <div className="text-sm text-white/50">Launch WhisPURR automatically when your system starts.</div>
+                        </div>
+                        <div className="w-12 h-6 bg-[#8d6e63] rounded-full relative cursor-pointer border border-[#8d6e63]/50">
+                          <div className="absolute right-1 top-1 w-4 h-4 bg-[#f4ece1] rounded-full shadow-md"></div>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between p-4 rounded-xl bg-black/20 border border-white/5">
+                        <div>
+                          <div className="font-semibold text-white">Hardware Acceleration</div>
+                          <div className="text-sm text-white/50">Use GPU to make animations and interface buttery smooth.</div>
+                        </div>
+                        <div className="w-12 h-6 bg-[#8d6e63] rounded-full relative cursor-pointer border border-[#8d6e63]/50">
+                          <div className="absolute right-1 top-1 w-4 h-4 bg-[#f4ece1] rounded-full shadow-md"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {activeTab === 'Plans & Billing' && (
+              <motion.div key="billing" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col gap-6 p-8 overflow-y-auto ${glassPanel}`}>
+                <div className="px-2 shrink-0">
+                  <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
+                    <CreditCard className="text-[#8d6e63] w-8 h-8" />
+                    Plans & Billing
+                  </h1>
+                  <p className="text-white/50 text-sm">Manage your subscription and billing details.</p>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-4">
+                  {/* Basic Plan */}
+                  <div className="bg-white/[0.02] border border-white/5 p-8 rounded-2xl shadow-sm flex flex-col">
+                    <h3 className="text-xl font-bold text-white mb-2">Kitten</h3>
+                    <div className="text-3xl font-extrabold text-white mb-6">Free</div>
+                    <ul className="text-white/60 space-y-3 mb-8 flex-1">
+                      <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-[#8d6e63]" /> 500 Daily Words</li>
+                      <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-[#8d6e63]" /> Standard Voice Engine</li>
+                      <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-[#8d6e63]" /> Community Support</li>
+                    </ul>
+                    <button className="w-full py-3 rounded-xl border border-white/10 text-white hover:bg-white/5 transition-colors font-semibold">Current Plan</button>
+                  </div>
+                  
+                  {/* Pro Plan */}
+                  <div className="bg-[#8d6e63]/10 border border-[#8d6e63]/40 p-8 rounded-2xl shadow-[0_0_30px_rgba(141,110,99,0.15)] flex flex-col relative">
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#8d6e63] text-[#f4ece1] text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">Most Popular</div>
+                    <h3 className="text-xl font-bold text-white mb-2">Lion</h3>
+                    <div className="text-3xl font-extrabold text-[#8d6e63] mb-6">$9<span className="text-lg text-white/50 font-medium">/mo</span></div>
+                    <ul className="text-white/80 space-y-3 mb-8 flex-1">
+                      <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-[#8d6e63]" /> Unlimited Words</li>
+                      <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-[#8d6e63]" /> Advanced AI Engine</li>
+                      <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-[#8d6e63]" /> Priority Support</li>
+                      <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-[#8d6e63]" /> Adaptive Modes</li>
+                    </ul>
+                    <button className="w-full py-3 rounded-xl bg-[#8d6e63] text-[#f4ece1] hover:bg-[#795548] transition-colors font-bold shadow-md">Upgrade to Lion</button>
+                  </div>
+
+                  {/* Enterprise Plan */}
+                  <div className="bg-white/[0.02] border border-white/5 p-8 rounded-2xl shadow-sm flex flex-col">
+                    <h3 className="text-xl font-bold text-white mb-2">Panther</h3>
+                    <div className="text-3xl font-extrabold text-white mb-6">$29<span className="text-lg text-white/50 font-medium">/mo</span></div>
+                    <ul className="text-white/60 space-y-3 mb-8 flex-1">
+                      <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-[#8d6e63]" /> Everything in Lion</li>
+                      <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-[#8d6e63]" /> Custom AI Training</li>
+                      <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-[#8d6e63]" /> Team Management</li>
+                      <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-[#8d6e63]" /> API Access</li>
+                    </ul>
+                    <button className="w-full py-3 rounded-xl border border-white/10 text-white hover:bg-white/5 transition-colors font-semibold">Contact Sales</button>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {activeTab === 'User Policy' && (
+              <motion.div key="policy" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col gap-6 p-8 overflow-y-auto ${glassPanel}`}>
+                <div className="px-2 shrink-0 border-b border-white/5 pb-6">
+                  <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
+                    <Shield className="text-[#8d6e63] w-8 h-8" />
+                    User Policy & Privacy
+                  </h1>
+                  <p className="text-white/50 text-sm">We take your privacy and data security seriously.</p>
+                </div>
+                
+                <div className="max-w-4xl text-white/80 space-y-8 px-2 pb-10">
+                  <section>
+                    <h2 className="text-xl font-bold text-white mb-3">1. Data Processing</h2>
+                    <p className="leading-relaxed text-sm text-white/60 mb-2">
+                      WhisPURR processes your voice data locally whenever possible. When utilizing cloud-based transcription models, audio is transmitted via end-to-end encrypted tunnels and is immediately discarded after transcription is complete. We do not store your voice recordings on our servers.
+                    </p>
+                  </section>
+                  <section>
+                    <h2 className="text-xl font-bold text-white mb-3">2. AI Training</h2>
+                    <p className="leading-relaxed text-sm text-white/60 mb-2">
+                      We firmly believe that your data is yours. WhisPURR will never use your personal transcriptions or dictation history to train our global AI models without your explicit, opt-in consent.
+                    </p>
+                  </section>
+                  <section>
+                    <h2 className="text-xl font-bold text-white mb-3">3. Telemetry & Analytics</h2>
+                    <p className="leading-relaxed text-sm text-white/60 mb-2">
+                      To improve our service, we collect anonymized telemetry data (such as error rates, transcription latency, and feature usage). This data contains no personally identifiable information (PII) and cannot be traced back to your individual account.
+                    </p>
+                  </section>
+                </div>
+              </motion.div>
+            )}
+
+            {activeTab === 'Profile' && (
+              <motion.div key="profile" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col gap-4 p-6 overflow-hidden ${glassPanel}`}>
+                <div className="px-2 shrink-0 border-b border-white/5 pb-4">
+                  <h1 className="text-3xl font-bold text-white mb-1 flex items-center gap-3">
+                    <User className="text-[#8d6e63] w-8 h-8" />
+                    Profile
+                  </h1>
+                  <p className="text-white/50 text-sm">Your personal dashboard and lifetime statistics.</p>
+                </div>
+                
+                <div className="flex-1 flex flex-col items-center max-w-4xl mx-auto w-full py-2 min-h-0">
+                  <div className="w-28 h-28 shrink-0 rounded-full bg-gradient-to-tr from-[#8d6e63] to-[#d7ccc8] flex items-center justify-center border-4 border-[#5d4037]/50 shadow-[0_0_50px_rgba(141,110,99,0.3)] mb-4">
+                    <User className="w-14 h-14 text-white" strokeWidth={2} />
+                  </div>
+                  <h2 className="text-3xl font-extrabold text-white mb-1">Ugine</h2>
+                  <div className="text-white/50 font-medium tracking-widest uppercase text-xs mb-8">Lion Plan Member</div>
+
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full mb-auto shrink-0">
+                    <div className="bg-white/[0.02] border border-white/5 p-4 rounded-2xl flex flex-col items-center justify-center text-center shadow-sm hover:bg-white/[0.04] transition-colors">
+                      <div className="text-2xl font-bold text-white mb-1">45.2k</div>
+                      <div className="text-[10px] text-white/40 uppercase tracking-wider font-semibold">Words Spoken</div>
+                    </div>
+                    <div className="bg-white/[0.02] border border-white/5 p-4 rounded-2xl flex flex-col items-center justify-center text-center shadow-sm hover:bg-white/[0.04] transition-colors">
+                      <div className="text-2xl font-bold text-[#8d6e63] mb-1">16.5h</div>
+                      <div className="text-[10px] text-white/40 uppercase tracking-wider font-semibold">Time Saved</div>
+                    </div>
+                    <div className="bg-white/[0.02] border border-white/5 p-4 rounded-2xl flex flex-col items-center justify-center text-center shadow-sm hover:bg-white/[0.04] transition-colors">
+                      <div className="text-2xl font-bold text-white mb-1">Formal</div>
+                      <div className="text-[10px] text-white/40 uppercase tracking-wider font-semibold">Top Mode</div>
+                    </div>
+                    <div className="bg-white/[0.02] border border-white/5 p-4 rounded-2xl flex flex-col items-center justify-center text-center shadow-sm hover:bg-white/[0.04] transition-colors">
+                      <div className="text-2xl font-bold text-white mb-1">342</div>
+                      <div className="text-[10px] text-white/40 uppercase tracking-wider font-semibold">Shortcuts Used</div>
+                    </div>
+                  </div>
+
+                  <div className="mt-auto pt-6 text-center text-white/30 italic text-sm font-medium shrink-0">
+                    "Thank you for using WhisPURR"
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {!['Home', 'History', 'Dictionary', 'ShortHand', 'ScratchPad', 'Modes', 'Theme', 'Tutorial', 'Shortcuts', 'Settings', 'Plans & Billing', 'User Policy', 'Profile'].includes(activeTab) && (
               <motion.div key="fallback" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col items-center justify-center gap-4 p-8 ${glassPanel}`}>
                 <Settings className="w-16 h-16 text-white/10" />
                 <h1 className="text-2xl font-bold text-white/50">{activeTab}</h1>
