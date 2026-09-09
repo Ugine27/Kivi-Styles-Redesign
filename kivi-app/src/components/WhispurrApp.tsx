@@ -32,14 +32,6 @@ const FUN_SUBTITLES = [
   "Zero hisses, all purrs. Speak whenever you're ready! 🐾"
 ];
 
-const CAT_MOODS = [
-  { emoji: '😸', label: 'Purring along', phrase: 'Purr-fectly in sync' },
-  { emoji: '⚡', label: 'Zoomies active', phrase: 'Ready for fast speech' },
-  { emoji: '🥐', label: 'Kneading thoughts', phrase: 'Baking audio into text' },
-  { emoji: '🎯', label: 'Laser-focused', phrase: 'Catching every syllable' },
-  { emoji: '☕', label: 'Cozy catnap', phrase: 'Chilled & standing by' },
-];
-
 const BOOP_REACTIONS = [
   '🐾 *purr*',
   '💖 +10 Purrs!',
@@ -119,7 +111,6 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
     }
   }, [activeTab]);
 
-  const [catMoodIndex, setCatMoodIndex] = useState(0);
   const [funSubtitleIndex, setFunSubtitleIndex] = useState(0);
   const [boopParticles, setBoopParticles] = useState<{ id: number; text: string; x: number }[]>([]);
   const [isBooping, setIsBooping] = useState(false);
@@ -129,7 +120,6 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
     setIsBooping(true);
     setTimeout(() => setIsBooping(false), 500);
 
-    setCatMoodIndex(prev => (prev + 1) % CAT_MOODS.length);
     setFunSubtitleIndex(prev => (prev + 1) % FUN_SUBTITLES.length);
 
     const reaction = BOOP_REACTIONS[Math.floor(Math.random() * BOOP_REACTIONS.length)];
@@ -860,33 +850,6 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                   <FootprintManager contained={true} />
                   {/* Centered Fun Greeting Section */}
                   <div className="w-full flex flex-col items-center justify-center text-center relative z-20 pt-1 pb-1 select-none">
-                    {/* Interactive Top Status Pill / Fun Cat Mood Badge */}
-                    <motion.button
-                      type="button"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.96 }}
-                      onClick={handleBoop}
-                      className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-[#5d4037]/50 via-[#8d6e63]/30 to-[#5d4037]/50 border border-[#8d6e63]/50 text-orange-200 text-xs font-medium mb-2.5 shadow-[0_4px_16px_rgba(0,0,0,0.25)] backdrop-blur-md cursor-pointer hover:border-orange-400/60 hover:bg-[#8d6e63]/40 transition-all group"
-                      title="Click to boop & change kitty mood!"
-                    >
-                      <span className="relative flex h-2 w-2">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                        <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-                      </span>
-                      <span className="font-semibold text-[#f4ece1] flex items-center gap-1.5">
-                        <Sparkles className="w-3.5 h-3.5 text-orange-400" />
-                        Whispurr AI Active
-                      </span>
-                      <span className="text-white/20">•</span>
-                      <span className="text-orange-300 flex items-center gap-1 font-normal">
-                        <span>{CAT_MOODS[catMoodIndex].emoji}</span>
-                        <span>{CAT_MOODS[catMoodIndex].label}</span>
-                      </span>
-                      <span className="text-[10px] bg-orange-500/20 text-orange-200 px-1.5 py-0.5 rounded-md border border-orange-500/30 group-hover:bg-orange-500/30 transition-colors font-medium flex items-center gap-1">
-                        Boop! 🐾
-                      </span>
-                    </motion.button>
-
                     {/* Centered Greeting Heading with Interactive Paw Button */}
                     <div className="relative inline-flex items-center justify-center gap-3">
                       <h1 className="text-3xl lg:text-4xl font-extrabold tracking-tight text-white flex items-center gap-2 drop-shadow-sm">
