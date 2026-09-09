@@ -154,7 +154,7 @@ function renderSlideContent(index: number, onComplete: () => void) {
               Your thoughts, seamlessly translated into work.
             </p>
             <p className="text-xl text-[#3e2723]/70 font-sans mb-6 leading-relaxed">
-              WhisPURR stays quietly in the background as you move between contexts. Speak naturally, and it adapts your words to where you are.
+              WhisPURR stays quietly in the background as you move between modes. Speak naturally, and it adapts your words to where you are.
             </p>
             <p className="text-2xl text-[#3e2723] font-serif font-bold italic">
               Fast. Flexible. Quietly there.
@@ -252,7 +252,7 @@ function renderSlideContent(index: number, onComplete: () => void) {
         { n: 'Formal', d: 'Highest formality, full forms.' }
       ]} />;
     case 8:
-      return <SurveySlide title="Global Context." icon={<Briefcase size={32} />} subtext="Pick WhisPURR's default structural baseline when prowling through other applications." options={[
+      return <SurveySlide title="Global Modes." icon={<Briefcase size={32} />} subtext="Pick WhisPURR's default structural baseline when prowling through other applications." options={[
         { n: 'Balanced', d: 'Cleaned, but still your voice.' },
         { n: 'Minimal', d: 'Compressed to fragments.' },
         { n: 'Polished', d: 'Composed, complete sentences.' }
@@ -286,7 +286,7 @@ function SurveySlide({ title, icon, subtext, options }: { title: string, icon: R
     <div className="flex flex-col items-center w-full text-center -mt-8">
       <div className="flex items-center gap-4 mb-4">
         <span className="text-[#3e2723]/40">{icon}</span>
-        <h2 className="text-2xl font-mono text-[#3e2723]/40 tracking-tight">styles survey.</h2>
+        <h2 className="text-2xl font-mono text-[#3e2723]/40 tracking-tight">modes survey.</h2>
       </div>
       <h1 className="text-6xl font-serif font-medium tracking-tight mb-6">{title}</h1>
       <p className="text-2xl text-[#3e2723]/70 font-serif italic mb-16 max-w-3xl">- {subtext}</p>
