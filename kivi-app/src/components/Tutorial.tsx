@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Terminal, Briefcase, MessageCircle, Mail, ChevronRight, ChevronLeft, Check, Compass, Globe, Sparkles, Plus, ChevronUp, ChevronDown, Copy } from 'lucide-react';
+import { Terminal, Briefcase, MessageCircle, Mail, ChevronRight, ChevronLeft, Check, Compass, Globe, Sparkles, Plus, ChevronUp, ChevronDown, Copy, Mic } from 'lucide-react';
 import { ALL_DIAL_LANGUAGES, LANG_SAMPLES, getSanitizedDialLanguages } from '../constants/languages';
 
 interface TutorialProps {
@@ -187,65 +187,68 @@ function renderSlideContent(index: number, onComplete: () => void, onNext?: () =
       return <RadialDialsDemoSlide />;
     case 3:
       return (
-        <div className="flex flex-col items-center justify-center -mt-8 text-center max-w-4xl">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-coral-500/10 border border-coral-500/25 text-coral-700 text-xs font-sans font-bold uppercase tracking-wider mb-4 shadow-xs backdrop-blur-md">
-            <span>⚡ Desktop Shortcuts</span>
+        <div className="flex flex-col items-center justify-center -mt-4 text-center max-w-4xl px-4 select-none">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#f4ebe1] border border-[#8d6e63]/25 text-[#5d4037] text-xs font-mono font-medium tracking-wide mb-3 shadow-2xs">
+            <span>Desktop Shortcuts</span>
           </div>
 
-          <h1 className="text-5xl sm:text-6xl font-serif font-medium tracking-tight mb-4 text-[#2b1f1a]">
-            Pick Your <span className="bg-gradient-to-r from-rose-500 via-pink-500 to-amber-500 gradient-text font-bold">Paws.</span>
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-serif font-normal tracking-tight mb-3 text-[#2b170e]">
+            Pick Your <span className="font-semibold italic text-[#8d5e3b]">Paws.</span>
           </h1>
 
-          <p className="text-xl sm:text-2xl text-[#3e2723]/75 font-serif italic mb-10 max-w-2xl leading-relaxed">
+          <p className="text-lg sm:text-xl text-[#5d4037]/80 font-serif italic mb-8 max-w-xl leading-relaxed">
             Quick desktop shortcuts to trigger dictation and radial dials.
           </p>
 
-          <p className="text-xs font-bold text-[#2b1f1a]/50 uppercase tracking-widest mb-6">Active desktop shortcuts</p>
+          <p className="text-xs font-mono font-medium text-[#8d6e63] uppercase tracking-widest mb-6">Active desktop shortcuts</p>
 
           <div className="flex flex-wrap gap-6 justify-center w-full">
             {/* Hold to Talk */}
             <div 
               onClick={() => goToSlide?.(1)}
-              className="flex-1 min-w-[220px] max-w-[280px] px-7 py-6 bg-gradient-to-b from-sky-50 to-blue-100/50 border-2 border-sky-400 rounded-3xl flex flex-col items-center cursor-pointer hover:scale-105 hover:shadow-xl hover:shadow-sky-500/15 transition-all shadow-md active:scale-95"
+              className="flex-1 min-w-[220px] max-w-[280px] p-7 bg-white/80 backdrop-blur-md border border-[#8d6e63]/20 rounded-3xl flex flex-col items-center justify-between cursor-pointer hover:border-[#8d6e63]/50 hover:shadow-xl hover:shadow-[#2b170e]/5 hover:-translate-y-1 transition-all duration-300 shadow-sm active:scale-95 group"
               title="Click to view Hold option to Speak slide"
             >
-              <span className="text-xs font-bold text-sky-800 uppercase tracking-wider mb-3 bg-sky-200/60 px-3 py-1 rounded-full">
-                🎙️ Hold to Talk
+              <span className="inline-flex items-center gap-1.5 text-xs font-medium text-[#5d4037] bg-[#f4ebe1]/80 px-3 py-1 rounded-full border border-[#8d6e63]/15 mb-5">
+                <Mic className="w-3.5 h-3.5 text-[#8d5e3b]" />
+                <span>Hold to Talk</span>
               </span>
-              <span className="text-4xl font-sans font-black text-sky-950 bg-white px-6 py-2 rounded-2xl border-2 border-sky-200 shadow-sm mb-2 font-mono">
+              <span className="text-3xl sm:text-4xl font-mono font-semibold text-[#2b170e] bg-white px-6 py-2.5 rounded-2xl border border-[#8d6e63]/25 shadow-xs mb-4">
                 option
               </span>
-              <span className="text-xs text-sky-900/70 font-sans font-medium">Instant Voice Typing</span>
+              <span className="text-xs text-[#5d4037]/75 font-sans font-medium">Instant Voice Typing</span>
             </div>
 
             {/* Persona Dial */}
             <div 
               onClick={() => goToSlide?.(2)}
-              className="flex-1 min-w-[220px] max-w-[280px] px-7 py-6 bg-gradient-to-b from-coral-50 to-rose-100/50 border-2 border-coral-400 rounded-3xl flex flex-col items-center cursor-pointer hover:scale-105 hover:shadow-xl hover:shadow-coral-500/15 transition-all shadow-md active:scale-95"
+              className="flex-1 min-w-[220px] max-w-[280px] p-7 bg-white/80 backdrop-blur-md border border-[#8d6e63]/20 rounded-3xl flex flex-col items-center justify-between cursor-pointer hover:border-[#8d6e63]/50 hover:shadow-xl hover:shadow-[#2b170e]/5 hover:-translate-y-1 transition-all duration-300 shadow-sm active:scale-95 group"
               title="Click to view Persona Dial slide"
             >
-              <span className="text-xs font-bold text-coral-800 uppercase tracking-wider mb-3 bg-coral-200/60 px-3 py-1 rounded-full">
-                🧭 Persona Dial
+              <span className="inline-flex items-center gap-1.5 text-xs font-medium text-[#5d4037] bg-[#f4ebe1]/80 px-3 py-1 rounded-full border border-[#8d6e63]/15 mb-5">
+                <Compass className="w-3.5 h-3.5 text-[#8d5e3b]" />
+                <span>Persona Dial</span>
               </span>
-              <span className="text-2xl font-sans font-black text-coral-950 bg-white px-5 py-3 rounded-2xl border-2 border-coral-200 shadow-sm mb-2 whitespace-nowrap font-mono">
+              <span className="text-xl sm:text-2xl font-mono font-semibold text-[#2b170e] bg-white px-5 py-3 rounded-2xl border border-[#8d6e63]/25 shadow-xs mb-4 whitespace-nowrap">
                 option + scroll
               </span>
-              <span className="text-xs text-coral-900/70 font-sans font-medium">Spin 8 Personas</span>
+              <span className="text-xs text-[#5d4037]/75 font-sans font-medium">Spin 8 Personas</span>
             </div>
 
             {/* Language Dial */}
             <div 
               onClick={() => goToSlide?.(2)}
-              className="flex-1 min-w-[220px] max-w-[280px] px-7 py-6 bg-gradient-to-b from-mint-50 to-teal-100/50 border-2 border-teal-400 rounded-3xl flex flex-col items-center cursor-pointer hover:scale-105 hover:shadow-xl hover:shadow-teal-500/15 transition-all shadow-md active:scale-95"
+              className="flex-1 min-w-[220px] max-w-[280px] p-7 bg-white/80 backdrop-blur-md border border-[#8d6e63]/20 rounded-3xl flex flex-col items-center justify-between cursor-pointer hover:border-[#8d6e63]/50 hover:shadow-xl hover:shadow-[#2b170e]/5 hover:-translate-y-1 transition-all duration-300 shadow-sm active:scale-95 group"
               title="Click to view Language Dial slide"
             >
-              <span className="text-xs font-bold text-teal-800 uppercase tracking-wider mb-3 bg-mint-200/60 px-3 py-1 rounded-full">
-                🌐 Language Dial
+              <span className="inline-flex items-center gap-1.5 text-xs font-medium text-[#5d4037] bg-[#f4ebe1]/80 px-3 py-1 rounded-full border border-[#8d6e63]/15 mb-5">
+                <Globe className="w-3.5 h-3.5 text-[#8d5e3b]" />
+                <span>Language Dial</span>
               </span>
-              <span className="text-2xl font-sans font-black text-teal-950 bg-white px-4 py-3 rounded-2xl border-2 border-teal-200 shadow-sm mb-2 whitespace-nowrap font-mono">
+              <span className="text-xl sm:text-2xl font-mono font-semibold text-[#2b170e] bg-white px-4 py-3 rounded-2xl border border-[#8d6e63]/25 shadow-xs mb-4 whitespace-nowrap">
                 option + right-click
               </span>
-              <span className="text-xs text-teal-900/70 font-sans font-medium">Switch 23 Languages</span>
+              <span className="text-xs text-[#5d4037]/75 font-sans font-medium">Switch 23 Languages</span>
             </div>
           </div>
         </div>
