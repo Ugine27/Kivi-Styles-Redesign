@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Mic, Terminal, Briefcase, MessageCircle, Mail, ChevronRight, ChevronLeft, Check, Compass, Globe, Sparkles, Plus, ChevronUp, ChevronDown } from 'lucide-react';
+import { Terminal, Briefcase, MessageCircle, Mail, ChevronRight, ChevronLeft, Check, Compass, Globe, Sparkles, Plus, ChevronUp, ChevronDown, Copy } from 'lucide-react';
 import { ALL_DIAL_LANGUAGES, LANG_SAMPLES, getSanitizedDialLanguages } from '../constants/languages';
 
 interface TutorialProps {
@@ -183,54 +183,74 @@ function renderSlideContent(index: number, onComplete: () => void, onNext?: () =
       );
     case 1:
       return (
-        <div className="flex flex-col items-center justify-center -mt-8 text-center max-w-3xl">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-coral-500/10 border border-coral-500/25 text-coral-700 text-xs font-sans font-bold uppercase tracking-wider mb-4 shadow-xs backdrop-blur-md">
-            <span>🎙️ Real-Time Dictation</span>
-          </div>
-
-          <h1 className="text-5xl sm:text-6xl font-serif font-medium tracking-tight mb-4 text-[#2b1f1a] flex items-center justify-center gap-3.5 flex-wrap">
+        <div className="flex flex-col items-center justify-center text-center max-w-3xl px-4">
+          <h1 className="text-4xl sm:text-5xl font-serif font-medium tracking-tight mb-3 text-[#2b1f1a] flex items-center justify-center gap-3 flex-wrap">
             <span>Hold</span>
-            <span className="px-6 py-2 bg-gradient-to-b from-sky-500 to-blue-600 text-white rounded-2xl text-4xl sm:text-5xl font-sans font-bold shadow-[0_8px_25px_rgba(2,132,199,0.35)] border border-sky-400/50">
-              Alt
-            </span>
+            <kbd className="px-4 py-1 rounded-xl bg-[#2b170e] text-[#fdfaf6] border border-[#5d4037] shadow-[0_4px_14px_rgba(43,23,14,0.3)] font-mono text-3xl sm:text-4xl font-semibold inline-flex items-center justify-center tracking-tight">
+              ⌥ Alt
+            </kbd>
             <span>to Speak.</span>
           </h1>
 
-          <p className="text-xl sm:text-2xl text-[#3e2723]/75 font-serif italic mb-8 max-w-xl leading-relaxed">
+          <p className="text-lg sm:text-xl text-[#3e2723]/75 font-serif italic mb-8 max-w-lg leading-relaxed">
             Press and hold to speak. WhisPURR transcribes in real time and types directly into your active app.
           </p>
 
-          {/* Interactive Mic Visualization with Audio Rings */}
-          <div className="relative flex items-center justify-center mb-8">
-            <div className="absolute w-44 h-44 rounded-full bg-sky-400/25 animate-ping opacity-35 pointer-events-none" />
-            <div className="absolute w-36 h-36 rounded-full bg-coral-400/20 blur-md pointer-events-none" />
-            <div className="relative flex items-center justify-center w-24 h-24 rounded-full bg-gradient-to-tr from-sky-500 via-blue-600 to-indigo-600 border-4 border-white shadow-[0_10px_35px_rgba(2,132,199,0.35)]">
-              <Mic size={40} className="text-white animate-pulse" />
-            </div>
-          </div>
+          {/* Realistic WhisPURR Floating HUD Mockup */}
+          <div className="w-full max-w-xl select-none text-left">
+            <div className="bg-[#190f0b]/95 backdrop-blur-2xl border border-[#5d4037]/80 rounded-3xl p-5 md:p-6 shadow-[0_25px_70px_rgba(0,0,0,0.85),0_0_40px_rgba(249,115,22,0.12)] text-[#f4ece1] flex flex-col gap-4 relative overflow-hidden">
+              {/* Subtle warm glowing aura */}
+              <div className="absolute -top-24 -left-24 w-48 h-48 bg-orange-500/10 rounded-full blur-3xl pointer-events-none" />
+              <div className="absolute -bottom-24 -right-24 w-48 h-48 bg-amber-600/10 rounded-full blur-3xl pointer-events-none" />
 
-          {/* Floating Dialogue HUD Mockup Preview */}
-          <div className="w-full max-w-xl bg-white/95 backdrop-blur-xl rounded-2xl border-2 border-sky-200/80 shadow-[0_12px_40px_rgba(2,132,199,0.12)] p-4 flex flex-col gap-3">
-            <div className="flex items-center justify-between text-xs border-b border-black/5 pb-2">
-              <div className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-                <span className="font-bold text-sky-900 uppercase tracking-wider text-[11px]">Floating Speech Dialogue</span>
+              {/* Top Header */}
+              <div className="flex items-center justify-between border-b border-[#5d4037]/50 pb-3 relative z-10">
+                <div className="flex items-center gap-3">
+                  {/* Animated orange waveform status square */}
+                  <div className="w-8 h-8 rounded-xl bg-orange-500/20 text-orange-400 border border-orange-500/40 shadow-[0_0_15px_rgba(249,115,22,0.3)] flex items-center justify-center">
+                    <div className="flex items-center gap-0.5 h-3.5 px-1">
+                      <motion.span animate={{ height: [4, 14, 6, 12, 4] }} transition={{ repeat: Infinity, duration: 0.8 }} className="w-0.5 bg-orange-400 rounded-full" />
+                      <motion.span animate={{ height: [10, 4, 14, 8, 10] }} transition={{ repeat: Infinity, duration: 0.9, delay: 0.1 }} className="w-0.5 bg-amber-400 rounded-full" />
+                      <motion.span animate={{ height: [6, 14, 8, 12, 6] }} transition={{ repeat: Infinity, duration: 0.75, delay: 0.2 }} className="w-0.5 bg-orange-300 rounded-full" />
+                      <motion.span animate={{ height: [12, 6, 14, 4, 12] }} transition={{ repeat: Infinity, duration: 0.85, delay: 0.15 }} className="w-0.5 bg-amber-300 rounded-full" />
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="text-sm font-bold tracking-tight text-[#f4ece1]">WhisPURR Listening...</h3>
+                    <p className="text-[11px] text-[#d7ccc8]/70">Speak now · Release Alt to finish</p>
+                  </div>
+                </div>
+
+                {/* Persona Tag */}
+                <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md bg-orange-500/15 text-orange-300 border border-orange-500/30">
+                  Formal
+                </span>
               </div>
-              <span className="px-2.5 py-0.5 rounded-full bg-sky-100 text-sky-700 text-[10px] font-mono font-bold">Auto-Typing Active</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-1.5 h-6 px-2.5 bg-sky-50 rounded-lg border border-sky-200">
-                <span className="w-1 h-3 bg-sky-500 rounded-full animate-bounce" />
-                <span className="w-1 h-5 bg-coral-500 rounded-full animate-bounce [animation-delay:0.15s]" />
-                <span className="w-1 h-2 bg-sunshine-500 rounded-full animate-bounce [animation-delay:0.3s]" />
-                <span className="w-1 h-4 bg-mint-500 rounded-full animate-bounce [animation-delay:0.45s]" />
+
+              {/* Transcribed Speech Bubble */}
+              <div className="bg-[#2b1f1a]/95 border border-[#5d4037] rounded-2xl p-4 shadow-inner text-[#f4ece1] text-sm md:text-[15px] font-sans leading-relaxed relative z-10">
+                <p className="italic text-[#f4ece1]/95">
+                  "Please review the attached project schedule and confirm whether the proposed delivery date works for your team."
+                </p>
               </div>
-              <p className="text-sm text-[#2b1f1a] font-sans font-medium text-left truncate flex-1">
-                "Draft an update for the team summarizing our new launch timeline..."
-              </p>
-              <span className="px-3 py-1 bg-gradient-to-r from-sky-500 to-blue-600 text-white text-xs font-bold rounded-lg shadow-xs">
-                Copy
-              </span>
+
+              {/* Bottom Action Bar */}
+              <div className="flex items-center justify-between text-xs text-[#d7ccc8]/70 pt-1 relative z-10">
+                <div className="flex items-center gap-2">
+                  <span className="flex items-center justify-center w-4 h-4 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                    <Check size={10} strokeWidth={3} />
+                  </span>
+                  <span className="text-xs text-[#d7ccc8]/80 font-medium">Typed directly into active app</span>
+                </div>
+                <button
+                  type="button"
+                  className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-xs text-[#d7ccc8] font-medium border border-[#5d4037]/50 transition-colors"
+                >
+                  <Copy size={12} />
+                  <span>Copy</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
