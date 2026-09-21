@@ -94,31 +94,25 @@ export default function Tutorial({ onComplete }: TutorialProps) {
       </div>
 
       {/* Navigation Controls */}
-      <div className="absolute inset-y-0 left-3 flex items-center justify-center z-20 pointer-events-none">
+      <div className="absolute inset-y-0 left-4 flex items-center justify-center z-20 pointer-events-none">
         {slide > 0 && (
           <button 
             onClick={prevSlide}
-            className="pointer-events-auto p-2.5 text-[#5d4037] hover:text-[#2b170e] bg-white/80 hover:bg-white backdrop-blur-md rounded-2xl border border-[#8d6e63]/20 hover:border-[#8d6e63]/40 transition-all flex flex-col items-center group cursor-pointer shadow-sm hover:shadow-md"
-            title="Previous slide (← or Backspace)"
+            className="pointer-events-auto w-11 h-11 text-[#5d4037] hover:text-[#2b170e] bg-white/80 hover:bg-white backdrop-blur-md rounded-full border border-[#8d6e63]/20 hover:border-[#8d6e63]/40 transition-all flex items-center justify-center group cursor-pointer shadow-sm hover:shadow-md hover:scale-105 active:scale-95"
+            title="Previous slide (←)"
           >
-            <ChevronLeft size={20} strokeWidth={2.5} className="group-hover:-translate-x-0.5 transition-transform text-[#5d4037]" />
-            <span className="text-[9px] font-mono tracking-wider opacity-75 group-hover:opacity-100 transition-opacity text-[#5d4037]">
-              ← Left
-            </span>
+            <ChevronLeft size={22} strokeWidth={2.5} className="group-hover:-translate-x-0.5 transition-transform text-[#5d4037]" />
           </button>
         )}
       </div>
-      <div className="absolute inset-y-0 right-3 flex items-center justify-center z-20 pointer-events-none">
+      <div className="absolute inset-y-0 right-4 flex items-center justify-center z-20 pointer-events-none">
         {slide < totalSlides - 1 && (
           <button 
             onClick={nextSlide}
-            className="pointer-events-auto p-2.5 text-[#5d4037] hover:text-[#2b170e] bg-white/80 hover:bg-white backdrop-blur-md rounded-2xl border border-[#8d6e63]/20 hover:border-[#8d6e63]/40 transition-all flex flex-col items-center group cursor-pointer shadow-sm hover:shadow-md"
-            title="Next slide (→, Space, or Enter)"
+            className="pointer-events-auto w-11 h-11 text-[#5d4037] hover:text-[#2b170e] bg-white/80 hover:bg-white backdrop-blur-md rounded-full border border-[#8d6e63]/20 hover:border-[#8d6e63]/40 transition-all flex items-center justify-center group cursor-pointer shadow-sm hover:shadow-md hover:scale-105 active:scale-95"
+            title="Next slide (→)"
           >
-            <ChevronRight size={20} strokeWidth={2.5} className="group-hover:translate-x-0.5 transition-transform text-[#5d4037]" />
-            <span className="text-[9px] font-mono tracking-wider opacity-75 group-hover:opacity-100 transition-opacity text-[#5d4037]">
-              Right →
-            </span>
+            <ChevronRight size={22} strokeWidth={2.5} className="group-hover:translate-x-0.5 transition-transform text-[#5d4037]" />
           </button>
         )}
       </div>
