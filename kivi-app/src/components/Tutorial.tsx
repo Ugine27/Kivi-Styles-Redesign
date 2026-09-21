@@ -187,68 +187,84 @@ function renderSlideContent(index: number, onComplete: () => void, onNext?: () =
       return <RadialDialsDemoSlide />;
     case 3:
       return (
-        <div className="flex flex-col items-center justify-center -mt-4 text-center max-w-4xl px-4 select-none">
+        <div className="flex flex-col items-center justify-center text-center max-w-4xl px-4 select-none">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#f4ebe1] border border-[#8d6e63]/25 text-[#5d4037] text-xs font-mono font-medium tracking-wide mb-3 shadow-2xs">
             <span>Desktop Shortcuts</span>
           </div>
 
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-serif font-normal tracking-tight mb-3 text-[#2b170e]">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-serif font-normal tracking-tight mb-2 text-[#2b170e]">
             Pick Your <span className="font-semibold italic text-[#8d5e3b]">Paws.</span>
           </h1>
 
-          <p className="text-lg sm:text-xl text-[#5d4037]/80 font-serif italic mb-8 max-w-xl leading-relaxed">
+          <p className="text-base sm:text-lg text-[#5d4037]/80 font-serif italic mb-7 max-w-md leading-relaxed">
             Quick desktop shortcuts to trigger dictation and radial dials.
           </p>
 
-          <p className="text-xs font-mono font-medium text-[#8d6e63] uppercase tracking-widest mb-6">Active desktop shortcuts</p>
-
-          <div className="flex flex-wrap gap-6 justify-center w-full">
+          <div className="flex flex-wrap gap-5 sm:gap-6 justify-center w-full items-stretch">
             {/* Hold to Talk */}
             <div 
               onClick={() => goToSlide?.(1)}
-              className="flex-1 min-w-[220px] max-w-[280px] p-7 bg-white/80 backdrop-blur-md border border-[#8d6e63]/20 rounded-3xl flex flex-col items-center justify-between cursor-pointer hover:border-[#8d6e63]/50 hover:shadow-xl hover:shadow-[#2b170e]/5 hover:-translate-y-1 transition-all duration-300 shadow-sm active:scale-95 group"
+              className="w-full sm:w-[250px] min-h-[235px] p-6 bg-white/85 backdrop-blur-md border border-[#8d6e63]/20 rounded-3xl flex flex-col items-center justify-between cursor-pointer hover:border-[#8d6e63]/50 hover:shadow-xl hover:shadow-[#2b170e]/6 hover:-translate-y-1 transition-all duration-300 shadow-sm active:scale-95 group"
               title="Click to view Hold option to Speak slide"
             >
-              <span className="inline-flex items-center gap-1.5 text-xs font-medium text-[#5d4037] bg-[#f4ebe1]/80 px-3 py-1 rounded-full border border-[#8d6e63]/15 mb-5">
+              <span className="inline-flex items-center gap-1.5 text-xs font-medium text-[#5d4037] bg-[#f4ebe1]/80 px-3.5 py-1 rounded-full border border-[#8d6e63]/15">
                 <Mic className="w-3.5 h-3.5 text-[#8d5e3b]" />
                 <span>Hold to Talk</span>
               </span>
-              <span className="text-3xl sm:text-4xl font-mono font-semibold text-[#2b170e] bg-white px-6 py-2.5 rounded-2xl border border-[#8d6e63]/25 shadow-xs mb-4">
-                option
+
+              <div className="my-auto py-3">
+                <span className="inline-flex items-center px-6 py-2.5 rounded-xl bg-white border border-[#8d6e63]/25 shadow-[0_3px_0_rgba(141,110,99,0.18)] font-mono font-semibold text-2xl text-[#2b170e]">
+                  option
+                </span>
+              </div>
+
+              <span className="text-xs text-[#5d4037]/75 font-sans font-medium">
+                Instant Voice Typing
               </span>
-              <span className="text-xs text-[#5d4037]/75 font-sans font-medium">Instant Voice Typing</span>
             </div>
 
             {/* Persona Dial */}
             <div 
               onClick={() => goToSlide?.(2)}
-              className="flex-1 min-w-[220px] max-w-[280px] p-7 bg-white/80 backdrop-blur-md border border-[#8d6e63]/20 rounded-3xl flex flex-col items-center justify-between cursor-pointer hover:border-[#8d6e63]/50 hover:shadow-xl hover:shadow-[#2b170e]/5 hover:-translate-y-1 transition-all duration-300 shadow-sm active:scale-95 group"
+              className="w-full sm:w-[250px] min-h-[235px] p-6 bg-white/85 backdrop-blur-md border border-[#8d6e63]/20 rounded-3xl flex flex-col items-center justify-between cursor-pointer hover:border-[#8d6e63]/50 hover:shadow-xl hover:shadow-[#2b170e]/6 hover:-translate-y-1 transition-all duration-300 shadow-sm active:scale-95 group"
               title="Click to view Persona Dial slide"
             >
-              <span className="inline-flex items-center gap-1.5 text-xs font-medium text-[#5d4037] bg-[#f4ebe1]/80 px-3 py-1 rounded-full border border-[#8d6e63]/15 mb-5">
+              <span className="inline-flex items-center gap-1.5 text-xs font-medium text-[#5d4037] bg-[#f4ebe1]/80 px-3.5 py-1 rounded-full border border-[#8d6e63]/15">
                 <Compass className="w-3.5 h-3.5 text-[#8d5e3b]" />
                 <span>Persona Dial</span>
               </span>
-              <span className="text-xl sm:text-2xl font-mono font-semibold text-[#2b170e] bg-white px-5 py-3 rounded-2xl border border-[#8d6e63]/25 shadow-xs mb-4 whitespace-nowrap">
-                option + scroll
+
+              <div className="my-auto py-3">
+                <span className="inline-flex items-center px-4 py-2.5 rounded-xl bg-white border border-[#8d6e63]/25 shadow-[0_3px_0_rgba(141,110,99,0.18)] font-mono font-semibold text-base sm:text-lg text-[#2b170e] whitespace-nowrap">
+                  option + scroll
+                </span>
+              </div>
+
+              <span className="text-xs text-[#5d4037]/75 font-sans font-medium">
+                Spin 8 Personas
               </span>
-              <span className="text-xs text-[#5d4037]/75 font-sans font-medium">Spin 8 Personas</span>
             </div>
 
             {/* Language Dial */}
             <div 
               onClick={() => goToSlide?.(2)}
-              className="flex-1 min-w-[220px] max-w-[280px] p-7 bg-white/80 backdrop-blur-md border border-[#8d6e63]/20 rounded-3xl flex flex-col items-center justify-between cursor-pointer hover:border-[#8d6e63]/50 hover:shadow-xl hover:shadow-[#2b170e]/5 hover:-translate-y-1 transition-all duration-300 shadow-sm active:scale-95 group"
+              className="w-full sm:w-[250px] min-h-[235px] p-6 bg-white/85 backdrop-blur-md border border-[#8d6e63]/20 rounded-3xl flex flex-col items-center justify-between cursor-pointer hover:border-[#8d6e63]/50 hover:shadow-xl hover:shadow-[#2b170e]/6 hover:-translate-y-1 transition-all duration-300 shadow-sm active:scale-95 group"
               title="Click to view Language Dial slide"
             >
-              <span className="inline-flex items-center gap-1.5 text-xs font-medium text-[#5d4037] bg-[#f4ebe1]/80 px-3 py-1 rounded-full border border-[#8d6e63]/15 mb-5">
+              <span className="inline-flex items-center gap-1.5 text-xs font-medium text-[#5d4037] bg-[#f4ebe1]/80 px-3.5 py-1 rounded-full border border-[#8d6e63]/15">
                 <Globe className="w-3.5 h-3.5 text-[#8d5e3b]" />
                 <span>Language Dial</span>
               </span>
-              <span className="text-xl sm:text-2xl font-mono font-semibold text-[#2b170e] bg-white px-4 py-3 rounded-2xl border border-[#8d6e63]/25 shadow-xs mb-4 whitespace-nowrap">
-                option + right-click
+
+              <div className="my-auto py-3">
+                <span className="inline-flex items-center px-3.5 py-2.5 rounded-xl bg-white border border-[#8d6e63]/25 shadow-[0_3px_0_rgba(141,110,99,0.18)] font-mono font-semibold text-sm sm:text-base text-[#2b170e] whitespace-nowrap">
+                  option + right-click
+                </span>
+              </div>
+
+              <span className="text-xs text-[#5d4037]/75 font-sans font-medium">
+                Switch 23 Languages
               </span>
-              <span className="text-xs text-[#5d4037]/75 font-sans font-medium">Switch 23 Languages</span>
             </div>
           </div>
         </div>
