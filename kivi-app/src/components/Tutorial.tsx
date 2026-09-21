@@ -1131,8 +1131,12 @@ function RadialDialsDemoSlide() {
             </span>
             <span className="text-[#2b170e] font-serif italic text-sm truncate">
               "{activeDial === 0
-                ? (MODE_SAMPLES[currentMode]?.plain || 'Your adapted thoughts will flow here.')
-                : (LANG_SAMPLES[currentLang] || 'Your translated voice appears here in real-time.')}"
+                ? (moodsEnabled
+                    ? (MODE_SAMPLES[currentMode]?.mood || `${MODE_SAMPLES[currentMode]?.plain || 'Your adapted thoughts will flow here.'} ✨`)
+                    : (MODE_SAMPLES[currentMode]?.plain || 'Your adapted thoughts will flow here.'))
+                : (moodsEnabled
+                    ? `${LANG_SAMPLES[currentLang] || 'Your translated voice appears here in real-time.'} ✨`
+                    : (LANG_SAMPLES[currentLang] || 'Your translated voice appears here in real-time.'))}"
             </span>
           </div>
           {activeDial === 0 && (
