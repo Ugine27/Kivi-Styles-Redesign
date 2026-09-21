@@ -547,11 +547,6 @@ function renderSlideContent(index: number, onComplete: () => void, onNext?: () =
     case 9:
       return (
         <div className="flex flex-col items-center justify-center text-center max-w-4xl px-4 select-none">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#f4ebe1] border border-[#8d6e63]/25 text-[#5d4037] text-xs font-mono font-medium tracking-wide mb-3 shadow-2xs">
-            <Sparkles className="w-3.5 h-3.5 text-[#8d5e3b]" />
-            <span>Setup Complete</span>
-          </div>
-
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-serif font-normal tracking-tight mb-2 text-[#2b170e]">
             You're Ready to <span className="font-semibold italic text-[#8d5e3b]">Pounce.</span>
           </h1>
