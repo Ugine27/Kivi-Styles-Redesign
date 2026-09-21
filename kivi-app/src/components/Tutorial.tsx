@@ -187,7 +187,7 @@ function renderSlideContent(index: number, onComplete: () => void, onNext?: () =
           <h1 className="text-4xl sm:text-5xl font-serif font-medium tracking-tight mb-3 text-[#2b1f1a] flex items-center justify-center gap-3 flex-wrap">
             <span>Hold</span>
             <kbd className="px-4 py-1 rounded-xl bg-[#2b170e] text-[#fdfaf6] border border-[#5d4037] shadow-[0_4px_14px_rgba(43,23,14,0.3)] font-mono text-3xl sm:text-4xl font-semibold inline-flex items-center justify-center tracking-tight">
-              ⌥ Alt
+              ⌥ Option
             </kbd>
             <span>to Speak.</span>
           </h1>
@@ -218,7 +218,7 @@ function renderSlideContent(index: number, onComplete: () => void, onNext?: () =
 
                   <div>
                     <h3 className="text-sm font-bold tracking-tight text-[#f4ece1]">WhisPURR Listening...</h3>
-                    <p className="text-[11px] text-[#d7ccc8]/70">Speak now · Release Alt to finish</p>
+                    <p className="text-[11px] text-[#d7ccc8]/70">Speak now · Release Option to finish</p>
                   </div>
                 </div>
 
