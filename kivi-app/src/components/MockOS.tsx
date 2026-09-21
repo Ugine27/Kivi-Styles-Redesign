@@ -8,15 +8,7 @@ import { getSanitizedDialLanguages } from '../constants/languages';
 
 type AppType = 'email' | 'vscode' | 'ai' | 'whispurr' | null;
 
-let globalMouseX = typeof window !== 'undefined' ? window.innerWidth / 2 : 0;
-let globalMouseY = typeof window !== 'undefined' ? window.innerHeight / 2 : 0;
 
-if (typeof window !== 'undefined') {
-  window.addEventListener('mousemove', (e) => {
-    globalMouseX = e.clientX;
-    globalMouseY = e.clientY;
-  });
-}
 
 interface MockOSProps {
   activeText: string;
@@ -93,7 +85,6 @@ const MockOS = memo(({
   const [scratchPadText, setScratchPadText] = useState("");
 
   const [showModeHud, setShowModeHud] = useState(false);
-  const [hudPosition, setHudPosition] = useState({ x: 0, y: 0 });
   
   const [dialLangs, setDialLangs] = useState<string[]>(getSanitizedDialLanguages);
 
@@ -141,28 +132,9 @@ const MockOS = memo(({
     }
   }, [isAltPressed]);
 
-  // Option+Scroll or Option+Arrow / Option+Right-Click to change mode/lang
+  // Option+Scroll or Option+Arrow / Option+Right-Click to change mode/lang surrounding Whispurr orb
   useEffect(() => {
-    const updateHudPosition = (overrideX?: number, overrideY?: number) => {
-      const currentX = overrideX !== undefined ? overrideX : globalMouseX;
-      const currentY = overrideY !== undefined ? overrideY : globalMouseY;
-
-      let rawX = currentX;
-      let rawY = currentY;
-      
-      const radius = 100;
-      const padding = 70; // buffer for text widths
-      
-      if (rawX - radius - padding < 0) rawX = radius + padding;
-      if (rawX + radius + padding > window.innerWidth) rawX = window.innerWidth - radius - padding;
-      if (rawY - radius - 30 < 0) rawY = radius + 30;
-      if (rawY + radius + 30 > window.innerHeight) rawY = window.innerHeight - radius - 30;
-      
-      setHudPosition({ x: rawX, y: rawY });
-      setShowModeHud(true);
-    };
-    
-    const cycleMode = (direction: 1 | -1, overrideX?: number, overrideY?: number) => {
+    const cycleMode = (direction: 1 | -1) => {
       if (!setMode) return;
       const modesList = dialModesRef.current;
       setModeRotation(prev => {
@@ -174,10 +146,10 @@ const MockOS = memo(({
         }
         return nextRot;
       });
-      updateHudPosition(overrideX, overrideY);
+      setShowModeHud(true);
     };
 
-    const cycleLang = (direction: 1 | -1, overrideX?: number, overrideY?: number) => {
+    const cycleLang = (direction: 1 | -1) => {
       const langsList = dialLangsRef.current;
       setLangRotation(prev => {
         let nextRot = prev + direction;
@@ -185,15 +157,15 @@ const MockOS = memo(({
         if (nextRot > langsList.length - 1) nextRot = Math.max(0, langsList.length - 1);
         return nextRot;
       });
-      updateHudPosition(overrideX, overrideY);
+      setShowModeHud(true);
     };
 
     const handleWheel = (e: WheelEvent) => {
       // Trigger whenever Option is held on Mac (via isAltPressed or hardware e.altKey)
       if (!isAltPressed && !e.altKey) return;
       e.preventDefault();
-      if (activeDialRef.current === 0) cycleMode(e.deltaY > 0 ? 1 : -1, e.clientX, e.clientY);
-      else cycleLang(e.deltaY > 0 ? 1 : -1, e.clientX, e.clientY);
+      if (activeDialRef.current === 0) cycleMode(e.deltaY > 0 ? 1 : -1);
+      else cycleLang(e.deltaY > 0 ? 1 : -1);
     };
 
     const handleContextMenu = (e: MouseEvent) => {
@@ -205,10 +177,14 @@ const MockOS = memo(({
         activeDialRef.current = next;
         return next;
       });
-      updateHudPosition(e.clientX, e.clientY);
+      setShowModeHud(true);
     };
 
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setShowModeHud(false);
+        return;
+      }
       const isOptionHeld = isAltPressed || e.altKey || e.key === 'Alt' || e.key === 'Option' || e.code === 'AltLeft' || e.code === 'AltRight';
       if (!isOptionHeld) return;
       if (e.key === 'ArrowDown') {
@@ -223,12 +199,12 @@ const MockOS = memo(({
         e.preventDefault();
         setActiveDial(1);
         activeDialRef.current = 1;
-        updateHudPosition();
+        setShowModeHud(true);
       } else if (e.key === 'ArrowRight') {
         e.preventDefault();
         setActiveDial(0);
         activeDialRef.current = 0;
-        updateHudPosition();
+        setShowModeHud(true);
       }
     };
     
@@ -242,18 +218,13 @@ const MockOS = memo(({
     };
   }, [isAltPressed, setMode]);
 
-  // Auto-hide HUD or hide on Alt release
+  // Auto-hide HUD after 2 seconds of inactivity
   useEffect(() => {
-    if (!isAltPressed) {
-      setShowModeHud(false);
-      return;
-    }
-    
     if (showModeHud) {
-      const timer = setTimeout(() => setShowModeHud(false), 1500);
+      const timer = setTimeout(() => setShowModeHud(false), 2000);
       return () => clearTimeout(timer);
     }
-  }, [showModeHud, mode, isAltPressed, activeDial, langRotation]);
+  }, [showModeHud, mode, activeDial, langRotation]);
 
   // Local state for native typing
   const [emailText, setEmailText] = useState('');
@@ -502,167 +473,221 @@ const MockOS = memo(({
         </div>
       )}
 
-      {/* ALT+SCROLL MODE HUD (CIRCULAR) */}
-      <AnimatePresence>
-        {showModeHud && (
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.5 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.5, filter: 'blur(10px)' }}
-            transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-            className="fixed z-[100] pointer-events-none flex items-center justify-center w-0 h-0"
-            style={{ left: hudPosition.x, top: hudPosition.y }}
-          >
-            <AnimatePresence>
-              {activeDial === 0 && (
-                <motion.div 
-                  key="dial-0"
-                  initial={{ x: 100, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  exit={{ x: 100, opacity: 0 }}
-                  transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-                  className="absolute flex items-center justify-center w-0 h-0"
-                >
-                  <svg className="absolute pointer-events-none" style={{ width: 240, height: 240, left: -120, top: -120 }}>
-                    <defs>
-                      <linearGradient id="arcFadeShared0" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#E8D5B5" stopOpacity="0" />
-                        <stop offset="20%" stopColor="#E8D5B5" stopOpacity="0.4" />
-                        <stop offset="50%" stopColor="#E8D5B5" stopOpacity="1" />
-                        <stop offset="80%" stopColor="#E8D5B5" stopOpacity="0.4" />
-                        <stop offset="100%" stopColor="#E8D5B5" stopOpacity="0" />
-                      </linearGradient>
-                    </defs>
-                    <path d="M 120 10 A 110 110 0 0 1 120 230" fill="none" stroke="url(#arcFadeShared0)" strokeWidth="2" strokeLinecap="round" />
-                  </svg>
-                  {dialModes.map((m, i) => {
-                    const diff = i - modeRotation;
-                    const angle = diff * 25;
-                    const angleRad = angle * (Math.PI / 180);
-                    const radius = 145; 
-                    const x = Math.cos(angleRad) * radius;
-                    const y = Math.sin(angleRad) * radius;
-                    const isActive = diff === 0;
-                    const distance = Math.abs(diff);
-                    const opacity = distance === 0 ? 1 : distance === 1 ? 0.65 : distance === 2 ? 0.25 : 0;
-                    return (
-                      <motion.div 
-                        key={m} 
-                        className="absolute" 
-                        animate={{ x, y, scale: isActive ? 1.15 : 0.85, opacity }} 
-                        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                        style={{ pointerEvents: distance > 2 ? 'none' : 'auto' }}
-                      >
-                        <div className={`-translate-y-1/2 px-4 py-2 whitespace-nowrap font-bold transition-all ${isActive ? 'rounded-2xl shadow-xl backdrop-blur-3xl bg-[#5D4037]/90 text-[#E8D5B5] border border-[#3E2723]/50' : 'text-[#E8D5B5] drop-shadow-md'}`}>{m}</div>
-                      </motion.div>
-                    );
-                  })}
-                </motion.div>
-              )}
-              {activeDial === 1 && (
-                <motion.div 
-                  key="dial-1"
-                  initial={{ x: -100, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  exit={{ x: -100, opacity: 0 }}
-                  transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-                  className="absolute flex items-center justify-center w-0 h-0"
-                >
-                  <svg className="absolute pointer-events-none" style={{ width: 240, height: 240, left: -120, top: -120 }}>
-                    <defs>
-                      <linearGradient id="arcFadeShared1" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#E8D5B5" stopOpacity="0" />
-                        <stop offset="20%" stopColor="#E8D5B5" stopOpacity="0.4" />
-                        <stop offset="50%" stopColor="#E8D5B5" stopOpacity="1" />
-                        <stop offset="80%" stopColor="#E8D5B5" stopOpacity="0.4" />
-                        <stop offset="100%" stopColor="#E8D5B5" stopOpacity="0" />
-                      </linearGradient>
-                    </defs>
-                    <path d="M 120 10 A 110 110 0 0 0 120 230" fill="none" stroke="url(#arcFadeShared1)" strokeWidth="2" strokeLinecap="round" />
-                  </svg>
-                  {dialLangs.map((m, i) => {
-                    const diff = i - langRotation;
-                    // Mirror to the left side and invert the vertical progression
-                    const angle = 180 - diff * 25;
-                    const angleRad = angle * (Math.PI / 180);
-                    const radius = 145; 
-                    const x = Math.cos(angleRad) * radius;
-                    const y = Math.sin(angleRad) * radius;
-                    const isActive = diff === 0;
-                    const distance = Math.abs(diff);
-                    const opacity = distance === 0 ? 1 : distance === 1 ? 0.65 : distance === 2 ? 0.25 : 0;
-                    return (
-                      <motion.div 
-                        key={m} 
-                        className="absolute right-0" 
-                        animate={{ x, y, scale: isActive ? 1.15 : 0.85, opacity }} 
-                        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                        style={{ pointerEvents: distance > 2 ? 'none' : 'auto' }}
-                      >
-                        <div className={`-translate-y-1/2 px-4 py-2 whitespace-nowrap font-bold transition-all ${isActive ? 'rounded-2xl shadow-xl backdrop-blur-3xl bg-[#5D4037]/90 text-[#E8D5B5] border border-[#3E2723]/50' : 'text-[#E8D5B5] drop-shadow-md'}`}>{m}</div>
-                      </motion.div>
-                    );
-                  })}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* NEW RADIAL KIVI CONTROL STRIP */}
+      <motion.div 
+        initial={{ y: 50, opacity: 0 }}
+        animate={{ 
+          y: (isAltPressed || isLoading || !!activeText || showModeHud) ? 0 : 50, 
+          opacity: 1 
+        }}
+        transition={{ type: 'spring', stiffness: 350, damping: 25 }}
+        className="absolute bottom-0 left-[41.5%] -translate-x-1/2 z-[100] w-64 h-64 flex items-center justify-center rounded-full pointer-events-none overflow-visible"
+        onMouseLeave={() => { setIsHovered(false); setActivePopup(null); }}
+      >
+        <div 
+          className="relative w-32 h-32 flex items-center justify-center rounded-full pointer-events-auto overflow-visible"
+        >
+          {/* Subtle Hover Glow Backdrop */}
+          <AnimatePresence>
+            {isHovered && !(isAltPressed || isLoading || !!activeText || showModeHud) && (
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.5 }}
+                className="absolute top-[-20px] left-[-20px] right-[-20px] bottom-1/2 bg-white/[0.02] rounded-t-full backdrop-blur-md border border-white/5 border-b-0 shadow-2xl origin-bottom"
+              />
+            )}
+          </AnimatePresence>
 
-            {/* NEW RADIAL KIVI CONTROL STRIP */}
-          <motion.div 
-            initial={{ y: 50, opacity: 0 }}
-            animate={{ 
-              y: (isAltPressed || isLoading || !!activeText) ? 0 : 50, 
-              opacity: 1 
+          {/* RADIAL DIALS SURROUNDING WHISPURR ORB */}
+          <AnimatePresence>
+            {showModeHud && (
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.85 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.85, filter: 'blur(8px)' }}
+                transition={{ type: 'spring', stiffness: 380, damping: 26 }}
+                className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-visible z-[90]"
+              >
+                {/* Dial Selector Pills (Top) */}
+                <div className="absolute -top-16 flex items-center gap-1 bg-[#2C1810]/95 backdrop-blur-md px-2.5 py-1 rounded-full border border-[#8D6E63]/40 shadow-2xl pointer-events-auto z-30">
+                  <button 
+                    type="button"
+                    onClick={(e) => { 
+                      e.stopPropagation(); 
+                      setActiveDial(1); 
+                      activeDialRef.current = 1; 
+                      setShowModeHud(true); 
+                    }}
+                    className={`px-2.5 py-0.5 rounded-full text-xs font-mono transition-all cursor-pointer ${
+                      activeDial === 1 
+                        ? 'bg-[#8D6E63] text-white font-bold shadow-md' 
+                        : 'text-[#E8D5B5]/60 hover:text-[#E8D5B5]'
+                    }`}
+                  >
+                    ← Language
+                  </button>
+                  <div className="w-[1px] h-3 bg-white/20" />
+                  <button 
+                    type="button"
+                    onClick={(e) => { 
+                      e.stopPropagation(); 
+                      setActiveDial(0); 
+                      activeDialRef.current = 0; 
+                      setShowModeHud(true); 
+                    }}
+                    className={`px-2.5 py-0.5 rounded-full text-xs font-mono transition-all cursor-pointer ${
+                      activeDial === 0 
+                        ? 'bg-[#8D6E63] text-white font-bold shadow-md' 
+                        : 'text-[#E8D5B5]/60 hover:text-[#E8D5B5]'
+                    }`}
+                  >
+                    Persona →
+                  </button>
+                </div>
+
+                <AnimatePresence mode="wait">
+                  {activeDial === 0 && (
+                    <motion.div 
+                      key="dial-modes"
+                      initial={{ opacity: 0, x: 25 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: 25 }}
+                      transition={{ type: 'spring', stiffness: 350, damping: 25 }}
+                      className="absolute flex items-center justify-center w-0 h-0 overflow-visible pointer-events-none"
+                    >
+                      <svg className="absolute pointer-events-none overflow-visible" style={{ width: 240, height: 240, left: -120, top: -120 }}>
+                        <defs>
+                          <linearGradient id="arcFadeShared0" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor="#E8D5B5" stopOpacity="0" />
+                            <stop offset="20%" stopColor="#E8D5B5" stopOpacity="0.4" />
+                            <stop offset="50%" stopColor="#E8D5B5" stopOpacity="1" />
+                            <stop offset="80%" stopColor="#E8D5B5" stopOpacity="0.4" />
+                            <stop offset="100%" stopColor="#E8D5B5" stopOpacity="0" />
+                          </linearGradient>
+                        </defs>
+                        <path d="M 120 10 A 110 110 0 0 1 120 230" fill="none" stroke="url(#arcFadeShared0)" strokeWidth="2.5" strokeLinecap="round" />
+                      </svg>
+                      {dialModes.map((m, i) => {
+                        const diff = i - modeRotation;
+                        const angle = diff * 22;
+                        const angleRad = angle * (Math.PI / 180);
+                        const radius = 125; 
+                        const x = Math.cos(angleRad) * radius;
+                        const y = Math.sin(angleRad) * radius;
+                        const isActive = diff === 0;
+                        const distance = Math.abs(diff);
+                        const opacity = distance === 0 ? 1 : distance === 1 ? 0.7 : distance === 2 ? 0.35 : 0;
+                        return (
+                          <motion.div 
+                            key={m} 
+                            className="absolute left-0 pointer-events-auto cursor-pointer" 
+                            animate={{ x, y, scale: isActive ? 1.12 : 0.85, opacity }} 
+                            transition={{ type: 'spring', stiffness: 320, damping: 28 }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setModeRotation(i);
+                              if (setMode) setMode(m);
+                              setShowModeHud(true);
+                            }}
+                            style={{ pointerEvents: distance > 2 ? 'none' : 'auto' }}
+                          >
+                            <div className={`-translate-y-1/2 px-3.5 py-1.5 whitespace-nowrap text-sm font-semibold transition-all ${
+                              isActive 
+                                ? 'rounded-2xl shadow-xl backdrop-blur-3xl bg-[#5D4037]/95 text-[#E8D5B5] border border-[#8D6E63]/70 ring-2 ring-[#E8D5B5]/25 shadow-[0_4px_20px_rgba(0,0,0,0.5)]' 
+                                : 'text-[#E8D5B5]/75 hover:text-[#E8D5B5] drop-shadow-md hover:scale-105'
+                            }`}>
+                              {m}
+                            </div>
+                          </motion.div>
+                        );
+                      })}
+                    </motion.div>
+                  )}
+                  {activeDial === 1 && (
+                    <motion.div 
+                      key="dial-langs"
+                      initial={{ opacity: 0, x: -25 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -25 }}
+                      transition={{ type: 'spring', stiffness: 350, damping: 25 }}
+                      className="absolute flex items-center justify-center w-0 h-0 overflow-visible pointer-events-none"
+                    >
+                      <svg className="absolute pointer-events-none overflow-visible" style={{ width: 240, height: 240, left: -120, top: -120 }}>
+                        <defs>
+                          <linearGradient id="arcFadeShared1" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor="#E8D5B5" stopOpacity="0" />
+                            <stop offset="20%" stopColor="#E8D5B5" stopOpacity="0.4" />
+                            <stop offset="50%" stopColor="#E8D5B5" stopOpacity="1" />
+                            <stop offset="80%" stopColor="#E8D5B5" stopOpacity="0.4" />
+                            <stop offset="100%" stopColor="#E8D5B5" stopOpacity="0" />
+                          </linearGradient>
+                        </defs>
+                        <path d="M 120 10 A 110 110 0 0 0 120 230" fill="none" stroke="url(#arcFadeShared1)" strokeWidth="2.5" strokeLinecap="round" />
+                      </svg>
+                      {dialLangs.map((m, i) => {
+                        const diff = i - langRotation;
+                        const angle = 180 - diff * 22;
+                        const angleRad = angle * (Math.PI / 180);
+                        const radius = 125; 
+                        const x = Math.cos(angleRad) * radius;
+                        const y = Math.sin(angleRad) * radius;
+                        const isActive = diff === 0;
+                        const distance = Math.abs(diff);
+                        const opacity = distance === 0 ? 1 : distance === 1 ? 0.7 : distance === 2 ? 0.35 : 0;
+                        return (
+                          <motion.div 
+                            key={m} 
+                            className="absolute right-0 pointer-events-auto cursor-pointer" 
+                            animate={{ x, y, scale: isActive ? 1.12 : 0.85, opacity }} 
+                            transition={{ type: 'spring', stiffness: 320, damping: 28 }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setLangRotation(i);
+                              setShowModeHud(true);
+                            }}
+                            style={{ pointerEvents: distance > 2 ? 'none' : 'auto' }}
+                          >
+                            <div className={`-translate-y-1/2 text-right px-3.5 py-1.5 whitespace-nowrap text-sm font-semibold transition-all ${
+                              isActive 
+                                ? 'rounded-2xl shadow-xl backdrop-blur-3xl bg-[#5D4037]/95 text-[#E8D5B5] border border-[#8D6E63]/70 ring-2 ring-[#E8D5B5]/25 shadow-[0_4px_20px_rgba(0,0,0,0.5)]' 
+                                : 'text-[#E8D5B5]/75 hover:text-[#E8D5B5] drop-shadow-md hover:scale-105'
+                            }`}>
+                              {m}
+                            </div>
+                          </motion.div>
+                        );
+                      })}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Central Cat */}
+          <div 
+            onClick={(e) => { 
+              if (!(isAltPressed || isLoading || !!activeText || showModeHud)) {
+                setIsHovered(prev => !prev);
+                if (activePopup) setActivePopup(null);
+                return;
+              }
+              if (e.detail === 1 && toggleListening) toggleListening(); 
             }}
-            transition={{ type: 'spring', stiffness: 350, damping: 25 }}
-            className={`absolute bottom-0 left-[41.5%] -translate-x-1/2 z-[80] w-64 h-64 flex items-center justify-center rounded-full pointer-events-none`}
-            onMouseLeave={() => { setIsHovered(false); setActivePopup(null); }}
+            className={`w-12 h-12 rounded-full border-2 flex items-center justify-center cursor-pointer transition-all duration-300 shadow-2xl relative z-20 overflow-hidden ${
+              (isAltPressed || isLoading || showModeHud)
+                ? 'border-[#8d6e63] shadow-[0_0_30px_rgba(141,110,99,0.6)] scale-110'
+                : 'border-white/20 shadow-[0_0_15px_rgba(0,0,0,0.5)] hover:scale-105 hover:border-white/40'
+            }`}
           >
-            <div 
-              className={`relative w-32 h-32 flex items-center justify-center rounded-full pointer-events-auto`}
-            >
-            {/* Subtle Hover Glow Backdrop */}
-            <AnimatePresence>
-              {isHovered && !(isAltPressed || isLoading || !!activeText) && (
-                <motion.div 
-                  initial={{ opacity: 0, scale: 0.5 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.5 }}
-                  className="absolute top-[-20px] left-[-20px] right-[-20px] bottom-1/2 bg-white/[0.02] rounded-t-full backdrop-blur-md border border-white/5 border-b-0 shadow-2xl origin-bottom"
-                />
-              )}
-            </AnimatePresence>
-
-            {/* Central Cat */}
-            <div 
-              onClick={(e) => { 
-                if (!(isAltPressed || isLoading || !!activeText)) {
-                  setIsHovered(prev => !prev);
-                  if (activePopup) setActivePopup(null);
-                  return;
-                }
-                if (e.detail === 1 && toggleListening) toggleListening(); 
-              }}
-              className={`flex items-center justify-center cursor-pointer transition-all duration-500 shadow-2xl relative z-10 overflow-hidden ${
-                (isAltPressed || isLoading || !!activeText)
-                  ? `w-12 h-12 rounded-full border-2 ${isAltPressed || isLoading ? 'border-[#8d6e63] shadow-[0_0_30px_rgba(141,110,99,0.5)] scale-110' : 'border-white/10 shadow-[0_0_15px_rgba(0,0,0,0.5)]'}`
-                  : 'px-3 py-0.5 rounded-md bg-black/60 border border-white/10 text-white/50 text-xs font-mono hover:text-white hover:bg-black/80'
-              }`}
-            >
-              {(isAltPressed || isLoading || !!activeText) ? (
-                <KiviCatIcon className={`w-full h-full object-cover transition-all duration-500 ${
-                  isLoading ? 'animate-pulse opacity-100' : 'opacity-100'
-                }`} />
-              ) : (
-                <span>^-^</span>
-              )}
-            </div>
+            <KiviCatIcon className={`w-full h-full object-cover transition-all duration-300 ${
+              isLoading ? 'animate-pulse opacity-100' : 'opacity-100'
+            }`} />
+          </div>
 
             <AnimatePresence>
-              {isHovered && !(isAltPressed || isLoading || !!activeText) && (
+              {isHovered && !(isAltPressed || isLoading || !!activeText || showModeHud) && (
                 <>
                   {/* ScratchPad Satellite (Top Left) */}
                   <motion.div 
