@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Terminal, Briefcase, MessageCircle, Mail, ChevronRight, ChevronLeft, Check, Compass, Globe, Sparkles, Plus, ChevronUp, ChevronDown, Copy } from 'lucide-react';
@@ -182,79 +182,7 @@ function renderSlideContent(index: number, onComplete: () => void, onNext?: () =
         </div>
       );
     case 1:
-      return (
-        <div className="flex flex-col items-center justify-center text-center max-w-3xl px-4">
-          <h1 className="text-4xl sm:text-5xl font-serif font-medium tracking-tight mb-3 text-[#2b1f1a] flex items-center justify-center gap-3 flex-wrap">
-            <span>Hold</span>
-            <kbd className="px-4 py-1 rounded-xl bg-[#2b170e] text-[#fdfaf6] border border-[#5d4037] shadow-[0_4px_14px_rgba(43,23,14,0.3)] font-mono text-3xl sm:text-4xl font-semibold inline-flex items-center justify-center tracking-tight">
-              ⌥ Option
-            </kbd>
-            <span>to Speak.</span>
-          </h1>
-
-          <p className="text-lg sm:text-xl text-[#3e2723]/75 font-serif italic mb-8 max-w-lg leading-relaxed">
-            Press and hold to speak. WhisPURR transcribes in real time and types directly into your active app.
-          </p>
-
-          {/* Realistic WhisPURR Floating HUD Mockup */}
-          <div className="w-full max-w-xl select-none text-left">
-            <div className="bg-[#190f0b]/95 backdrop-blur-2xl border border-[#5d4037]/80 rounded-3xl p-5 md:p-6 shadow-[0_25px_70px_rgba(0,0,0,0.85),0_0_40px_rgba(249,115,22,0.12)] text-[#f4ece1] flex flex-col gap-4 relative overflow-hidden">
-              {/* Subtle warm glowing aura */}
-              <div className="absolute -top-24 -left-24 w-48 h-48 bg-orange-500/10 rounded-full blur-3xl pointer-events-none" />
-              <div className="absolute -bottom-24 -right-24 w-48 h-48 bg-amber-600/10 rounded-full blur-3xl pointer-events-none" />
-
-              {/* Top Header */}
-              <div className="flex items-center justify-between border-b border-[#5d4037]/50 pb-3 relative z-10">
-                <div className="flex items-center gap-3">
-                  {/* Animated orange waveform status square */}
-                  <div className="w-8 h-8 rounded-xl bg-orange-500/20 text-orange-400 border border-orange-500/40 shadow-[0_0_15px_rgba(249,115,22,0.3)] flex items-center justify-center">
-                    <div className="flex items-center gap-0.5 h-3.5 px-1">
-                      <motion.span animate={{ height: [4, 14, 6, 12, 4] }} transition={{ repeat: Infinity, duration: 0.8 }} className="w-0.5 bg-orange-400 rounded-full" />
-                      <motion.span animate={{ height: [10, 4, 14, 8, 10] }} transition={{ repeat: Infinity, duration: 0.9, delay: 0.1 }} className="w-0.5 bg-amber-400 rounded-full" />
-                      <motion.span animate={{ height: [6, 14, 8, 12, 6] }} transition={{ repeat: Infinity, duration: 0.75, delay: 0.2 }} className="w-0.5 bg-orange-300 rounded-full" />
-                      <motion.span animate={{ height: [12, 6, 14, 4, 12] }} transition={{ repeat: Infinity, duration: 0.85, delay: 0.15 }} className="w-0.5 bg-amber-300 rounded-full" />
-                    </div>
-                  </div>
-
-                  <div>
-                    <h3 className="text-sm font-bold tracking-tight text-[#f4ece1]">WhisPURR Listening...</h3>
-                    <p className="text-[11px] text-[#d7ccc8]/70">Speak now · Release Option to finish</p>
-                  </div>
-                </div>
-
-                {/* Persona Tag */}
-                <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md bg-orange-500/15 text-orange-300 border border-orange-500/30">
-                  Formal
-                </span>
-              </div>
-
-              {/* Transcribed Speech Bubble */}
-              <div className="bg-[#2b1f1a]/95 border border-[#5d4037] rounded-2xl p-4 shadow-inner text-[#f4ece1] text-sm md:text-[15px] font-sans leading-relaxed relative z-10">
-                <p className="italic text-[#f4ece1]/95">
-                  "Please review the attached project schedule and confirm whether the proposed delivery date works for your team."
-                </p>
-              </div>
-
-              {/* Bottom Action Bar */}
-              <div className="flex items-center justify-between text-xs text-[#d7ccc8]/70 pt-1 relative z-10">
-                <div className="flex items-center gap-2">
-                  <span className="flex items-center justify-center w-4 h-4 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
-                    <Check size={10} strokeWidth={3} />
-                  </span>
-                  <span className="text-xs text-[#d7ccc8]/80 font-medium">Typed directly into active app</span>
-                </div>
-                <button
-                  type="button"
-                  className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-xs text-[#d7ccc8] font-medium border border-[#5d4037]/50 transition-colors"
-                >
-                  <Copy size={12} />
-                  <span>Copy</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      );
+      return <HoldOptionToSpeakSlide />;
     case 2:
       return <RadialDialsDemoSlide />;
     case 3:
@@ -280,8 +208,8 @@ function renderSlideContent(index: number, onComplete: () => void, onNext?: () =
               <span className="text-xs font-bold text-sky-800 uppercase tracking-wider mb-3 bg-sky-200/60 px-3 py-1 rounded-full">
                 🎙️ Hold to Talk
               </span>
-              <span className="text-4xl font-sans font-black text-sky-950 bg-white px-6 py-2 rounded-2xl border-2 border-sky-200 shadow-sm mb-2">
-                Alt
+              <span className="text-4xl font-sans font-black text-sky-950 bg-white px-6 py-2 rounded-2xl border-2 border-sky-200 shadow-sm mb-2 font-mono">
+                option
               </span>
               <span className="text-xs text-sky-900/70 font-sans font-medium">Instant Voice Typing</span>
             </div>
@@ -291,8 +219,8 @@ function renderSlideContent(index: number, onComplete: () => void, onNext?: () =
               <span className="text-xs font-bold text-coral-800 uppercase tracking-wider mb-3 bg-coral-200/60 px-3 py-1 rounded-full">
                 🧭 Persona Dial
               </span>
-              <span className="text-2xl font-sans font-black text-coral-950 bg-white px-5 py-3 rounded-2xl border-2 border-coral-200 shadow-sm mb-2 whitespace-nowrap">
-                Alt + Scroll
+              <span className="text-2xl font-sans font-black text-coral-950 bg-white px-5 py-3 rounded-2xl border-2 border-coral-200 shadow-sm mb-2 whitespace-nowrap font-mono">
+                option + scroll
               </span>
               <span className="text-xs text-coral-900/70 font-sans font-medium">Spin 8 Personas</span>
             </div>
@@ -302,8 +230,8 @@ function renderSlideContent(index: number, onComplete: () => void, onNext?: () =
               <span className="text-xs font-bold text-teal-800 uppercase tracking-wider mb-3 bg-mint-200/60 px-3 py-1 rounded-full">
                 🌐 Language Dial
               </span>
-              <span className="text-2xl font-sans font-black text-teal-950 bg-white px-4 py-3 rounded-2xl border-2 border-teal-200 shadow-sm mb-2 whitespace-nowrap">
-                Alt + Right Click
+              <span className="text-2xl font-sans font-black text-teal-950 bg-white px-4 py-3 rounded-2xl border-2 border-teal-200 shadow-sm mb-2 whitespace-nowrap font-mono">
+                option + right-click
               </span>
               <span className="text-xs text-teal-900/70 font-sans font-medium">Switch 23 Languages</span>
             </div>
@@ -431,13 +359,13 @@ function renderSlideContent(index: number, onComplete: () => void, onNext?: () =
 
           <div className="flex items-center gap-3 flex-wrap justify-center mb-10 max-w-xl">
             <span className="px-3.5 py-1.5 rounded-xl bg-sky-100 text-sky-900 border border-sky-300 text-xs font-bold shadow-xs">
-              🎙️ Alt to Dictate
+              🎙️ option to dictate
             </span>
             <span className="px-3.5 py-1.5 rounded-xl bg-coral-100 text-coral-900 border border-coral-300 text-xs font-bold shadow-xs">
-              🧭 Alt + Scroll for Personas
+              🧭 option + scroll for personas
             </span>
             <span className="px-3.5 py-1.5 rounded-xl bg-mint-100 text-emerald-900 border border-mint-300 text-xs font-bold shadow-xs">
-              🌐 Alt + Right-Click for Languages
+              🌐 option + right-click for languages
             </span>
             <span className="px-3.5 py-1.5 rounded-xl bg-sunshine-100 text-amber-900 border border-sunshine-300 text-xs font-bold shadow-xs">
               ✨ Expressive Moods Emojis
@@ -548,6 +476,234 @@ function SurveySlide({
             </div>
           </div>
         ))}
+      </div>
+    </div>
+  );
+}
+
+function HoldOptionToSpeakSlide() {
+  const [stage, setStage] = useState<'idle' | 'listening' | 'polishing' | 'typed'>('idle');
+  const [isCopied, setIsCopied] = useState(false);
+  const sampleSpeech = "Please review the attached project schedule and confirm whether the proposed delivery date works for your team.";
+  const [displayText, setDisplayText] = useState('');
+  const typingTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const startListening = useCallback(() => {
+    setStage('listening');
+    setDisplayText('');
+    if (typingTimerRef.current) clearInterval(typingTimerRef.current);
+    
+    let index = 0;
+    typingTimerRef.current = setInterval(() => {
+      index += 3;
+      if (index >= sampleSpeech.length) {
+        setDisplayText(sampleSpeech);
+        if (typingTimerRef.current) clearInterval(typingTimerRef.current);
+      } else {
+        setDisplayText(sampleSpeech.slice(0, index));
+      }
+    }, 40);
+  }, [sampleSpeech]);
+
+  const finishListening = useCallback(() => {
+    if (typingTimerRef.current) clearInterval(typingTimerRef.current);
+    setDisplayText(sampleSpeech);
+    setStage('polishing');
+
+    setTimeout(() => {
+      setStage('typed');
+    }, 550);
+  }, [sampleSpeech]);
+
+  const handleToggle = () => {
+    if (stage === 'listening') {
+      finishListening();
+    } else {
+      startListening();
+    }
+  };
+
+  // Keyboard listener for physical option / alt key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Alt' || e.key === 'Option' || e.key.toLowerCase() === 'option') {
+        if (!e.repeat) {
+          startListening();
+        }
+      }
+    };
+
+    const handleKeyUp = (e: KeyboardEvent) => {
+      if (e.key === 'Alt' || e.key === 'Option' || e.key.toLowerCase() === 'option') {
+        finishListening();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+      if (typingTimerRef.current) clearInterval(typingTimerRef.current);
+    };
+  }, [startListening, finishListening]);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(sampleSpeech);
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 2000);
+    } catch (e) {
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 2000);
+    }
+  };
+
+  const isListening = stage === 'listening';
+  const isProcessing = stage === 'polishing';
+
+  return (
+    <div className="flex flex-col items-center justify-center text-center max-w-3xl px-4 select-none">
+      <h1 className="text-4xl sm:text-5xl font-serif font-medium tracking-tight mb-3 text-[#2b1f1a] flex items-center justify-center gap-3 flex-wrap">
+        <span>Hold</span>
+        <button
+          type="button"
+          onClick={handleToggle}
+          onMouseDown={startListening}
+          onMouseUp={finishListening}
+          className={`px-4 py-1.5 rounded-xl font-mono text-3xl sm:text-4xl font-semibold inline-flex items-center justify-center tracking-tight transition-all duration-200 cursor-pointer shadow-md select-none active:scale-95 ${
+            isListening
+              ? 'bg-[#ea580c] text-white ring-4 ring-[#ea580c]/30 shadow-[0_0_25px_rgba(234,88,12,0.45)] scale-95'
+              : 'bg-[#2b170e] hover:bg-[#3e2417] text-[#fdfaf6] border border-[#5d4037] hover:border-[#8d6e63] shadow-[0_4px_14px_rgba(43,23,14,0.3)] hover:scale-105'
+          }`}
+          title="Click or hold option to test"
+        >
+          ⌥ option
+        </button>
+        <span>to Speak.</span>
+      </h1>
+
+      <p className="text-lg sm:text-xl text-[#3e2723]/75 font-serif italic mb-3 max-w-lg leading-relaxed">
+        Press and hold to speak. WhisPURR transcribes in real time and types directly into your active app.
+      </p>
+
+      {/* Interactive Status Indicator */}
+      <div 
+        onClick={handleToggle}
+        className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#5d4037]/10 hover:bg-[#5d4037]/15 border border-[#5d4037]/20 text-[#5d4037] text-xs font-sans font-medium mb-6 cursor-pointer transition-colors"
+      >
+        <span className={`w-2 h-2 rounded-full ${isListening ? 'bg-orange-500 animate-ping' : isProcessing ? 'bg-amber-500 animate-pulse' : 'bg-emerald-600'}`} />
+        <span>
+          {isListening
+            ? 'Listening active · Click option or release to finish'
+            : isProcessing
+              ? 'Polishing speech with persona...'
+              : 'Click ⌥ option above or press Option on your keyboard to test'}
+        </span>
+      </div>
+
+      {/* Realistic WhisPURR Floating HUD Mockup */}
+      <div className="w-full max-w-xl select-none text-left">
+        <div className="bg-[#190f0b]/95 backdrop-blur-2xl border border-[#5d4037]/80 rounded-3xl p-5 md:p-6 shadow-[0_25px_70px_rgba(0,0,0,0.85),0_0_40px_rgba(249,115,22,0.12)] text-[#f4ece1] flex flex-col gap-4 relative overflow-hidden">
+          {/* Subtle warm glowing aura */}
+          <div className="absolute -top-24 -left-24 w-48 h-48 bg-orange-500/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-24 -right-24 w-48 h-48 bg-amber-600/10 rounded-full blur-3xl pointer-events-none" />
+
+          {/* Top Header */}
+          <div className="flex items-center justify-between border-b border-[#5d4037]/50 pb-3 relative z-10">
+            <div className="flex items-center gap-3">
+              {/* Animated orange waveform status square */}
+              <div className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all ${
+                isListening
+                  ? 'bg-orange-500/20 text-orange-400 border border-orange-500/40 shadow-[0_0_15px_rgba(249,115,22,0.3)]'
+                  : isProcessing
+                    ? 'bg-amber-500/20 text-amber-400 border border-amber-500/40 animate-pulse'
+                    : 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40'
+              }`}>
+                {isListening ? (
+                  <div className="flex items-center gap-0.5 h-3.5 px-1">
+                    <motion.span animate={{ height: [4, 14, 6, 12, 4] }} transition={{ repeat: Infinity, duration: 0.8 }} className="w-0.5 bg-orange-400 rounded-full" />
+                    <motion.span animate={{ height: [10, 4, 14, 8, 10] }} transition={{ repeat: Infinity, duration: 0.9, delay: 0.1 }} className="w-0.5 bg-amber-400 rounded-full" />
+                    <motion.span animate={{ height: [6, 14, 8, 12, 6] }} transition={{ repeat: Infinity, duration: 0.75, delay: 0.2 }} className="w-0.5 bg-orange-300 rounded-full" />
+                    <motion.span animate={{ height: [12, 6, 14, 4, 12] }} transition={{ repeat: Infinity, duration: 0.85, delay: 0.15 }} className="w-0.5 bg-amber-300 rounded-full" />
+                  </div>
+                ) : isProcessing ? (
+                  <Sparkles className="w-4 h-4 animate-spin text-amber-400" />
+                ) : (
+                  <Check className="w-4 h-4 text-emerald-400" />
+                )}
+              </div>
+
+              <div>
+                <h3 className="text-sm font-bold tracking-tight text-[#f4ece1]">
+                  {isListening
+                    ? 'WhisPURR Listening...'
+                    : isProcessing
+                      ? 'Polishing with Formal...'
+                      : 'WhisPURR Active'}
+                </h3>
+                <p className="text-[11px] text-[#d7ccc8]/70">
+                  {isListening
+                    ? 'Speak now · Release option to finish'
+                    : isProcessing
+                      ? 'Adapting tone and custom rules...'
+                      : 'Typed directly into active app'}
+                </p>
+              </div>
+            </div>
+
+            {/* Persona Tag */}
+            <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md bg-orange-500/15 text-orange-300 border border-orange-500/30">
+              formal
+            </span>
+          </div>
+
+          {/* Transcribed Speech Bubble */}
+          <div className="bg-[#2b1f1a]/95 border border-[#5d4037] rounded-2xl p-4 shadow-inner text-[#f4ece1] text-sm md:text-[15px] font-sans leading-relaxed relative z-10 min-h-[72px] flex items-center">
+            {isListening ? (
+              <p className="italic text-[#f4ece1]/95">
+                "{displayText || 'Listening to your voice...'}"
+                <span className="inline-block w-1.5 h-4 ml-1 bg-orange-400 animate-pulse align-middle" />
+              </p>
+            ) : isProcessing ? (
+              <div className="flex items-center gap-2 text-amber-300 text-xs italic">
+                <Sparkles className="w-3.5 h-3.5 text-amber-400 animate-spin" />
+                <span>Refining speech and styling for Formal tone...</span>
+              </div>
+            ) : (
+              <p className="italic text-[#f4ece1]/95 select-text">
+                "{sampleSpeech}"
+              </p>
+            )}
+          </div>
+
+          {/* Bottom Action Bar */}
+          <div className="flex items-center justify-between text-xs text-[#d7ccc8]/70 pt-1 relative z-10">
+            <div className="flex items-center gap-2">
+              <span className="flex items-center justify-center w-4 h-4 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                <Check size={10} strokeWidth={3} />
+              </span>
+              <span className="text-xs text-[#d7ccc8]/80 font-medium">Typed directly into active app</span>
+            </div>
+            <button
+              type="button"
+              onClick={handleCopy}
+              className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-xs text-[#d7ccc8] font-medium border border-[#5d4037]/50 transition-colors cursor-pointer active:scale-95"
+            >
+              {isCopied ? (
+                <>
+                  <Check size={12} className="text-emerald-400" />
+                  <span className="text-emerald-400 font-bold">Copied!</span>
+                </>
+              ) : (
+                <>
+                  <Copy size={12} />
+                  <span>Copy</span>
+                </>
+              )}
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -733,7 +889,7 @@ function RadialDialsDemoSlide() {
         </span>
       </h1>
       <p className="text-sm md:text-base text-[#3e2723]/75 font-serif italic mb-3 max-w-2xl">
-        Hold <strong className="text-sky-700 font-sans font-bold bg-sky-100/90 border border-sky-200/80 px-1.5 py-0.5 rounded-md">Alt</strong> to spin personas, or <strong className="text-indigo-700 font-sans font-bold bg-indigo-100/90 border border-indigo-200/80 px-1.5 py-0.5 rounded-md">right-click</strong> to spin languages.
+        Hold <strong className="text-sky-700 font-sans font-bold bg-sky-100/90 border border-sky-200/80 px-1.5 py-0.5 rounded-md">option</strong> to spin personas, or <strong className="text-indigo-700 font-sans font-bold bg-indigo-100/90 border border-indigo-200/80 px-1.5 py-0.5 rounded-md">right-click</strong> to spin languages.
       </p>
 
       {/* Main Interactive Dial Simulator Card */}
@@ -755,7 +911,7 @@ function RadialDialsDemoSlide() {
             >
               <Compass className="w-3.5 h-3.5" />
               <span>Personas</span>
-              <span className={`px-1.5 py-0.5 rounded text-[10px] font-mono font-normal ${activeDial === 0 ? 'bg-black/20 text-[#ffffff]' : 'bg-sky-200/60 text-sky-900'}`}>Alt + Scroll</span>
+              <span className={`px-1.5 py-0.5 rounded text-[10px] font-mono font-normal ${activeDial === 0 ? 'bg-black/20 text-[#ffffff]' : 'bg-sky-200/60 text-sky-900'}`}>option + scroll</span>
             </button>
 
             <button
@@ -768,7 +924,7 @@ function RadialDialsDemoSlide() {
             >
               <Globe className="w-3.5 h-3.5" />
               <span>Languages</span>
-              <span className={`px-1.5 py-0.5 rounded text-[10px] font-mono font-normal ${activeDial === 1 ? 'bg-black/20 text-[#ffffff]' : 'bg-indigo-200/60 text-indigo-900'}`}>Alt + → / Right-Click</span>
+              <span className={`px-1.5 py-0.5 rounded text-[10px] font-mono font-normal ${activeDial === 1 ? 'bg-black/20 text-[#ffffff]' : 'bg-indigo-200/60 text-indigo-900'}`}>option + → / right-click</span>
             </button>
 
             <button

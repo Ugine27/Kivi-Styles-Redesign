@@ -1761,11 +1761,11 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                           <div className="flex items-center justify-between">
                             <span className="text-xs font-bold uppercase tracking-wider text-orange-400">Right Dial: Personas</span>
                             <span className="px-2 py-0.5 bg-orange-500/15 border border-orange-500/30 text-orange-300 rounded font-mono text-[11px] font-bold">
-                              Alt + Scroll
+                              option + scroll
                             </span>
                           </div>
                           <p className="text-xs text-white/75 leading-relaxed">
-                            Hold <kbd className="px-1.5 py-0.5 bg-white/10 border border-white/20 rounded text-[#f4ece1] font-mono text-[11px]">Alt</kbd> and <strong>scroll</strong> to cycle personas on the right radial dial.
+                            Hold <kbd className="px-1.5 py-0.5 bg-white/10 border border-white/20 rounded text-[#f4ece1] font-mono text-[11px]">option</kbd> and <strong>scroll</strong> to cycle personas on the right radial dial.
                           </p>
                         </div>
 
@@ -1774,11 +1774,11 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                           <div className="flex items-center justify-between">
                             <span className="text-xs font-bold uppercase tracking-wider text-amber-400">Left Dial: Languages</span>
                             <span className="px-2 py-0.5 bg-amber-500/15 border border-amber-500/30 text-amber-300 rounded font-mono text-[11px] font-bold">
-                              Alt + Right Click / →
+                              option + right-click / →
                             </span>
                           </div>
                           <p className="text-xs text-white/75 leading-relaxed">
-                            Hold <kbd className="px-1.5 py-0.5 bg-white/10 border border-white/20 rounded text-[#f4ece1] font-mono text-[11px]">Alt</kbd> + <strong>Right-Click</strong> to cycle languages on the left radial dial.
+                            Hold <kbd className="px-1.5 py-0.5 bg-white/10 border border-white/20 rounded text-[#f4ece1] font-mono text-[11px]">option</kbd> + <strong>Right-Click</strong> to cycle languages on the left radial dial.
                           </p>
                         </div>
                       </div>

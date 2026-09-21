@@ -24,7 +24,6 @@ export default function FloatingDictationHUD({
   mode,
   destinationApp,
   onClose,
-  onSimulateSpeech,
 }: FloatingDictationHUDProps) {
   const [isCopied, setIsCopied] = useState(false);
 
@@ -65,12 +64,6 @@ export default function FloatingDictationHUD({
       setTimeout(() => setIsCopied(false), 2500);
     }
   };
-
-  const samplePhrases = [
-    "hey sorry I couldn't finish this today I'll send it tomorrow",
-    "can you check this when you get time and tell me if everything looks okay",
-    "send this to the client and ask if tomorrow works"
-  ];
 
   if (!isOpen) return null;
 
@@ -131,7 +124,7 @@ export default function FloatingDictationHUD({
                 </div>
                 <p className="text-[11px] text-[#d7ccc8]/70">
                   {isListening
-                    ? 'Speak now · Release Alt/Option to finish'
+                    ? 'Speak now · Release option to finish'
                     : isProcessing
                       ? 'Adapting tone and custom rules...'
                       : destinationApp
@@ -210,26 +203,6 @@ export default function FloatingDictationHUD({
               </div>
             )}
 
-            {/* Quick Sample Test Phrases (helpful if mic is muted or for fast testing) */}
-            {isListening && !transcript && onSimulateSpeech && (
-              <div className="flex flex-col gap-1.5 pt-1">
-                <span className="text-[10.5px] font-bold uppercase tracking-wider text-[#d7ccc8]/50 px-1">
-                  Or test with a sample phrase:
-                </span>
-                <div className="flex flex-wrap gap-1.5">
-                  {samplePhrases.map((phrase, i) => (
-                    <button
-                      key={i}
-                      type="button"
-                      onClick={() => onSimulateSpeech(phrase)}
-                      className="text-left text-[11px] px-2.5 py-1 bg-[#5d4037]/20 hover:bg-[#5d4037]/50 border border-[#5d4037]/40 hover:border-orange-400/50 rounded-lg text-[#d7ccc8] hover:text-[#f4ece1] transition-all cursor-pointer truncate max-w-full"
-                    >
-                      "{phrase.slice(0, 38)}..."
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
           </div>
 
           {/* Bottom Actions Bar */}
@@ -301,9 +274,9 @@ export default function FloatingDictationHUD({
           {/* Quick instructions hint while listening */}
           {isListening && (
             <div className="flex items-center justify-between text-[11px] text-[#d7ccc8]/50 pt-1 border-t border-[#5d4037]/30">
-              <span>Hold Alt/Option to dictate</span>
+              <span>Hold option to dictate</span>
               <span className="flex items-center gap-1 text-orange-400/80">
-                <span>Release Alt to process & type</span>
+                <span>Release option to process & type</span>
                 <CornerDownLeft className="w-3 h-3" />
               </span>
             </div>

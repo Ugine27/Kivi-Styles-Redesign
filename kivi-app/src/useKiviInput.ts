@@ -135,9 +135,22 @@ export function useKiviInput() {
       return key;
     };
 
+    const isTalkKey = (e: KeyboardEvent, saved: string) => {
+      const s = (saved || 'option').trim().toLowerCase();
+      const k = formatKey(e.key).toLowerCase();
+      if (s === 'option' || s === 'alt') {
+        return k === 'option' || k === 'alt' || e.key === 'Alt' || e.key === 'Option';
+      }
+      return k === s;
+    };
+
     const handleKeyDown = (e: KeyboardEvent) => {
-      const savedShortcut = localStorage.getItem('whispurr_talk') || 'Alt';
-      if (formatKey(e.key) === savedShortcut && !e.repeat) {
+      const target = e.target as HTMLElement | null;
+      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA')) {
+        return;
+      }
+      const savedShortcut = localStorage.getItem('whispurr_talk') || 'option';
+      if (isTalkKey(e, savedShortcut) && !e.repeat) {
         setIsAltPressed(true);
         setTranscript('');
         setTranslatedText('');
@@ -151,8 +164,12 @@ export function useKiviInput() {
     };
 
     const handleKeyUp = (e: KeyboardEvent) => {
-      const savedShortcut = localStorage.getItem('whispurr_talk') || 'Alt';
-      if (formatKey(e.key) === savedShortcut) {
+      const target = e.target as HTMLElement | null;
+      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA')) {
+        return;
+      }
+      const savedShortcut = localStorage.getItem('whispurr_talk') || 'option';
+      if (isTalkKey(e, savedShortcut)) {
         setIsAltPressed(false);
         try {
           recognitionRef.current?.stop();
@@ -160,7 +177,7 @@ export function useKiviInput() {
           // Already stopped
         }
 
-        // Immediately finalize transformation upon Alt key release
+        // Immediately finalize transformation upon option key release
         if (latestTranscriptRef.current.trim()) {
           finalizeTransformation(latestTranscriptRef.current);
         }

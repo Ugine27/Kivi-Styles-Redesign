@@ -463,7 +463,7 @@ export default function StyleDetailPage({
             </div>
 
             <div className="text-[11px] text-white/40">
-              Access via floating cat widget or Alt+Scroll shortcut.
+              Access via floating cat widget or option + scroll shortcut.
             </div>
           </div>
         </div>
