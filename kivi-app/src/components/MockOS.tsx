@@ -141,10 +141,8 @@ const MockOS = memo(({
     }
   }, [isAltPressed]);
 
-  // Alt+Scroll or Alt+Arrow / Alt+Right-Click to change mode/lang
+  // Option+Scroll or Option+Arrow / Option+Right-Click to change mode/lang
   useEffect(() => {
-    if (!isAltPressed) return;
-    
     const updateHudPosition = (overrideX?: number, overrideY?: number) => {
       const currentX = overrideX !== undefined ? overrideX : globalMouseX;
       const currentY = overrideY !== undefined ? overrideY : globalMouseY;
@@ -191,12 +189,16 @@ const MockOS = memo(({
     };
 
     const handleWheel = (e: WheelEvent) => {
+      // Trigger whenever Option is held on Mac (via isAltPressed or hardware e.altKey)
+      if (!isAltPressed && !e.altKey) return;
       e.preventDefault();
       if (activeDialRef.current === 0) cycleMode(e.deltaY > 0 ? 1 : -1, e.clientX, e.clientY);
       else cycleLang(e.deltaY > 0 ? 1 : -1, e.clientX, e.clientY);
     };
 
     const handleContextMenu = (e: MouseEvent) => {
+      // Trigger whenever Option is held on Mac (via isAltPressed or hardware e.altKey)
+      if (!isAltPressed && !e.altKey) return;
       e.preventDefault();
       setActiveDial(prev => {
         const next = (prev === 0 ? 1 : 0) as 0 | 1;
@@ -207,6 +209,8 @@ const MockOS = memo(({
     };
 
     const handleKeyDown = (e: KeyboardEvent) => {
+      const isOptionHeld = isAltPressed || e.altKey || e.key === 'Alt' || e.key === 'Option' || e.code === 'AltLeft' || e.code === 'AltRight';
+      if (!isOptionHeld) return;
       if (e.key === 'ArrowDown') {
         e.preventDefault();
         if (activeDialRef.current === 0) cycleMode(1);

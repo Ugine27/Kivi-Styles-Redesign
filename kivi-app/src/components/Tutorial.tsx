@@ -525,25 +525,35 @@ function HoldOptionToSpeakSlide() {
 
   // Keyboard listener for physical option / alt key
   useEffect(() => {
+    const isOptionEvent = (e: KeyboardEvent) => {
+      return (
+        e.key === 'Alt' ||
+        e.key === 'Option' ||
+        e.code === 'AltLeft' ||
+        e.code === 'AltRight' ||
+        (e.key && (e.key.toLowerCase() === 'alt' || e.key.toLowerCase() === 'option'))
+      );
+    };
+
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Alt' || e.key === 'Option' || e.key.toLowerCase() === 'option') {
-        if (!e.repeat) {
-          startListening();
-        }
+      if (isOptionEvent(e) && !e.repeat) {
+        startListening();
       }
     };
 
     const handleKeyUp = (e: KeyboardEvent) => {
-      if (e.key === 'Alt' || e.key === 'Option' || e.key.toLowerCase() === 'option') {
+      if (isOptionEvent(e)) {
         finishListening();
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('keyup', handleKeyUp);
+    window.addEventListener('blur', finishListening);
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
+      window.removeEventListener('blur', finishListening);
       if (typingTimerRef.current) clearInterval(typingTimerRef.current);
     };
   }, [startListening, finishListening]);
@@ -875,6 +885,51 @@ function RadialDialsDemoSlide() {
     e.preventDefault();
     setActiveDial(prev => (prev === 0 ? 1 : 0));
   };
+
+  // Global listener while on this demo slide so Option+scroll works anywhere on Mac
+  useEffect(() => {
+    const handleGlobalWheel = (e: WheelEvent) => {
+      if (e.altKey) {
+        e.preventDefault();
+        cycle(e.deltaY > 0 ? 1 : -1);
+      }
+    };
+
+    const handleGlobalContextMenu = (e: MouseEvent) => {
+      if (e.altKey) {
+        e.preventDefault();
+        setActiveDial(prev => (prev === 0 ? 1 : 0));
+      }
+    };
+
+    const handleGlobalKeyDown = (e: KeyboardEvent) => {
+      const isOption = e.altKey || e.key === 'Alt' || e.key === 'Option' || e.code === 'AltLeft' || e.code === 'AltRight';
+      if (isOption) {
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          cycle(1);
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          cycle(-1);
+        } else if (e.key === 'ArrowLeft') {
+          e.preventDefault();
+          setActiveDial(1);
+        } else if (e.key === 'ArrowRight') {
+          e.preventDefault();
+          setActiveDial(0);
+        }
+      }
+    };
+
+    window.addEventListener('wheel', handleGlobalWheel, { passive: false });
+    window.addEventListener('contextmenu', handleGlobalContextMenu);
+    window.addEventListener('keydown', handleGlobalKeyDown);
+    return () => {
+      window.removeEventListener('wheel', handleGlobalWheel);
+      window.removeEventListener('contextmenu', handleGlobalContextMenu);
+      window.removeEventListener('keydown', handleGlobalKeyDown);
+    };
+  }, [activeDial, dialModes.length, dialLanguages.length]);
 
   const currentMode = dialModes[modeRotation] || 'Formal';
   const currentLang = dialLanguages[langRotation] || 'English — English';

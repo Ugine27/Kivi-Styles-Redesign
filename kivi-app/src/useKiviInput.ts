@@ -137,18 +137,21 @@ export function useKiviInput() {
 
     const isTalkKey = (e: KeyboardEvent, saved: string) => {
       const s = (saved || 'option').trim().toLowerCase();
-      const k = formatKey(e.key).toLowerCase();
+      // Robust Mac Option key detection across all browsers
+      const isOption = 
+        e.key === 'Alt' ||
+        e.key === 'Option' ||
+        e.code === 'AltLeft' ||
+        e.code === 'AltRight' ||
+        (e.key && (e.key.toLowerCase() === 'alt' || e.key.toLowerCase() === 'option'));
+
       if (s === 'option' || s === 'alt') {
-        return k === 'option' || k === 'alt' || e.key === 'Alt' || e.key === 'Option';
+        return isOption;
       }
-      return k === s;
+      return formatKey(e.key).toLowerCase() === s;
     };
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      const target = e.target as HTMLElement | null;
-      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA')) {
-        return;
-      }
       const savedShortcut = localStorage.getItem('whispurr_talk') || 'option';
       if (isTalkKey(e, savedShortcut) && !e.repeat) {
         setIsAltPressed(true);
@@ -164,10 +167,6 @@ export function useKiviInput() {
     };
 
     const handleKeyUp = (e: KeyboardEvent) => {
-      const target = e.target as HTMLElement | null;
-      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA')) {
-        return;
-      }
       const savedShortcut = localStorage.getItem('whispurr_talk') || 'option';
       if (isTalkKey(e, savedShortcut)) {
         setIsAltPressed(false);
@@ -184,11 +183,20 @@ export function useKiviInput() {
       }
     };
 
+    const handleReset = () => {
+      setIsAltPressed(false);
+      try {
+        recognitionRef.current?.stop();
+      } catch (err) {}
+    };
+
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('keyup', handleKeyUp);
+    window.addEventListener('blur', handleReset);
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
+      window.removeEventListener('blur', handleReset);
     };
   }, []);
 
