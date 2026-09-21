@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Terminal, Briefcase, MessageCircle, Mail, ChevronRight, ChevronLeft, Check, Compass, Globe, Sparkles, Plus, ChevronUp, ChevronDown, Copy, Mic } from 'lucide-react';
 import { ALL_DIAL_LANGUAGES, LANG_SAMPLES, getSanitizedDialLanguages } from '../constants/languages';
+import KiviCatIcon from './KiviCatIcon';
 
 interface TutorialProps {
   onComplete: () => void;
@@ -138,6 +139,113 @@ export default function Tutorial({ onComplete }: TutorialProps) {
   return createPortal(tutorialContent, document.body);
 }
 
+function CompanionFormSlide() {
+  const [selectedForm, setSelectedForm] = useState<'Orb' | 'Mini' | 'Pill'>(() => {
+    try {
+      return (localStorage.getItem('whispurr_companion_form') as any) || 'Orb';
+    } catch (e) {
+      return 'Orb';
+    }
+  });
+
+  const handleSelect = (formName: 'Orb' | 'Mini' | 'Pill') => {
+    setSelectedForm(formName);
+    try {
+      localStorage.setItem('whispurr_companion_form', formName);
+    } catch (e) {}
+  };
+
+  const forms = [
+    { 
+      name: 'Orb' as const, 
+      desc: 'Radiant floating sphere that quietly pulses with speech.', 
+      tag: 'Ambient Glow',
+      renderIcon: () => (
+        <div className="w-14 h-14 rounded-full bg-[#f4ebe1] border border-[#8d6e63]/30 flex items-center justify-center shadow-xs">
+          <KiviCatIcon className="w-9 h-9 object-cover rounded-full" />
+        </div>
+      )
+    },
+    { 
+      name: 'Mini' as const, 
+      desc: 'Compact screen edge notch tucked against the display.', 
+      tag: 'Minimalist',
+      renderIcon: () => (
+        <div className="w-14 h-14 rounded-2xl bg-[#f4ebe1] border border-[#8d6e63]/30 flex items-center justify-center shadow-xs">
+          <div className="w-8 h-2 rounded-full bg-[#8d5e3b] shadow-2xs" />
+        </div>
+      )
+    },
+    { 
+      name: 'Pill' as const, 
+      desc: 'Dynamic live spectrum bar reflecting your speech.', 
+      tag: 'Full Waveform',
+      renderIcon: () => (
+        <div className="w-14 h-14 rounded-2xl bg-[#f4ebe1] border border-[#8d6e63]/30 flex items-center justify-center gap-1 shadow-xs">
+          <span className="w-1 h-3 bg-[#8d5e3b]/50 rounded-full" />
+          <span className="w-1 h-6 bg-[#8d5e3b] rounded-full" />
+          <span className="w-1 h-4.5 bg-[#8d5e3b]/80 rounded-full" />
+          <span className="w-1 h-2 bg-[#8d5e3b]/40 rounded-full" />
+        </div>
+      )
+    }
+  ];
+
+  return (
+    <div className="flex flex-col items-center justify-center text-center max-w-4xl px-4 select-none">
+      <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#f4ebe1] border border-[#8d6e63]/25 text-[#5d4037] text-xs font-mono font-medium tracking-wide mb-3 shadow-2xs">
+        <span>Form Factor</span>
+      </div>
+
+      <h1 className="text-4xl sm:text-5xl md:text-6xl font-serif font-normal tracking-tight mb-2 text-[#2b170e]">
+        Shape Your <span className="font-semibold italic text-[#8d5e3b]">Companion.</span>
+      </h1>
+
+      <p className="text-base sm:text-lg text-[#5d4037]/80 font-serif italic mb-7 max-w-md leading-relaxed">
+        Choose how WhisPURR anchors to your screen while you work.
+      </p>
+
+      <div className="flex flex-wrap gap-5 sm:gap-6 justify-center w-full items-stretch">
+        {forms.map((opt) => {
+          const isSelected = selectedForm === opt.name;
+          return (
+            <div 
+              key={opt.name}
+              onClick={() => handleSelect(opt.name)}
+              className={`w-full sm:w-[250px] min-h-[245px] p-6 rounded-3xl flex flex-col items-center justify-between cursor-pointer transition-all duration-300 shadow-sm active:scale-95 group ${
+                isSelected 
+                  ? 'bg-white border-2 border-[#8d5e3b] shadow-xl shadow-[#2b170e]/8 scale-[1.03] ring-4 ring-[#8d5e3b]/15' 
+                  : 'bg-white/80 backdrop-blur-md border border-[#8d6e63]/20 hover:border-[#8d6e63]/50 hover:shadow-md hover:-translate-y-0.5'
+              }`}
+            >
+              <div className="my-auto pt-1 pb-3">
+                {opt.renderIcon()}
+              </div>
+
+              <div className="mb-4">
+                <span className="text-xl font-serif font-semibold block mb-1 text-[#2b170e]">
+                  {opt.name}
+                </span>
+                <span className="text-xs text-[#5d4037]/75 block leading-relaxed max-w-[200px]">
+                  {opt.desc}
+                </span>
+              </div>
+
+              <span className={`text-[10px] font-mono font-semibold uppercase tracking-wider px-3 py-1 rounded-full transition-all ${
+                isSelected 
+                  ? 'bg-[#2b170e] text-[#e8d5b5] shadow-xs' 
+                  : 'bg-[#f4ebe1] text-[#5d4037]/60 group-hover:text-[#5d4037]'
+              }`}>
+                {opt.tag}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 function renderSlideContent(index: number, onComplete: () => void, onNext?: () => void, goToSlide?: (idx: number) => void) {
   switch (index) {
     case 0:
@@ -270,53 +378,7 @@ function renderSlideContent(index: number, onComplete: () => void, onNext?: () =
         </div>
       );
     case 4:
-      return (
-        <div className="flex flex-col items-center justify-center -mt-8 text-center max-w-4xl">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-lavender-500/15 border border-lavender-500/25 text-purple-700 text-xs font-sans font-bold uppercase tracking-wider mb-4 shadow-xs backdrop-blur-md">
-            <span>🎨 Companion Form Factor</span>
-          </div>
-
-          <h1 className="text-5xl sm:text-6xl font-serif font-medium tracking-tight mb-4 text-[#2b1f1a]">
-            Shape Your <span className="bg-gradient-to-r from-purple-600 via-indigo-500 to-sky-500 gradient-text font-bold">Companion.</span>
-          </h1>
-
-          <p className="text-xl sm:text-2xl text-[#3e2723]/75 font-serif italic mb-10 max-w-2xl leading-relaxed">
-            Choose how WhisPURR anchors to your screen while you work.
-          </p>
-
-          <p className="text-xs font-bold text-[#2b1f1a]/50 uppercase tracking-widest mb-8">Click the form you'd like to keep on screen</p>
-
-          <div className="flex gap-6 justify-center flex-wrap">
-            {[
-              { name: 'Orb', desc: 'Radiant floating sphere', tag: 'Ambient Glow', active: true, color: 'from-sky-400 via-indigo-400 to-coral-400' },
-              { name: 'Mini', desc: 'Compact screen notch', tag: 'Minimalist', active: false, color: 'from-mint-400 to-teal-500' },
-              { name: 'Pill', desc: 'Dynamic spectrum bar', tag: 'Full Waveform', active: false, color: 'from-amber-400 to-coral-500' }
-            ].map((opt, i) => (
-              <div 
-                key={i} 
-                className={`w-44 h-48 rounded-[2rem] border-2 p-5 flex flex-col items-center justify-between cursor-pointer transition-all ${
-                  opt.active 
-                    ? 'border-sky-500 bg-gradient-to-b from-sky-50/90 to-white text-[#2b1f1a] shadow-xl shadow-sky-500/15 scale-105 ring-2 ring-sky-400/40' 
-                    : 'border-[#2b1f1a]/10 bg-white/85 text-[#2b1f1a]/70 hover:border-sky-300 hover:shadow-md'
-                }`}
-              >
-                <div className={`w-14 h-14 rounded-2xl bg-gradient-to-tr ${opt.color} flex items-center justify-center shadow-md text-white font-bold text-lg`}>
-                  {opt.name === 'Orb' ? '🔮' : opt.name === 'Mini' ? '✨' : '🌊'}
-                </div>
-                <div>
-                  <span className="text-xl font-bold font-sans block mb-1 text-[#2b1f1a]">{opt.name}</span>
-                  <span className="text-xs text-[#2b1f1a]/60 block leading-tight">{opt.desc}</span>
-                </div>
-                <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full ${
-                  opt.active ? 'bg-sky-500 text-white shadow-xs' : 'bg-black/5 text-[#2b1f1a]/60'
-                }`}>
-                  {opt.tag}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      );
+      return <CompanionFormSlide />;
     case 5:
       return (
         <SurveySlide 
