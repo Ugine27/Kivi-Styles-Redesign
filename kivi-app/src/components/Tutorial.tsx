@@ -54,36 +54,24 @@ export default function Tutorial({ onComplete }: TutorialProps) {
 
   const tutorialContent = (
     <div className="fixed inset-0 z-[9999] bg-[#fcf9f5] text-[#2b1f1a] flex flex-col justify-between overflow-hidden font-sans select-none">
-      {/* Radiant Atmospheric Aura Glows */}
-      <div className="absolute top-[-12%] left-[-8%] w-[600px] h-[600px] rounded-full bg-sky-400/25 blur-[120px] pointer-events-none" />
-      <div className="absolute top-[-6%] right-[-6%] w-[520px] h-[520px] rounded-full bg-coral-400/20 blur-[130px] pointer-events-none" />
-      <div className="absolute bottom-[-10%] left-[18%] w-[480px] h-[480px] rounded-full bg-sunshine-300/25 blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-[-8%] right-[-5%] w-[520px] h-[520px] rounded-full bg-lavender-400/20 blur-[140px] pointer-events-none" />
-      <div className="absolute top-[38%] left-[42%] w-[420px] h-[420px] rounded-full bg-mint-400/15 blur-[130px] pointer-events-none" />
+      {/* Subtle Warm Editorial Ambient Glows */}
+      <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[800px] h-[500px] rounded-full bg-[#f4ebe1] blur-[140px] pointer-events-none opacity-80" />
+      <div className="absolute -bottom-24 right-10 w-[500px] h-[500px] rounded-full bg-[#ebdccf]/50 blur-[140px] pointer-events-none" />
+      <div className="absolute -bottom-20 left-10 w-[450px] h-[450px] rounded-full bg-[#f1e6da]/40 blur-[130px] pointer-events-none" />
 
       {/* Top Bar */}
       <div className="flex justify-between items-center px-8 pt-7 pb-4 z-10">
         <button 
           onClick={onComplete}
-          className="bg-white/80 hover:bg-white text-[#2b1f1a] hover:text-coral-600 px-4 py-1.5 rounded-full border border-black/5 hover:border-coral-300 shadow-xs transition-all text-xs font-mono font-bold flex items-center gap-2 cursor-pointer backdrop-blur-md"
+          className="bg-white/75 hover:bg-white text-[#5d4037] hover:text-[#2b170e] px-4 py-1.5 rounded-full border border-[#8d6e63]/20 shadow-xs transition-all text-xs font-mono font-medium flex items-center gap-2 cursor-pointer backdrop-blur-sm"
           title="Skip tutorial (Esc)"
         >
           <span>skip</span>
-          <span className="text-[10px] text-[#2b1f1a]/50 font-sans font-normal">[Esc]</span>
+          <span className="text-[10px] text-[#8d6e63]/70 font-sans font-normal">[Esc]</span>
         </button>
 
-        {/* Keyboard navigation hint */}
-        <div className="hidden sm:flex items-center gap-2 text-xs font-mono text-[#2b1f1a]/70 bg-white/75 backdrop-blur-md px-4 py-1.5 rounded-full border border-sky-200/70 shadow-xs">
-          <span className="w-2 h-2 rounded-full bg-sky-500 animate-pulse" />
-          <span>Navigate with</span>
-          <kbd className="px-2 py-0.5 bg-white rounded-md border border-sky-300 shadow-xs text-sky-800 font-bold">←</kbd>
-          <kbd className="px-2 py-0.5 bg-white rounded-md border border-sky-300 shadow-xs text-sky-800 font-bold">→</kbd>
-          <span>or</span>
-          <kbd className="px-2.5 py-0.5 bg-white rounded-md border border-sky-300 shadow-xs text-sky-800 font-bold">Space</kbd>
-        </div>
-
-        <div className="px-3.5 py-1.5 rounded-full bg-white/80 backdrop-blur-md border border-black/5 text-sky-900 font-mono text-xs font-bold shadow-xs">
-          <span className="text-sky-600">{String(slide + 1).padStart(2, '0')}</span>
+        <div className="px-3.5 py-1.5 rounded-full bg-white/75 backdrop-blur-sm border border-[#8d6e63]/20 text-[#3e2723] font-mono text-xs font-semibold shadow-xs">
+          <span className="text-[#8d6e63] font-bold">{String(slide + 1).padStart(2, '0')}</span>
           <span className="opacity-40 mx-1">/</span>
           <span>{String(totalSlides).padStart(2, '0')}</span>
         </div>
@@ -100,7 +88,7 @@ export default function Tutorial({ onComplete }: TutorialProps) {
             transition={{ duration: 0.35, ease: "easeOut" }}
             className="flex flex-col items-center w-full max-w-5xl"
           >
-            {renderSlideContent(slide, onComplete)}
+            {renderSlideContent(slide, onComplete, nextSlide)}
           </motion.div>
         </AnimatePresence>
       </div>
@@ -110,11 +98,11 @@ export default function Tutorial({ onComplete }: TutorialProps) {
         {slide > 0 && (
           <button 
             onClick={prevSlide}
-            className="pointer-events-auto p-2 text-[#2b1f1a]/60 hover:text-sky-600 bg-white/80 hover:bg-white backdrop-blur-md rounded-xl border border-sky-200/80 transition-all flex flex-col items-center group cursor-pointer shadow-sm hover:shadow-md"
+            className="pointer-events-auto p-2.5 text-[#5d4037] hover:text-[#2b170e] bg-white/80 hover:bg-white backdrop-blur-md rounded-2xl border border-[#8d6e63]/20 hover:border-[#8d6e63]/40 transition-all flex flex-col items-center group cursor-pointer shadow-sm hover:shadow-md"
             title="Previous slide (← or Backspace)"
           >
-            <ChevronLeft size={22} strokeWidth={2.5} className="group-hover:-translate-x-0.5 transition-transform text-sky-600" />
-            <span className="text-[9px] font-mono tracking-wider opacity-75 group-hover:opacity-100 transition-opacity text-sky-800">
+            <ChevronLeft size={20} strokeWidth={2.5} className="group-hover:-translate-x-0.5 transition-transform text-[#5d4037]" />
+            <span className="text-[9px] font-mono tracking-wider opacity-75 group-hover:opacity-100 transition-opacity text-[#5d4037]">
               ← Left
             </span>
           </button>
@@ -124,11 +112,11 @@ export default function Tutorial({ onComplete }: TutorialProps) {
         {slide < totalSlides - 1 && (
           <button 
             onClick={nextSlide}
-            className="pointer-events-auto p-2 text-[#2b1f1a]/60 hover:text-sky-600 bg-white/80 hover:bg-white backdrop-blur-md rounded-xl border border-sky-200/80 transition-all flex flex-col items-center group cursor-pointer shadow-sm hover:shadow-md"
+            className="pointer-events-auto p-2.5 text-[#5d4037] hover:text-[#2b170e] bg-white/80 hover:bg-white backdrop-blur-md rounded-2xl border border-[#8d6e63]/20 hover:border-[#8d6e63]/40 transition-all flex flex-col items-center group cursor-pointer shadow-sm hover:shadow-md"
             title="Next slide (→, Space, or Enter)"
           >
-            <ChevronRight size={22} strokeWidth={2.5} className="group-hover:translate-x-0.5 transition-transform text-sky-600" />
-            <span className="text-[9px] font-mono tracking-wider opacity-75 group-hover:opacity-100 transition-opacity text-sky-800">
+            <ChevronRight size={20} strokeWidth={2.5} className="group-hover:translate-x-0.5 transition-transform text-[#5d4037]" />
+            <span className="text-[9px] font-mono tracking-wider opacity-75 group-hover:opacity-100 transition-opacity text-[#5d4037]">
               Right →
             </span>
           </button>
@@ -143,8 +131,8 @@ export default function Tutorial({ onComplete }: TutorialProps) {
             onClick={() => setSlide(i)}
             className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
               i === slide 
-                ? 'w-10 bg-gradient-to-r from-sky-400 via-indigo-500 to-coral-400 shadow-sm' 
-                : 'w-2.5 bg-[#2b1f1a]/15 hover:bg-sky-400/50'
+                ? 'w-9 bg-[#4a2e22] shadow-sm' 
+                : 'w-2 bg-[#2b1f1a]/15 hover:bg-[#4a2e22]/40'
             }`}
             title={`Jump to slide ${i + 1}`}
           />
@@ -156,56 +144,47 @@ export default function Tutorial({ onComplete }: TutorialProps) {
   return createPortal(tutorialContent, document.body);
 }
 
-function renderSlideContent(index: number, onComplete: () => void) {
+function renderSlideContent(index: number, onComplete: () => void, onNext?: () => void) {
   switch (index) {
     case 0:
       return (
-        <div className="flex flex-col items-start justify-center -mt-6 max-w-4xl text-left relative z-10">
-          <motion.div 
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-sky-500/10 border border-sky-500/25 text-sky-700 text-xs font-sans font-bold uppercase tracking-wider mb-5 shadow-xs backdrop-blur-md"
-          >
-            <Sparkles className="w-4 h-4 text-sky-500" />
-            <span>Next-Gen Mac Voice Assistant</span>
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-          </motion.div>
+        <div className="flex flex-col items-center justify-center -mt-4 max-w-3xl text-center relative z-10 px-4">
+          {/* Elegant Icon Badge */}
+          <div className="relative mb-7 group">
+            <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-3xl bg-white p-2.5 shadow-[0_20px_50px_rgba(43,23,14,0.1)] border border-[#3e2723]/10 relative z-10 transition-transform duration-500 group-hover:scale-105">
+              <div className="w-full h-full rounded-2xl overflow-hidden bg-[#faf6ee] shadow-inner flex items-center justify-center">
+                <img src="/kivi_icon.png" className="w-full h-full object-cover" alt="WhisPURR Icon" />
+              </div>
+            </div>
+            <div className="absolute -inset-3 rounded-3xl bg-[#d7bda8]/30 blur-2xl -z-10" />
+          </div>
 
-          <h1 className="text-6xl sm:text-7xl font-serif font-medium tracking-tight mb-6 text-[#2b1f1a]">
-            Meet <span className="bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 gradient-text font-bold">WhisPURR.</span>
+          {/* Editorial Headline */}
+          <h1 className="text-5xl sm:text-6xl md:text-7xl font-serif font-normal tracking-tight text-[#2b170e] leading-tight mb-4">
+            Meet <span className="font-semibold italic text-[#8d5e3b]">WhisPURR.</span>
           </h1>
 
-          <div className="relative pl-7 ml-1 py-1">
-            <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-sky-500 via-coral-400 to-sunshine-400 rounded-full shadow-xs" />
-            <p className="text-2xl sm:text-3xl text-[#3e2723] font-serif italic mb-5 leading-snug">
-              Your thoughts, seamlessly translated into work.
-            </p>
-            <p className="text-lg sm:text-xl text-[#2b1f1a]/75 font-sans mb-8 leading-relaxed max-w-2xl font-normal">
-              WhisPURR stays quietly in the background. Speak naturally, and it shapes your words to your active app.
-            </p>
-            
-            <div className="flex items-center gap-3 flex-wrap">
-              <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-sunshine-100 text-amber-900 border border-sunshine-300 text-sm font-sans font-bold shadow-xs">
-                ⚡ Fast
-              </span>
-              <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-sky-100 text-sky-900 border border-sky-300 text-sm font-sans font-bold shadow-xs">
-                🌊 Flexible
-              </span>
-              <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-mint-100 text-emerald-900 border border-mint-300 text-sm font-sans font-bold shadow-xs">
-                🕊️ Quietly There
-              </span>
-              <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-lavender-100 text-purple-900 border border-lavender-300 text-sm font-sans font-bold shadow-xs">
-                ✨ Emotion Moods
-              </span>
-            </div>
-          </div>
+          {/* Catchy Subtitle */}
+          <p className="text-2xl sm:text-3xl text-[#3e2723] font-serif italic mb-4 max-w-2xl leading-snug">
+            Your thoughts, seamlessly translated into work.
+          </p>
 
-          <div className="mt-12 self-center relative group">
-            <div className="absolute -inset-4 rounded-full bg-gradient-to-r from-sky-400 via-coral-400 to-sunshine-400 blur-2xl opacity-60 group-hover:opacity-90 transition-opacity animate-pulse" />
-            <div className="relative w-28 h-28 sm:w-32 sm:h-32 rounded-full flex items-center justify-center overflow-hidden border-4 border-white shadow-2xl bg-white/95">
-              <img src="/kivi_icon.png" className="w-full h-full object-cover" alt="WhisPURR Icon" />
-            </div>
-          </div>
+          {/* Refined Description */}
+          <p className="text-base sm:text-lg text-[#5d4037]/85 font-sans max-w-xl leading-relaxed font-normal mb-8">
+            WhisPURR stays quietly in the background. Speak naturally, and it automatically shapes your words to your active app.
+          </p>
+
+          {/* Classy Action Button */}
+          {onNext && (
+            <button
+              type="button"
+              onClick={onNext}
+              className="px-8 py-3.5 rounded-full bg-[#2b170e] hover:bg-[#43261a] text-[#fdfaf6] text-sm font-medium tracking-wide shadow-md hover:shadow-xl transition-all duration-200 flex items-center gap-3 cursor-pointer group hover:-translate-y-0.5 active:translate-y-0"
+            >
+              <span>Explore WhisPURR</span>
+              <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform text-[#e8d5b5]" />
+            </button>
+          )}
         </div>
       );
     case 1:
