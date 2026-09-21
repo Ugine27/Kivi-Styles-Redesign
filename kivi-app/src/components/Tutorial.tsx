@@ -160,32 +160,19 @@ function renderSlideContent(index: number, onComplete: () => void, onNext?: () =
           </div>
 
           {/* Editorial Headline */}
-          <h1 className="text-5xl sm:text-6xl md:text-7xl font-serif font-normal tracking-tight text-[#2b170e] leading-tight mb-4">
+          <h1 className="text-5xl sm:text-6xl md:text-7xl font-serif font-normal tracking-tight text-[#2b170e] leading-tight mb-3">
             Meet <span className="font-semibold italic text-[#8d5e3b]">WhisPURR.</span>
           </h1>
 
-          {/* Catchy Subtitle */}
+          {/* Catchy Tagline */}
           <p className="text-2xl sm:text-3xl text-[#3e2723] font-serif italic mb-4 max-w-2xl leading-snug">
-            Your thoughts, seamlessly translated into work.
+            Fast. Flexible. Quietly there.
           </p>
 
           {/* Refined Description */}
-          <p className="text-base sm:text-lg text-[#5d4037]/85 font-sans max-w-xl leading-relaxed font-normal mb-6">
-            WhisPURR stays quietly in the background. Speak naturally, and it automatically shapes your words to your active app.
+          <p className="text-base sm:text-lg text-[#5d4037]/85 font-sans max-w-xl leading-relaxed font-normal mb-8">
+            Your thoughts, seamlessly translated into work. WhisPURR stays quietly in the background, automatically shaping your words to your active app.
           </p>
-
-          {/* Pillars: Fast, Flexible, Quietly there */}
-          <div className="flex items-center justify-center gap-2.5 flex-wrap mb-8">
-            <span className="inline-flex items-center px-4 py-1.5 rounded-full bg-white/80 border border-[#8d6e63]/20 text-[#3e2723] text-xs sm:text-[13px] font-medium tracking-wide shadow-xs backdrop-blur-sm">
-              Fast
-            </span>
-            <span className="inline-flex items-center px-4 py-1.5 rounded-full bg-white/80 border border-[#8d6e63]/20 text-[#3e2723] text-xs sm:text-[13px] font-medium tracking-wide shadow-xs backdrop-blur-sm">
-              Flexible
-            </span>
-            <span className="inline-flex items-center px-4 py-1.5 rounded-full bg-white/80 border border-[#8d6e63]/20 text-[#3e2723] text-xs sm:text-[13px] font-medium tracking-wide shadow-xs backdrop-blur-sm">
-              Quietly there
-            </span>
-          </div>
 
           {/* Classy Action Button */}
           {onNext && (
