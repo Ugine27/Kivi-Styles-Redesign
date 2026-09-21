@@ -181,7 +181,7 @@ function renderSlideContent(index: number, onComplete: () => void) {
               Your thoughts, seamlessly translated into work.
             </p>
             <p className="text-lg sm:text-xl text-[#2b1f1a]/75 font-sans mb-8 leading-relaxed max-w-2xl font-normal">
-              WhisPURR stays quietly in the background as you move between applications and modes. Speak naturally, and it automatically shapes your words to where you are.
+              WhisPURR stays quietly in the background. Speak naturally, and it shapes your words to your active app.
             </p>
             
             <div className="flex items-center gap-3 flex-wrap">
@@ -224,7 +224,7 @@ function renderSlideContent(index: number, onComplete: () => void) {
           </h1>
 
           <p className="text-xl sm:text-2xl text-[#3e2723]/75 font-serif italic mb-8 max-w-xl leading-relaxed">
-            - press and hold to speak. WhisPURR opens a bottom floating dialogue, transcribing in real-time, and automatically types directly into your active app or lets you copy.
+            Press and hold to speak. WhisPURR transcribes in real time and types directly into your active app.
           </p>
 
           {/* Interactive Mic Visualization with Audio Rings */}
@@ -276,7 +276,7 @@ function renderSlideContent(index: number, onComplete: () => void) {
           </h1>
 
           <p className="text-xl sm:text-2xl text-[#3e2723]/75 font-serif italic mb-10 max-w-2xl leading-relaxed">
-            - customize the shortcuts you'll use to trigger dictation and radial dials every day.
+            Quick desktop shortcuts to trigger dictation and radial dials.
           </p>
 
           <p className="text-xs font-bold text-[#2b1f1a]/50 uppercase tracking-widest mb-6">Active desktop shortcuts</p>
@@ -329,7 +329,7 @@ function renderSlideContent(index: number, onComplete: () => void) {
           </h1>
 
           <p className="text-xl sm:text-2xl text-[#3e2723]/75 font-serif italic mb-10 max-w-2xl leading-relaxed">
-            - choose how WhisPURR visually anchors to your screen while you work.
+            Choose how WhisPURR anchors to your screen while you work.
           </p>
 
           <p className="text-xs font-bold text-[#2b1f1a]/50 uppercase tracking-widest mb-8">Click the form you'd like to keep on screen</p>
@@ -370,7 +370,7 @@ function renderSlideContent(index: number, onComplete: () => void) {
         <SurveySlide 
           title="Developer Blueprints." 
           icon={<Terminal size={28} />} 
-          subtext="Pick how WhisPURR structures your technical prompts and terminal commands." 
+          subtext="Choose how technical prompts and terminal commands are formatted." 
           theme="sky"
           options={[
             { n: 'Clear', d: 'The full instruction, plainly written.' },
@@ -384,7 +384,7 @@ function renderSlideContent(index: number, onComplete: () => void) {
         <SurveySlide 
           title="Chat Registers." 
           icon={<MessageCircle size={28} />} 
-          subtext="Choose how WhisPURR adapts your voice for fast-twitch channels like Slack or Teams." 
+          subtext="Choose how your voice sounds in chat apps like Slack or Teams." 
           theme="coral"
           options={[
             { n: 'Clear', d: 'Clean sentences; essential shorthand kept.' },
@@ -398,7 +398,7 @@ function renderSlideContent(index: number, onComplete: () => void) {
         <SurveySlide 
           title="Inbox Registers." 
           icon={<Mail size={28} />} 
-          subtext="Set the baseline tone WhisPURR uses to draft high-context emails." 
+          subtext="Choose your default tone for emails and correspondence." 
           theme="lavender"
           options={[
             { n: 'Professional', d: 'Conventional, polished, and to the point.' },
@@ -412,7 +412,7 @@ function renderSlideContent(index: number, onComplete: () => void) {
         <SurveySlide 
           title="Global Personas." 
           icon={<Briefcase size={28} />} 
-          subtext="Pick WhisPURR's default structural baseline when prowling through other applications." 
+          subtext="Choose your baseline tone across other applications." 
           theme="mint"
           options={[
             { n: 'Balanced', d: 'Cleaned up, but authentically your voice.' },
@@ -433,7 +433,7 @@ function renderSlideContent(index: number, onComplete: () => void) {
           </h1>
 
           <p className="text-xl sm:text-2xl text-[#3e2723]/75 font-serif italic mb-8 max-w-xl leading-relaxed">
-            - WhisPURR will be resting quietly at the bottom of your screen. Just hold your shortcut and speak.
+            WhisPURR is ready at the bottom of your screen. Hold your shortcut and speak.
           </p>
 
           <div className="flex items-center gap-3 flex-wrap justify-center mb-10 max-w-xl">
@@ -740,7 +740,7 @@ function RadialDialsDemoSlide() {
         </span>
       </h1>
       <p className="text-sm md:text-base text-[#3e2723]/75 font-serif italic mb-3 max-w-2xl">
-        - hold <strong className="text-sky-700 font-sans font-bold bg-sky-100/90 border border-sky-200/80 px-1.5 py-0.5 rounded-md">Alt</strong> anywhere to spin personas, or <strong className="text-indigo-700 font-sans font-bold bg-indigo-100/90 border border-indigo-200/80 px-1.5 py-0.5 rounded-md">right-click</strong> to spin languages.
+        Hold <strong className="text-sky-700 font-sans font-bold bg-sky-100/90 border border-sky-200/80 px-1.5 py-0.5 rounded-md">Alt</strong> to spin personas, or <strong className="text-indigo-700 font-sans font-bold bg-indigo-100/90 border border-indigo-200/80 px-1.5 py-0.5 rounded-md">right-click</strong> to spin languages.
       </p>
 
       {/* Main Interactive Dial Simulator Card */}

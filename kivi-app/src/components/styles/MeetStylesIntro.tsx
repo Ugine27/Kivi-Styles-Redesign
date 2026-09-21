@@ -71,14 +71,14 @@ export default function MeetStylesIntro({ onProceed, onSkip }: MeetStylesIntroPr
           <div>
             <div className="flex items-center gap-2">
               <h2 className="text-lg font-serif font-bold text-[#3e2723] tracking-tight">
-                Meet Styles
+                Meet Personas
               </h2>
               <span className="px-2 py-0.5 rounded-full bg-[#8d6e63]/15 text-[#3e2723] text-[10px] font-mono font-bold uppercase tracking-wider">
                 Interactive Demo
               </span>
             </div>
             <p className="text-[11px] text-[#3e2723]/70 font-serif italic">
-              You just speak naturally — WhisPURR adapts your tone in real time.
+              Speak naturally — WhisPURR shapes your tone in real time.
             </p>
           </div>
         </div>
@@ -190,7 +190,7 @@ export default function MeetStylesIntro({ onProceed, onSkip }: MeetStylesIntroPr
       {/* Bottom Action */}
       <div className="pt-2 border-t border-[#3e2723]/10 flex items-center justify-between gap-3 shrink-0">
         <p className="text-[11px] text-[#3e2723]/60 font-serif italic truncate">
-          You decide what you mean — WhisPURR handles how it comes across.
+          Speak naturally — WhisPURR handles the delivery.
         </p>
 
         <button

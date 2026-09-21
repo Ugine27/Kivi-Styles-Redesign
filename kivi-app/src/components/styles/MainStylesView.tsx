@@ -45,11 +45,11 @@ const CONTEXT_ICONS: Record<string, any> = {
 };
 
 const CONTEXT_TAGLINES: Record<string, string> = {
-  "Formal": "Polished workplace and professional communications.",
-  "Casual": "Relaxed, natural conversations and team chats.",
-  "Developer": "Precise engineering syntax, code snippets, and bug reports.",
-  "Prompts": "Structured constraints and clear AI instructions.",
-  "Other apps": "Clean, balanced wording for everyday typing."
+  "Formal": "Professional and executive communications.",
+  "Casual": "Friendly, natural, and conversational.",
+  "Developer": "Technical syntax, code logic, and bug reports.",
+  "Prompts": "Clear constraints and system instructions.",
+  "Other apps": "Everyday balanced typing."
 };
 
 const DEFAULT_CONTEXT_APPS: Record<string, string[]> = {
@@ -144,15 +144,15 @@ export default function MainStylesView({
   const ActiveIcon = CONTEXT_ICONS[activeStyleName] || Palette;
 
   return (
-    <div className="flex-1 w-full h-full flex flex-col font-sans overflow-hidden gap-4 select-none">
-      {/* 1. Page Title + Subtitle & Controls (Rendered on outer warm cream background) */}
+    <div className="flex-1 w-full h-full flex flex-col font-sans overflow-hidden gap-3.5 select-none">
+      {/* 1. Page Title + Subtitle & Controls */}
       <div className="flex items-center justify-between px-1 shrink-0">
         <div>
           <h1 className="text-2xl font-bold text-[#2b170e] tracking-tight">
             Persona Studio
           </h1>
           <p className="text-xs text-[#5d4037] font-medium mt-0.5">
-            WhisPURR adapts your persona to where you are and lets you control how you sound.
+            Customise each persona to match how you sound.
           </p>
         </div>
 
@@ -161,8 +161,8 @@ export default function MainStylesView({
             <button
               type="button"
               onClick={onRevisitIntro}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#5d4037]/10 hover:bg-[#5d4037]/20 border border-[#8d6e63]/40 text-[#2b170e] text-xs font-bold transition-colors cursor-pointer shadow-xs"
-              title="Open interactive Meet Styles demo"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#5d4037]/10 hover:bg-[#5d4037]/20 border border-[#8d6e63]/40 text-[#2b170e] text-xs font-bold transition-colors cursor-pointer shadow-xs"
+              title="Interactive demo"
             >
               <Sparkles className="w-3.5 h-3.5 text-orange-600" />
               <span>Demo</span>
@@ -170,15 +170,10 @@ export default function MainStylesView({
           )}
 
           {/* Auto-Adapt Toggle Bar */}
-          <div className="flex items-center gap-2.5 bg-[#5d4037]/10 border border-[#8d6e63]/40 py-1.5 px-3 rounded-xl shrink-0 relative">
-            <div className="flex flex-col text-right">
-              <span className="text-xs font-bold text-[#2b170e]">
-                Auto-Adapt
-              </span>
-              <span className="text-[11px] text-[#5d4037] font-semibold">
-                {isAdaptiveMode ? 'App Sensing Active' : 'Manual'}
-              </span>
-            </div>
+          <div className="flex items-center gap-2 bg-[#5d4037]/10 border border-[#8d6e63]/40 py-1.5 px-3 rounded-xl shrink-0 relative">
+            <span className="text-xs font-bold text-[#2b170e]">
+              Auto-Adapt
+            </span>
             <button
               type="button"
               role="switch"
@@ -189,9 +184,9 @@ export default function MainStylesView({
                   ? 'bg-[#795548] border-[#5d4037]'
                   : 'bg-[#dfcebf] border-[#a1887f]'
               }`}
-              title={isAdaptiveMode ? "Disable Adaptive Mode" : "Enable Adaptive Mode"}
+              title={isAdaptiveMode ? "Disable Auto-Adapt" : "Enable Auto-Adapt"}
             >
-              <span className="sr-only">Toggle Adaptive Mode</span>
+              <span className="sr-only">Toggle Auto-Adapt</span>
               <motion.span
                 layout
                 transition={{ type: "spring", stiffness: 600, damping: 35 }}
@@ -206,8 +201,8 @@ export default function MainStylesView({
               <button 
                 type="button"
                 onClick={() => setShowAdaptInfo(!showAdaptInfo)}
-                className="p-1 rounded-full text-[#5d4037] hover:text-[#2b170e] hover:bg-[#5d4037]/15 transition-colors cursor-pointer"
-                title="Adaptive Mode Info"
+                className="p-0.5 rounded-full text-[#5d4037] hover:text-[#2b170e] transition-colors cursor-pointer"
+                title="Info"
               >
                 <Info className="w-3.5 h-3.5" />
               </button>
@@ -217,9 +212,9 @@ export default function MainStylesView({
                     initial={{ opacity: 0, y: -4, scale: 0.96 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: -4, scale: 0.96 }}
-                    className="absolute top-full mt-2 right-0 w-64 bg-[#2b170e] border border-[#6e4938] rounded-xl p-3 shadow-2xl z-50 text-xs text-[#fdfaf6] leading-relaxed font-normal"
+                    className="absolute top-full mt-2 right-0 w-60 bg-[#2b170e] border border-[#6e4938] rounded-xl p-3 shadow-2xl z-50 text-xs text-[#fdfaf6] leading-relaxed font-normal"
                   >
-                    WhisPURR adapts your tone and formatting automatically by sensing which foreground app you are currently typing in.
+                    WhisPURR detects your active app to automatically switch personas.
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -230,8 +225,8 @@ export default function MainStylesView({
 
       {/* Main 2-Column Work Area */}
       <div className="flex-1 min-h-0 flex gap-4 overflow-hidden">
-        {/* 2. Left Column: Context Profiles (Clean, warm coffee list on cream background) */}
-        <div className="w-52 md:w-56 shrink-0 flex flex-col h-full overflow-hidden">
+        {/* 2. Left Column: Active Personas list */}
+        <div className="w-48 md:w-52 shrink-0 flex flex-col h-full overflow-hidden">
           <div className="text-xs font-bold uppercase tracking-wider text-[#5d4037] px-2 mb-2">
             Active Personas
           </div>
@@ -246,27 +241,27 @@ export default function MainStylesView({
                   onClick={() => onSelectActiveStyle(name)}
                   className={`group relative flex items-center justify-between p-2.5 px-3 rounded-xl border transition-all text-left cursor-pointer ${
                     isActive 
-                      ? 'bg-[#5d4037]/20 border-[#795548] text-[#2b170e] shadow-xs' 
+                      ? 'bg-[#5d4037] text-white border-[#3e2723] shadow-sm' 
                       : 'bg-transparent border-transparent text-[#5d4037] hover:bg-[#5d4037]/10 hover:text-[#2b170e]'
                   }`}
                 >
                   <div className="flex items-center gap-2.5 min-w-0">
                     <div className={`p-1.5 rounded-lg transition-colors shrink-0 ${
-                      isActive ? 'bg-[#795548] text-[#fdfaf6]' : 'bg-[#5d4037]/10 text-[#5d4037] group-hover:text-[#2b170e]'
+                      isActive ? 'bg-[#795548] text-[#ffffff]' : 'bg-[#5d4037]/10 text-[#5d4037] group-hover:text-[#2b170e]'
                     }`}>
                       <Icon className="w-4 h-4" />
                     </div>
                     <div className="min-w-0 flex flex-col">
-                      <span className={`text-sm tracking-tight truncate ${isActive ? 'text-[#2b170e] font-bold' : 'text-[#3e2723] font-semibold'}`}>
+                      <span className={`text-sm tracking-tight truncate ${isActive ? 'text-[#ffffff] font-bold' : 'text-[#3e2723] font-semibold'}`}>
                         {name}
                       </span>
-                      <span className="text-[11px] truncate text-[#6d4c41] font-medium">
-                        {apps.slice(0, 2).join(', ')}{apps.length > 2 ? ` +${apps.length - 2}` : ''}
+                      <span className={`text-[11px] truncate font-medium ${isActive ? 'text-[#fceee2]' : 'text-[#6d4c41]'}`}>
+                        {apps.length} {apps.length === 1 ? 'app' : 'apps'}
                       </span>
                     </div>
                   </div>
                   {isActive && (
-                    <div className="w-1.5 h-5 rounded-full bg-orange-600 shrink-0" />
+                    <div className="w-1.5 h-4 rounded-full bg-orange-400 shrink-0" />
                   )}
                 </button>
               );
@@ -461,32 +456,32 @@ function ContextOptionsRenderer({
   };
 
   return (
-    <div className="flex flex-col w-full h-full min-h-0 select-text gap-6">
+    <div className="flex flex-col w-full h-full min-h-0 select-text gap-4">
       {/* 3. Output Examples — Visual Focus */}
-      <div className="flex flex-col gap-2.5 shrink-0">
+      <div className="flex flex-col gap-2 shrink-0">
         <div className="flex items-center justify-between">
           <span className="text-xs font-bold uppercase tracking-wider text-title-cream">
-            Persona Output Examples
+            Output Tone
           </span>
           <span className="text-xs text-desc-beige font-normal">
-            Select how unscripted speech is shaped
+            Select how your speech is shaped.
           </span>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 w-full">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 w-full">
           {currentModes.map((opt, i) => {
             const isSelected = selectedIndex === i;
             return (
               <div 
                 key={i}
                 onClick={() => setSelectedIndex(i)}
-                className={`relative rounded-2xl p-4 cursor-pointer transition-all flex flex-col justify-between min-h-[160px] ${
+                className={`relative rounded-2xl p-3.5 cursor-pointer transition-all flex flex-col justify-between gap-2.5 ${
                   isSelected
                     ? 'bg-[#4a2c20] border-2 border-orange-400 shadow-md ring-2 ring-orange-400/30' 
                     : 'bg-[#251610] border border-[#5e3b2c] hover:border-[#8d5e48] hover:bg-[#2b1912] shadow-xs'
                 }`}
               >
-                <div className="flex items-start justify-between gap-2 mb-2">
+                <div className="flex items-start justify-between gap-2">
                   <div>
                     <h3 className={`text-sm font-bold tracking-tight ${isSelected ? 'text-[#ffffff]' : 'text-title-cream'}`}>
                       {opt.n}
@@ -504,12 +499,12 @@ function ContextOptionsRenderer({
                   </div>
                 </div>
 
-                <div className={`rounded-xl p-3.5 flex items-center transition-colors border ${
+                <div className={`rounded-xl p-2.5 px-3 flex items-center transition-colors border ${
                   isSelected 
                     ? 'bg-[#1c0f0a] border-orange-400/50' 
                     : 'bg-[#1a0e0a] border-[#4d2f22]/70'
                 }`}>
-                  <p className={`text-sm leading-relaxed whitespace-pre-wrap ${isSelected ? 'text-[#ffffff] font-semibold' : 'text-quote-sample font-normal'}`}>
+                  <p className={`text-xs leading-relaxed truncate ${isSelected ? 'text-[#ffffff] font-medium' : 'text-quote-sample font-normal'}`}>
                     "{opt.ex}"
                   </p>
                 </div>
@@ -520,14 +515,14 @@ function ContextOptionsRenderer({
       </div>
 
       {/* 4. Custom Rules Section */}
-      <div className="flex flex-col gap-2.5 shrink-0">
+      <div className="flex flex-col gap-2 shrink-0">
         <div className="flex items-center justify-between">
           <div>
             <span className="text-xs font-bold uppercase tracking-wider text-title-cream">
               Custom Instructions
             </span>
             <p className="text-xs text-desc-beige font-normal mt-0.5">
-              Rules automatically applied whenever {activeStyleName} is active.
+              Rules applied when this persona is active.
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -541,7 +536,7 @@ function ContextOptionsRenderer({
                 type="button"
                 onClick={() => handleRuleChange('')}
                 className="text-xs text-desc-beige hover:text-red-400 hover:bg-white/[0.08] transition-colors px-2 py-0.5 rounded cursor-pointer font-semibold"
-                title="Clear rules for this context"
+                title="Clear rules"
               >
                 Clear
               </button>
@@ -553,9 +548,9 @@ function ContextOptionsRenderer({
         <textarea
           value={currentRule}
           onChange={(e) => handleRuleChange(e.target.value)}
-          placeholder={CONTEXT_PLACEHOLDERS[activeStyleName] || "Enter custom rules for this context..."}
+          placeholder={CONTEXT_PLACEHOLDERS[activeStyleName] || "Enter custom rules for this persona..."}
           rows={2}
-          className="w-full bg-[#241510] border border-[#5e3b2c] focus:border-orange-400 rounded-xl p-3 text-sm text-title-cream resize-none outline-none font-sans leading-relaxed transition-all shadow-inner font-normal"
+          className="w-full bg-[#241510] border border-[#5e3b2c] focus:border-orange-400 rounded-xl p-2.5 text-sm text-title-cream resize-none outline-none font-sans leading-relaxed transition-all shadow-inner font-normal"
         />
 
         {/* Quick Rule Suggestion Chips */}
@@ -570,12 +565,12 @@ function ContextOptionsRenderer({
                 key={chip}
                 type="button"
                 onClick={() => handleAddChip(chip)}
-                className={`text-xs px-3 py-1 rounded-lg border transition-all cursor-pointer font-medium ${
+                className={`text-xs px-2.5 py-0.5 rounded-lg border transition-all cursor-pointer font-medium ${
                   isChipActive
                     ? 'bg-orange-500/25 border-orange-400 text-[#ffd6b3] font-bold shadow-xs'
                     : 'bg-[#251610] hover:bg-[#3d251a] border-[#5e3b2c] text-desc-beige hover:text-title-cream'
                 }`}
-                title={isChipActive ? "Click to remove" : "Click to add rule"}
+                title={isChipActive ? "Remove" : "Add rule"}
               >
                 {isChipActive ? '✓ ' : '+ '}{chip}
               </button>
@@ -647,7 +642,7 @@ function AddAppsModal({
               <span className="text-orange-400 font-bold">{contextName}</span>
             </h3>
             <p className="text-xs text-desc-beige font-normal mt-1">
-              Select or type apps that will automatically trigger the {contextName} context.
+              Select or type apps that trigger the {contextName} persona.
             </p>
           </div>
           <button 

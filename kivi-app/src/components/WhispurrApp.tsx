@@ -88,14 +88,14 @@ const playCatChime = () => {
 };
 
 const TOUR_STEPS = [
-    { id: 'Home', title: 'The Home Base', text: 'Watch WhisPURR in action! See your speech turn into text live and access your quick controls.' },
-    { id: 'History', title: 'Chat Registers', text: 'Look back at everything you\'ve said. You can easily copy or reuse your past words here.' },
-    { id: 'Dictionary', title: 'Your Custom Dictionary', text: 'Teach WhisPURR your unique vocabulary, like tricky names, special acronyms, or work-specific words.' },
-    { id: 'ShortHand', title: 'ShortHand Macros', text: 'Create quick voice shortcuts! For example, say "sig" to automatically type out your entire email signature.' },
-    { id: 'Persona', title: 'Global Personas', text: 'Set up custom personas so WhisPURR always uses the right tone for your current task, like writing emails, chatting, or coding.' },
-    { id: 'ScratchPad', title: 'ScratchPad', text: 'Your personal sandbox! Quickly jot down ideas or play around to test your new custom personas.' },
-    { id: 'Profile', title: 'Your Profile', text: 'Manage your account details, billing, and tweak your overall settings just the way you like them.' },
-    { id: 'CatFacts', title: 'Cat Facts', text: 'Because who doesn\'t need a fun, random cat fact to brighten their workday?' }
+    { id: 'Home', title: 'The Home Base', text: 'Live speech-to-text with instant controls.' },
+    { id: 'History', title: 'Chat Registers', text: 'Review, copy, or export past dictations.' },
+    { id: 'Dictionary', title: 'Your Custom Dictionary', text: 'Teach WhisPURR jargon, acronyms, and unique names.' },
+    { id: 'ShortHand', title: 'ShortHand Macros', text: 'Set voice shortcuts that expand into full text.' },
+    { id: 'Persona', title: 'Global Personas', text: 'Tailor your output tone for each app or task.' },
+    { id: 'ScratchPad', title: 'ScratchPad', text: 'Test personas and capture quick notes.' },
+    { id: 'Profile', title: 'Your Profile', text: 'Manage your settings, shortcuts, and preferences.' },
+    { id: 'CatFacts', title: 'Cat Facts', text: 'Enjoy a quick cat fact while you work.' }
   ];
 
 const VIDEOS = ['/cat.mp4', '/cat2.mp4', '/cat3.mp4'];
@@ -1190,7 +1190,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                               </span>
                             )}
                           </h2>
-                          <p className="text-xs text-white/60 font-medium">Speak naturally and convert your speech into copyable text</p>
+                          <p className="text-xs text-white/60 font-medium">Speak naturally to convert your voice into text</p>
                         </div>
                       </div>
 
@@ -1280,7 +1280,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                                 >
                                   <div className="absolute -top-1.5 right-4 w-3 h-3 bg-[#2B1F1A] border-t border-l border-[#5D4037]/50 rotate-45" />
                                   <div className="text-[11px] text-[#E8D5B5] leading-relaxed relative z-10 font-medium">
-                                    Whisper Mode lets you talk very softly and slowly into the mic. It automatically heightens sensitivity and increases pause tolerance.
+                                    Heightens mic sensitivity for soft or quiet speech.
                                   </div>
                                 </motion.div>
                               )}
@@ -1336,7 +1336,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                                 >
                                   <div className="absolute -top-1.5 right-4 w-3 h-3 bg-[#2B1F1A] border-t border-l border-[#5D4037]/50 rotate-45" />
                                   <div className="text-[11px] text-[#E8D5B5] leading-relaxed relative z-10 font-medium">
-                                    WhisPURR aptly adds expressive emojis based on your Emotions and Undertones
+                                    Adds expressive emojis based on your tone.
                                   </div>
                                 </motion.div>
                               )}
@@ -1440,7 +1440,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                     <Clock className="text-[#8d6e63] w-8 h-8" />
                     History
                   </h1>
-                  <p className="text-white/80 font-medium text-sm">Review your past transcriptions and track your WhisPURR usage.</p>
+                  <p className="text-white/80 font-medium text-sm">Review past dictations and usage.</p>
                 </div>
                 
                 {/* Stats Brown Box */}
@@ -1494,7 +1494,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                     <BookOpen className="text-orange-400 w-8 h-8" />
                     Dictionary
                   </h1>
-                  <p className="text-white/40 text-sm">Teach WhisPURR to correctly transcribe unique names, technical jargon, and words it frequently mishears.</p>
+                  <p className="text-white/40 text-sm">Teach WhisPURR jargon, acronyms, and unique names.</p>
                 </div>
                 <div className="flex gap-4 p-5 rounded-2xl bg-white/5 border border-white/10 items-end shadow-lg">
                   <div className="flex-1">
@@ -1530,7 +1530,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                       </motion.div>
                     ))}
                   </AnimatePresence>
-                  {dictItems.length === 0 && <div className="text-center text-white/30 py-12 italic text-sm">Your Kat's dictionary is empty.</div>}
+                  {dictItems.length === 0 && <div className="text-center text-white/30 py-12 italic text-sm">Your dictionary is empty.</div>}
                 </div>
               </motion.div>
             )}
@@ -1542,7 +1542,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                     <Zap className="text-orange-400 w-8 h-8" />
                     ShortHand
                   </h1>
-                  <p className="text-white/40 text-sm">Automatically expand quick voice triggers into long-form templates.</p>
+                  <p className="text-white/40 text-sm">Expand quick voice triggers into full phrases.</p>
                 </div>
                 <div className="flex gap-4 p-5 rounded-2xl bg-white/5 border border-white/10 shadow-lg">
                   <div className="w-1/3">
@@ -1593,7 +1593,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                     <FileText className="text-orange-400 w-8 h-8" />
                     ScratchPad
                   </h1>
-                  <p className="text-white/40 text-sm">Jot down your thoughts instantly. Click any note to focus.</p>
+                  <p className="text-white/40 text-sm">Quick scratchpad for thoughts and voice notes.</p>
                 </div>
                 <div className="flex-1 relative w-full h-full">
                   {stickyNotes.map((note, index) => (
@@ -1669,14 +1669,14 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                 <div className="flex flex-col gap-6 max-w-4xl mx-auto">
                   <div className="px-2 mt-4">
                     <h1 className="text-3xl font-bold tracking-tight mb-2 text-white">Keyboard Shortcuts</h1>
-                    <p className="text-white/50 text-sm">Customize how you interact with WhisPURR via your keyboard.</p>
+                    <p className="text-white/50 text-sm">Configure global hotkeys and dials.</p>
                   </div>
                   
                   <div className={`mt-4 ${glassPanel} p-8 flex flex-col gap-6`}>
                     <div className="flex items-center justify-between pb-6 border-b border-white/5">
                       <div className="flex flex-col gap-1.5">
                         <span className="text-xl font-bold text-white tracking-tight">Talk to WhisPURR</span>
-                        <span className="text-[15px] text-white/50">Hold this key to transcribe your words into text</span>
+                        <span className="text-[15px] text-white/50">Hold to dictate</span>
                       </div>
                       <button 
                         onClick={() => setIsRecordingShortcut(true)}
@@ -1693,7 +1693,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                     <div className="flex items-center justify-between pb-6 border-b border-white/5">
                       <div className="flex flex-col gap-1.5">
                         <span className="text-xl font-bold text-white tracking-tight">Quicklaunch</span>
-                        <span className="text-[15px] text-white/50">Double tap this key to open or close WhisPURR</span>
+                        <span className="text-[15px] text-white/50">Double-tap to open or close</span>
                       </div>
                       <button 
                         onClick={() => setIsRecordingQuicklaunch(true)}
@@ -1710,7 +1710,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                     <div className="flex items-center justify-between pb-6 border-b border-white/5">
                       <div className="flex flex-col gap-1.5">
                         <span className="text-xl font-bold text-white tracking-tight">Quick Edit</span>
-                        <span className="text-[15px] text-white/50">Edits the last sentence you typed</span>
+                        <span className="text-[15px] text-white/50">Re-dictate or edit the last sentence</span>
                       </div>
                       <button 
                         onClick={() => setIsRecordingQuickEdit(true)}
@@ -1735,7 +1735,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                             </span>
                           </div>
                           <span className="text-[15px] text-white/50">
-                            Switch between tone modes and target languages directly from anywhere on your desktop.
+                            Switch personas and languages directly from anywhere on your desktop.
                           </span>
                         </div>
                         <button 
@@ -1765,7 +1765,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                             </span>
                           </div>
                           <p className="text-xs text-white/75 leading-relaxed">
-                            Hold <kbd className="px-1.5 py-0.5 bg-white/10 border border-white/20 rounded text-[#f4ece1] font-mono text-[11px]">Alt</kbd> anywhere and <strong>scroll</strong> (or press <kbd className="px-1.5 py-0.5 bg-white/10 border border-white/20 rounded text-[#f4ece1] font-mono text-[11px]">↑</kbd> / <kbd className="px-1.5 py-0.5 bg-white/10 border border-white/20 rounded text-[#f4ece1] font-mono text-[11px]">↓</kbd>) to cycle through your personas on the right radial dial.
+                            Hold <kbd className="px-1.5 py-0.5 bg-white/10 border border-white/20 rounded text-[#f4ece1] font-mono text-[11px]">Alt</kbd> and <strong>scroll</strong> to cycle personas on the right radial dial.
                           </p>
                         </div>
 
@@ -1778,7 +1778,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                             </span>
                           </div>
                           <p className="text-xs text-white/75 leading-relaxed">
-                            Hold <kbd className="px-1.5 py-0.5 bg-white/10 border border-white/20 rounded text-[#f4ece1] font-mono text-[11px]">Alt</kbd> and <strong>right-click</strong> (or press <kbd className="px-1.5 py-0.5 bg-white/10 border border-white/20 rounded text-[#f4ece1] font-mono text-[11px]">→</kbd> / <kbd className="px-1.5 py-0.5 bg-white/10 border border-white/20 rounded text-[#f4ece1] font-mono text-[11px]">←</kbd>) to switch to the languages dial, then <strong>scroll</strong> to select your language.
+                            Hold <kbd className="px-1.5 py-0.5 bg-white/10 border border-white/20 rounded text-[#f4ece1] font-mono text-[11px]">Alt</kbd> + <strong>Right-Click</strong> to cycle languages on the left radial dial.
                           </p>
                         </div>
                       </div>
@@ -1792,7 +1792,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                               <span className="text-xs text-amber-400 font-mono">({dialLanguages.length} active)</span>
                             </h3>
                             <p className="text-xs text-white/50 mt-0.5">
-                              Click languages to customize which ones are showcased on the left radial dial.
+                              Toggle languages to showcase on the left dial.
                             </p>
                           </div>
                           <button 
@@ -1837,7 +1837,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                               <span className="text-xs text-orange-400 font-mono">({dialModes.length} active)</span>
                             </h3>
                             <p className="text-xs text-white/50 mt-0.5">
-                              Click personas to customize which ones are showcased on the right radial dial.
+                              Toggle personas to showcase on the right dial.
                             </p>
                           </div>
                           <button 
@@ -1883,7 +1883,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                 <div className="flex-1 flex flex-col gap-6 max-w-4xl mx-auto">
                   <div className="px-2 mt-4">
                     <h1 className="text-3xl font-bold tracking-tight mb-2 text-white">Appearance</h1>
-                    <p className="text-white/50 text-sm">Customize the look and feel of your WhisPURR interface.</p>
+                    <p className="text-white/50 text-sm">Select your interface theme.</p>
                   </div>
                   <div className="grid grid-cols-2 gap-6 mt-4">
                     <div 
@@ -1897,7 +1897,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                       </div>
                       <div className="px-4 pb-4">
                         <div className="text-lg font-bold text-white mb-1">Dark Choco</div>
-                        <div className="text-sm text-white/50">Deep chocolate tones for a rich, focused environment.</div>
+                        <div className="text-sm text-white/50">Deep chocolate tones for high focus.</div>
                       </div>
                     </div>
                     
@@ -1912,7 +1912,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                       </div>
                       <div className="px-4 pb-4">
                         <div className="text-lg font-bold text-white mb-1">Coffee Brown</div>
-                        <div className="text-sm text-white/50">Warm beige and rich browns for a softer, organic reading experience.</div>
+                        <div className="text-sm text-white/50">Warm cream and roasted coffee tones.</div>
                       </div>
                     </div>
                   </div>
@@ -1926,8 +1926,8 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                   <PlayCircle className="w-12 h-12 text-white/90" />
                 </div>
                 <h1 className="text-3xl font-bold text-white tracking-tight">WhisPURR Tutorial</h1>
-                <p className="text-white/80 text-center max-w-md text-lg mb-4 font-medium">
-                  Need a refresher? Replay the interactive setup tutorial to learn about WhisPURR's features, shortcuts, and personas.
+                <p className="text-white/80 text-center max-w-md text-base mb-4 font-medium">
+                  Replay the interactive walkthrough anytime.
                 </p>
                 <button
                   onClick={() => setShowTutorial(true)}
@@ -1946,7 +1946,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                     <Settings className="text-[#8d6e63] w-8 h-8" />
                     Settings
                   </h1>
-                  <p className="text-white/50 text-sm">Configure your system preferences and account settings.</p>
+                  <p className="text-white/50 text-sm">System preferences and launch options.</p>
                 </div>
                 
                 <div className="grid grid-cols-1 max-w-3xl gap-6 mt-4">
@@ -1956,7 +1956,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                       <div className="flex items-center justify-between p-4 rounded-xl bg-black/20 border border-white/5">
                         <div>
                           <div className="font-semibold text-white">Start on Boot</div>
-                          <div className="text-sm text-white/50">Launch WhisPURR automatically when your system starts.</div>
+                          <div className="text-sm text-white/50">Launch automatically on system startup.</div>
                         </div>
                         <div className="w-12 h-6 bg-[#8d6e63] rounded-full relative cursor-pointer border border-[#8d6e63]/50">
                           <div className="absolute right-1 top-1 w-4 h-4 bg-[#f4ece1] rounded-full shadow-md"></div>
@@ -1965,7 +1965,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                       <div className="flex items-center justify-between p-4 rounded-xl bg-black/20 border border-white/5">
                         <div>
                           <div className="font-semibold text-white">Hardware Acceleration</div>
-                          <div className="text-sm text-white/50">Use GPU to make animations and interface buttery smooth.</div>
+                          <div className="text-sm text-white/50">GPU-accelerated interface rendering.</div>
                         </div>
                         <div className="w-12 h-6 bg-[#8d6e63] rounded-full relative cursor-pointer border border-[#8d6e63]/50">
                           <div className="absolute right-1 top-1 w-4 h-4 bg-[#f4ece1] rounded-full shadow-md"></div>
@@ -1984,7 +1984,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                     <CreditCard className="text-[#8d6e63] w-8 h-8" />
                     Plans & Billing
                   </h1>
-                  <p className="text-white/50 text-sm">Manage your subscription and billing details.</p>
+                  <p className="text-white/50 text-sm">Manage your subscription and limits.</p>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-4">
@@ -2037,7 +2037,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                     <Shield className="text-[#8d6e63] w-8 h-8" />
                     User Policy & Privacy
                   </h1>
-                  <p className="text-white/50 text-sm">We take your privacy and data security seriously.</p>
+                  <p className="text-white/50 text-sm">Your data privacy and security commitments.</p>
                 </div>
                 
                 <div className="max-w-4xl text-white/80 space-y-8 px-2 pb-10">
@@ -2070,7 +2070,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                     <User className="text-[#8d6e63] w-8 h-8" />
                     Profile
                   </h1>
-                  <p className="text-white/50 text-sm">Your personal dashboard and lifetime statistics.</p>
+                  <p className="text-white/50 text-sm">Your personal stats and account metrics.</p>
                 </div>
                 
                 <div className="flex-1 flex flex-col items-center max-w-4xl mx-auto w-full py-2 min-h-0">
