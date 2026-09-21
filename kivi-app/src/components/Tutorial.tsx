@@ -170,9 +170,22 @@ function renderSlideContent(index: number, onComplete: () => void, onNext?: () =
           </p>
 
           {/* Refined Description */}
-          <p className="text-base sm:text-lg text-[#5d4037]/85 font-sans max-w-xl leading-relaxed font-normal mb-8">
+          <p className="text-base sm:text-lg text-[#5d4037]/85 font-sans max-w-xl leading-relaxed font-normal mb-6">
             WhisPURR stays quietly in the background. Speak naturally, and it automatically shapes your words to your active app.
           </p>
+
+          {/* Pillars: Fast, Flexible, Quietly there */}
+          <div className="flex items-center justify-center gap-2.5 flex-wrap mb-8">
+            <span className="inline-flex items-center px-4 py-1.5 rounded-full bg-white/80 border border-[#8d6e63]/20 text-[#3e2723] text-xs sm:text-[13px] font-medium tracking-wide shadow-xs backdrop-blur-sm">
+              Fast
+            </span>
+            <span className="inline-flex items-center px-4 py-1.5 rounded-full bg-white/80 border border-[#8d6e63]/20 text-[#3e2723] text-xs sm:text-[13px] font-medium tracking-wide shadow-xs backdrop-blur-sm">
+              Flexible
+            </span>
+            <span className="inline-flex items-center px-4 py-1.5 rounded-full bg-white/80 border border-[#8d6e63]/20 text-[#3e2723] text-xs sm:text-[13px] font-medium tracking-wide shadow-xs backdrop-blur-sm">
+              Quietly there
+            </span>
+          </div>
 
           {/* Classy Action Button */}
           {onNext && (
