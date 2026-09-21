@@ -317,11 +317,11 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
     } catch (e) {}
     return !hasShownTutorialThisSession;
   });
-  const [talkShortcut, setTalkShortcut] = useState(() => localStorage.getItem('whispurr_talk') || 'Alt');
+  const [talkShortcut, setTalkShortcut] = useState(() => localStorage.getItem('whispurr_talk') || 'option');
   const [isRecordingShortcut, setIsRecordingShortcut] = useState(false);
   const [quicklaunchShortcut, setQuicklaunchShortcut] = useState(() => localStorage.getItem('whispurr_quicklaunch') || 'Ctrl');
   const [isRecordingQuicklaunch, setIsRecordingQuicklaunch] = useState(false);
-  const [quickEditShortcut, setQuickEditShortcut] = useState(() => localStorage.getItem('whispurr_quickedit') || 'Alt + Ctrl');
+  const [quickEditShortcut, setQuickEditShortcut] = useState(() => localStorage.getItem('whispurr_quickedit') || 'option + Ctrl');
   const [isRecordingQuickEdit, setIsRecordingQuickEdit] = useState(false);
   const [isSeamlessSwitchEnabled, setIsSeamlessSwitchEnabled] = useState(() => localStorage.getItem('whispurr_seamless_switch') !== 'false');
 
@@ -391,6 +391,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
         if (key === ' ') key = 'Space';
         else if (key === 'Control') key = 'Ctrl';
         else if (key === 'Meta') key = 'Cmd';
+        else if (key === 'Alt' || key === 'Option') key = 'option';
         if (key.length === 1) key = key.toUpperCase();
         setTalkShortcut(key);
         localStorage.setItem('whispurr_talk', key);

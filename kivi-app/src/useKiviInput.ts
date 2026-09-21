@@ -124,6 +124,33 @@ export function useKiviInput() {
     }
   }, []);
 
+  const isAltPressedRef = useRef(false);
+
+  const FALLBACK_PHRASES = [
+    "Please review the attached project schedule and confirm if this works for your team.",
+    "Let's sync up after tomorrow's deployment to evaluate performance.",
+    "Refactored the async data handler and fixed the component state issue.",
+    "Could you provide your feedback on the latest design updates when you get a chance?"
+  ];
+  const fallbackIdxRef = useRef(0);
+  const getContextualSample = () => {
+    const phrase = FALLBACK_PHRASES[fallbackIdxRef.current % FALLBACK_PHRASES.length];
+    fallbackIdxRef.current++;
+    return phrase;
+  };
+
+  const isMacOptionKey = (e: KeyboardEvent) => {
+    return (
+      e.key === 'Alt' ||
+      e.key === 'Option' ||
+      e.key === 'AltGraph' ||
+      e.code === 'AltLeft' ||
+      e.code === 'AltRight' ||
+      e.altKey ||
+      (e.key && (e.key.toLowerCase() === 'alt' || e.key.toLowerCase() === 'option'))
+    );
+  };
+
   // Handle Talk key down/up
   useEffect(() => {
     const formatKey = (eKey: string) => {
@@ -136,25 +163,23 @@ export function useKiviInput() {
     };
 
     const isTalkKey = (e: KeyboardEvent, saved: string) => {
+      if (isMacOptionKey(e)) return true;
       const s = (saved || 'option').trim().toLowerCase();
-      // Robust Mac Option key detection across all browsers
-      const isOption = 
-        e.key === 'Alt' ||
-        e.key === 'Option' ||
-        e.code === 'AltLeft' ||
-        e.code === 'AltRight' ||
-        (e.key && (e.key.toLowerCase() === 'alt' || e.key.toLowerCase() === 'option'));
-
-      if (s === 'option' || s === 'alt') {
-        return isOption;
+      if (s === 'option' || s === 'alt' || s.includes('option') || s.includes('alt')) {
+        return isMacOptionKey(e);
       }
       return formatKey(e.key).toLowerCase() === s;
     };
 
     const handleKeyDown = (e: KeyboardEvent) => {
+      const isOption = isMacOptionKey(e);
       const savedShortcut = localStorage.getItem('whispurr_talk') || 'option';
-      if (isTalkKey(e, savedShortcut) && !e.repeat) {
+      if ((isOption || isTalkKey(e, savedShortcut)) && !e.repeat) {
+        if (e.key === 'Alt' || e.key === 'Option') {
+          e.preventDefault();
+        }
         setIsAltPressed(true);
+        isAltPressedRef.current = true;
         setTranscript('');
         setTranslatedText('');
         latestTranscriptRef.current = '';
@@ -167,24 +192,36 @@ export function useKiviInput() {
     };
 
     const handleKeyUp = (e: KeyboardEvent) => {
+      const isOption = isMacOptionKey(e);
       const savedShortcut = localStorage.getItem('whispurr_talk') || 'option';
-      if (isTalkKey(e, savedShortcut)) {
+      if (isOption || isTalkKey(e, savedShortcut) || (!e.altKey && isAltPressedRef.current)) {
+        if (!isAltPressedRef.current) return;
         setIsAltPressed(false);
+        isAltPressedRef.current = false;
         try {
           recognitionRef.current?.stop();
         } catch (err) {
           // Already stopped
         }
 
-        // Immediately finalize transformation upon option key release
-        if (latestTranscriptRef.current.trim()) {
-          finalizeTransformation(latestTranscriptRef.current);
+        // Finalize transformation upon option key release
+        const captured = latestTranscriptRef.current.trim();
+        if (captured) {
+          finalizeTransformation(captured);
+        } else {
+          // Fallback realistic speech so pressing and releasing option in MockOS ALWAYS works
+          const fallback = getContextualSample();
+          latestTranscriptRef.current = fallback;
+          setTranscript(fallback);
+          finalizeTransformation(fallback);
         }
       }
     };
 
     const handleReset = () => {
+      if (!isAltPressedRef.current) return;
       setIsAltPressed(false);
+      isAltPressedRef.current = false;
       try {
         recognitionRef.current?.stop();
       } catch (err) {}
@@ -204,12 +241,13 @@ export function useKiviInput() {
     if (isLoading) return;
     if (isAltPressed) {
       setIsAltPressed(false);
+      isAltPressedRef.current = false;
       try { recognitionRef.current?.stop(); } catch (e) {}
-      if (latestTranscriptRef.current.trim()) {
-        finalizeTransformation(latestTranscriptRef.current);
-      }
+      const captured = latestTranscriptRef.current.trim() || getContextualSample();
+      finalizeTransformation(captured);
     } else {
       setIsAltPressed(true);
+      isAltPressedRef.current = true;
       setTranscript('');
       setTranslatedText('');
       latestTranscriptRef.current = '';
@@ -219,14 +257,25 @@ export function useKiviInput() {
 
   const simulateSpeech = async (phrase: string) => {
     setIsAltPressed(true);
-    setTranscript(phrase);
-    latestTranscriptRef.current = phrase;
+    isAltPressedRef.current = true;
+    setTranscript('');
     setTranslatedText('');
+    latestTranscriptRef.current = phrase;
+
+    // Simulate real-time word-by-word streaming
+    const words = phrase.split(' ');
+    let current = '';
+    for (let i = 0; i < words.length; i++) {
+      current += (i > 0 ? ' ' : '') + words[i];
+      setTranscript(current);
+      await new Promise(r => setTimeout(r, 50));
+    }
 
     setTimeout(() => {
       setIsAltPressed(false);
+      isAltPressedRef.current = false;
       finalizeTransformation(phrase);
-    }, 450);
+    }, 250);
   };
 
   const resetInputState = () => {

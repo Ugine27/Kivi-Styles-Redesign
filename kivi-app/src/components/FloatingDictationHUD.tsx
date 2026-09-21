@@ -164,7 +164,7 @@ export default function FloatingDictationHUD({
                 ) : (
                   <div className="flex items-center gap-2 text-xs text-[#d7ccc8]/50 italic">
                     <span className="inline-block w-2 h-2 rounded-full bg-orange-400 animate-ping" />
-                    <span>Listening to your voice... (say something or pick a sample below)</span>
+                    <span>Listening to your voice... (speak now · release option to finish)</span>
                   </div>
                 )}
               </div>

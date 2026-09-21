@@ -272,7 +272,39 @@ const MockOS = memo(({
   const autoDismissTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastTypedTextRef = useRef<string>('');
 
-  // Open HUD whenever Alt is held or speech begins
+  // Direct Mac Option key listener inside MockOS for instant HUD invocation & Escape dismiss
+  useEffect(() => {
+    const isMacOption = (e: KeyboardEvent) => {
+      return (
+        e.key === 'Alt' ||
+        e.key === 'Option' ||
+        e.key === 'AltGraph' ||
+        e.code === 'AltLeft' ||
+        e.code === 'AltRight' ||
+        e.altKey ||
+        (e.key && (e.key.toLowerCase() === 'alt' || e.key.toLowerCase() === 'option'))
+      );
+    };
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (isMacOption(e) && !e.repeat) {
+        setIsHudOpen(true);
+        if (autoDismissTimerRef.current) {
+          clearTimeout(autoDismissTimerRef.current);
+          autoDismissTimerRef.current = null;
+        }
+      }
+      if (e.key === 'Escape') {
+        setIsHudOpen(false);
+        if (resetInputState) resetInputState();
+      }
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [resetInputState]);
+
+  // Open HUD whenever Alt/Option is held or speech begins
   useEffect(() => {
     if (isAltPressed) {
       if (autoDismissTimerRef.current) {
@@ -320,8 +352,8 @@ const MockOS = memo(({
       const spaceBefore = start > 0 && !original.slice(0, start).endsWith(' ') && !original.slice(0, start).endsWith('\n') ? ' ' : '';
       const newText = original.slice(0, start) + spaceBefore + text + original.slice(end);
 
-      const setter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, 'value')?.set ||
-                     Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value')?.set;
+      const proto = activeEl instanceof HTMLTextAreaElement ? window.HTMLTextAreaElement.prototype : window.HTMLInputElement.prototype;
+      const setter = Object.getOwnPropertyDescriptor(proto, 'value')?.set;
       if (setter) {
         setter.call(activeEl, newText);
       } else {
@@ -347,20 +379,18 @@ const MockOS = memo(({
 
     const destination = getDestinationApp();
     if (destination) {
-      // 1. Try cursor insertion if an input/textarea is currently focused
-      const insertedAtCursor = insertAtCursor(outputText);
+      // 1. Insert at cursor if active element is focused
+      insertAtCursor(outputText);
 
-      // 2. Only update state directly if not already handled by focused element cursor insertion
-      if (!insertedAtCursor) {
-        if (openApp === 'email') {
-          setEmailText(prev => prev ? `${prev}\n${outputText}` : outputText);
-        } else if (openApp === 'vscode') {
-          setVscodeText(prev => prev ? `${prev}\n${outputText}` : outputText);
-        } else if (openApp === 'ai') {
-          setAiText(prev => prev ? `${prev} ${outputText}` : outputText);
-        } else if (activePopup === 'scratchpad') {
-          setScratchPadText(prev => prev ? `${prev}\n${outputText}` : outputText);
-        }
+      // 2. ALWAYS update React state for controlled inputs so they stay perfectly in sync
+      if (openApp === 'email') {
+        setEmailText(prev => prev ? `${prev}\n${outputText}` : outputText);
+      } else if (openApp === 'vscode') {
+        setVscodeText(prev => prev ? `${prev} ${outputText}` : outputText);
+      } else if (openApp === 'ai') {
+        setAiText(prev => prev ? `${prev} ${outputText}` : outputText);
+      } else if (activePopup === 'scratchpad') {
+        setScratchPadText(prev => prev ? `${prev}\n${outputText}` : outputText);
       }
 
       if (openApp === 'whispurr') {
@@ -446,6 +476,19 @@ const MockOS = memo(({
                  className={`w-8 h-8 rounded flex items-center justify-center cursor-pointer transition-colors ${(openApp as string) === 'whispurr' ? 'bg-white/10 border-b-2 border-orange-400' : 'hover:bg-white/10'}`}
               >
                  <KiviCatIcon className="w-5 h-5 text-orange-400" />
+              </div>
+
+              {/* Quick option Dictation Trigger */}
+              <div 
+                 onClick={() => {
+                   if (toggleListening) toggleListening();
+                   else if (simulateSpeech) simulateSpeech("WhisPURR dictation active.");
+                 }}
+                 className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/5 hover:bg-orange-500/20 border border-white/10 hover:border-orange-500/30 text-xs font-mono text-white/80 hover:text-orange-300 cursor-pointer transition-all hover:scale-105 active:scale-95 ml-2"
+                 title="WhisPURR Dictation · Click or hold option on keyboard"
+              >
+                 <Mic className="w-3.5 h-3.5 text-orange-400" />
+                 <span>option</span>
               </div>
            </div>
 
@@ -766,7 +809,18 @@ const MockOS = memo(({
                     <div className="text-sm hover:bg-gray-200 px-2 py-1 rounded cursor-pointer">Drafts</div>
                   </div>
                   <div className="flex-1 p-8 flex flex-col gap-4 font-serif">
-                    <h1 className="text-2xl font-semibold border-b pb-4">Daily Comms Update</h1>
+                    <div className="flex items-center justify-between border-b pb-4">
+                      <h1 className="text-2xl font-semibold">Daily Comms Update</h1>
+                      <button
+                        type="button"
+                        onClick={() => simulateSpeech ? simulateSpeech("Looking forward to our discussion tomorrow morning.") : toggleListening?.()}
+                        className="px-3 py-1.5 rounded-lg bg-orange-50 hover:bg-orange-100 text-orange-800 border border-orange-200 text-xs font-mono flex items-center gap-1.5 transition-all cursor-pointer active:scale-95"
+                        title="Dictate email with Whispurr (option)"
+                      >
+                        <Mic className="w-3.5 h-3.5 text-orange-600" />
+                        <span>option to dictate</span>
+                      </button>
+                    </div>
                     <div className="flex-1 text-gray-800 leading-relaxed text-lg flex flex-col">
                       <p className="mb-4">Hi Team,</p>
                       <p className="mb-4">Just wanted to provide a quick update on the latest deployment. Everything is looking stable.</p>
@@ -798,7 +852,7 @@ const MockOS = memo(({
                     <p className="pl-4">const server = new Server();</p>
                     <br/>
                     <p className="pl-4 text-[#6a9955]">// TODO: Implement fix</p>
-                    <div className="pl-4 flex">
+                    <div className="pl-4 flex items-center gap-2">
                        <input 
                          type="text" 
                          className="flex-1 bg-transparent outline-none text-[#4ec9b0] placeholder-[#6a9955]/50"
@@ -808,6 +862,15 @@ const MockOS = memo(({
                          spellCheck={false}
                          autoFocus
                        />
+                       <button
+                         type="button"
+                         onClick={() => simulateSpeech ? simulateSpeech("const data = await fetchReport();") : toggleListening?.()}
+                         className="px-2 py-0.5 rounded bg-[#333] hover:bg-orange-500/20 text-gray-400 hover:text-orange-300 text-[11px] font-mono border border-[#444] hover:border-orange-500/40 transition-all cursor-pointer flex items-center gap-1 active:scale-95 shrink-0"
+                         title="Dictate code with Whispurr (option)"
+                       >
+                         <Mic className="w-3 h-3 text-orange-400" />
+                         <span>option</span>
+                       </button>
                     </div>
                     <p>{'}'}</p>
                   </div>
@@ -819,21 +882,40 @@ const MockOS = memo(({
                   <div className="text-center">
                     <Sparkles className="w-16 h-16 text-purple-500/50 mx-auto mb-6" />
                     <h2 className="text-2xl font-bold text-white mb-2">Antigravity AI</h2>
-                    <p className="text-gray-400 max-w-md mx-auto">
-                      Hold <kbd className="px-2 py-1 bg-white/10 rounded-md text-white/80 mx-1 border border-white/20">option</kbd> anywhere in the OS to invoke Whispurr and translate your speech.
+                    <p className="text-gray-400 max-w-md mx-auto flex items-center justify-center gap-1.5 flex-wrap">
+                      <span>Hold</span>
+                      <button
+                        type="button"
+                        onClick={() => simulateSpeech ? simulateSpeech("Analyze the performance of our application.") : toggleListening?.()}
+                        className="px-2.5 py-0.5 bg-white/10 hover:bg-orange-500/20 text-white hover:text-orange-300 rounded-md border border-white/20 hover:border-orange-500/40 text-xs font-mono font-semibold transition-all cursor-pointer shadow-sm hover:scale-105 active:scale-95 inline-flex items-center gap-1"
+                        title="Click option to dictate with Whispurr"
+                      >
+                        <Mic className="w-3 h-3 text-orange-400" />
+                        <span>option</span>
+                      </button>
+                      <span>anywhere in the OS to invoke Whispurr and translate your speech.</span>
                     </p>
                   </div>
                   
                   {/* Chat Input */}
-                  <div className="absolute bottom-8 left-1/2 -translate-x-1/2 w-[80%] max-w-2xl bg-white/5 border border-white/10 rounded-xl p-4 flex items-center shadow-2xl focus-within:border-purple-500/50 transition-colors">
+                  <div className="absolute bottom-8 left-1/2 -translate-x-1/2 w-[80%] max-w-2xl bg-white/5 border border-white/10 rounded-xl p-3 md:p-4 flex items-center shadow-2xl focus-within:border-purple-500/50 transition-colors gap-2">
                     <input 
                       type="text" 
-                      className="flex-1 bg-transparent outline-none text-white placeholder-white/30 text-lg"
+                      className="flex-1 bg-transparent outline-none text-white placeholder-white/30 text-base md:text-lg"
                       placeholder="Ask Antigravity anything..."
                       value={aiText}
                       onChange={e => setAiText(e.target.value)}
                       autoFocus
                     />
+                    <button
+                      type="button"
+                      onClick={() => simulateSpeech ? simulateSpeech("Analyze the performance of our application.") : toggleListening?.()}
+                      className="px-2.5 py-1.5 rounded-lg bg-white/10 hover:bg-orange-500/20 text-white/70 hover:text-orange-300 border border-white/10 hover:border-orange-500/30 flex items-center gap-1.5 text-xs font-mono transition-all cursor-pointer active:scale-95 shrink-0"
+                      title="Dictate with Whispurr (option)"
+                    >
+                      <Mic className="w-3.5 h-3.5 text-orange-400" />
+                      <span>option</span>
+                    </button>
                   </div>
                 </div>
               )}

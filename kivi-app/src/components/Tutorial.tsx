@@ -88,7 +88,7 @@ export default function Tutorial({ onComplete }: TutorialProps) {
             transition={{ duration: 0.35, ease: "easeOut" }}
             className="flex flex-col items-center w-full max-w-5xl"
           >
-            {renderSlideContent(slide, onComplete, nextSlide)}
+            {renderSlideContent(slide, onComplete, nextSlide, setSlide)}
           </motion.div>
         </AnimatePresence>
       </div>
@@ -138,7 +138,7 @@ export default function Tutorial({ onComplete }: TutorialProps) {
   return createPortal(tutorialContent, document.body);
 }
 
-function renderSlideContent(index: number, onComplete: () => void, onNext?: () => void) {
+function renderSlideContent(index: number, onComplete: () => void, onNext?: () => void, goToSlide?: (idx: number) => void) {
   switch (index) {
     case 0:
       return (
@@ -204,7 +204,11 @@ function renderSlideContent(index: number, onComplete: () => void, onNext?: () =
 
           <div className="flex flex-wrap gap-6 justify-center w-full">
             {/* Hold to Talk */}
-            <div className="flex-1 min-w-[220px] max-w-[280px] px-7 py-6 bg-gradient-to-b from-sky-50 to-blue-100/50 border-2 border-sky-400 rounded-3xl flex flex-col items-center cursor-pointer hover:scale-105 hover:shadow-xl hover:shadow-sky-500/15 transition-all shadow-md">
+            <div 
+              onClick={() => goToSlide?.(1)}
+              className="flex-1 min-w-[220px] max-w-[280px] px-7 py-6 bg-gradient-to-b from-sky-50 to-blue-100/50 border-2 border-sky-400 rounded-3xl flex flex-col items-center cursor-pointer hover:scale-105 hover:shadow-xl hover:shadow-sky-500/15 transition-all shadow-md active:scale-95"
+              title="Click to view Hold option to Speak slide"
+            >
               <span className="text-xs font-bold text-sky-800 uppercase tracking-wider mb-3 bg-sky-200/60 px-3 py-1 rounded-full">
                 🎙️ Hold to Talk
               </span>
@@ -215,7 +219,11 @@ function renderSlideContent(index: number, onComplete: () => void, onNext?: () =
             </div>
 
             {/* Persona Dial */}
-            <div className="flex-1 min-w-[220px] max-w-[280px] px-7 py-6 bg-gradient-to-b from-coral-50 to-rose-100/50 border-2 border-coral-400 rounded-3xl flex flex-col items-center cursor-pointer hover:scale-105 hover:shadow-xl hover:shadow-coral-500/15 transition-all shadow-md">
+            <div 
+              onClick={() => goToSlide?.(2)}
+              className="flex-1 min-w-[220px] max-w-[280px] px-7 py-6 bg-gradient-to-b from-coral-50 to-rose-100/50 border-2 border-coral-400 rounded-3xl flex flex-col items-center cursor-pointer hover:scale-105 hover:shadow-xl hover:shadow-coral-500/15 transition-all shadow-md active:scale-95"
+              title="Click to view Persona Dial slide"
+            >
               <span className="text-xs font-bold text-coral-800 uppercase tracking-wider mb-3 bg-coral-200/60 px-3 py-1 rounded-full">
                 🧭 Persona Dial
               </span>
@@ -226,7 +234,11 @@ function renderSlideContent(index: number, onComplete: () => void, onNext?: () =
             </div>
 
             {/* Language Dial */}
-            <div className="flex-1 min-w-[220px] max-w-[280px] px-7 py-6 bg-gradient-to-b from-mint-50 to-teal-100/50 border-2 border-teal-400 rounded-3xl flex flex-col items-center cursor-pointer hover:scale-105 hover:shadow-xl hover:shadow-teal-500/15 transition-all shadow-md">
+            <div 
+              onClick={() => goToSlide?.(2)}
+              className="flex-1 min-w-[220px] max-w-[280px] px-7 py-6 bg-gradient-to-b from-mint-50 to-teal-100/50 border-2 border-teal-400 rounded-3xl flex flex-col items-center cursor-pointer hover:scale-105 hover:shadow-xl hover:shadow-teal-500/15 transition-all shadow-md active:scale-95"
+              title="Click to view Language Dial slide"
+            >
               <span className="text-xs font-bold text-teal-800 uppercase tracking-wider mb-3 bg-mint-200/60 px-3 py-1 rounded-full">
                 🌐 Language Dial
               </span>
@@ -515,11 +527,37 @@ function HoldOptionToSpeakSlide() {
     }, 550);
   }, [sampleSpeech]);
 
-  const handleToggle = () => {
+  const isHeldRef = useRef(false);
+  const holdTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleMouseDown = () => {
+    isHeldRef.current = false;
+    holdTimerRef.current = setTimeout(() => {
+      isHeldRef.current = true;
+      startListening();
+    }, 150);
+  };
+
+  const handleMouseUp = () => {
+    if (holdTimerRef.current) {
+      clearTimeout(holdTimerRef.current);
+      holdTimerRef.current = null;
+    }
+    if (isHeldRef.current) {
+      isHeldRef.current = false;
+      finishListening();
+    }
+  };
+
+  const handleClick = () => {
+    if (isHeldRef.current) return;
     if (stage === 'listening') {
       finishListening();
     } else {
       startListening();
+      setTimeout(() => {
+        finishListening();
+      }, 1800);
     }
   };
 
@@ -578,9 +616,9 @@ function HoldOptionToSpeakSlide() {
         <span>Hold</span>
         <button
           type="button"
-          onClick={handleToggle}
-          onMouseDown={startListening}
-          onMouseUp={finishListening}
+          onClick={handleClick}
+          onMouseDown={handleMouseDown}
+          onMouseUp={handleMouseUp}
           className={`px-4 py-1.5 rounded-xl font-mono text-3xl sm:text-4xl font-semibold inline-flex items-center justify-center tracking-tight transition-all duration-200 cursor-pointer shadow-md select-none active:scale-95 ${
             isListening
               ? 'bg-[#ea580c] text-white ring-4 ring-[#ea580c]/30 shadow-[0_0_25px_rgba(234,88,12,0.45)] scale-95'
@@ -593,24 +631,9 @@ function HoldOptionToSpeakSlide() {
         <span>to Speak.</span>
       </h1>
 
-      <p className="text-lg sm:text-xl text-[#3e2723]/75 font-serif italic mb-3 max-w-lg leading-relaxed">
-        Press and hold to speak. WhisPURR transcribes in real time and types directly into your active app.
+      <p className="text-lg sm:text-xl text-[#3e2723]/75 font-serif italic mb-8 max-w-lg leading-relaxed">
+        Hold to dictate. WhisPURR shapes your words and types directly into your active app.
       </p>
-
-      {/* Interactive Status Indicator */}
-      <div 
-        onClick={handleToggle}
-        className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#5d4037]/10 hover:bg-[#5d4037]/15 border border-[#5d4037]/20 text-[#5d4037] text-xs font-sans font-medium mb-6 cursor-pointer transition-colors"
-      >
-        <span className={`w-2 h-2 rounded-full ${isListening ? 'bg-orange-500 animate-ping' : isProcessing ? 'bg-amber-500 animate-pulse' : 'bg-emerald-600'}`} />
-        <span>
-          {isListening
-            ? 'Listening active · Click option or release to finish'
-            : isProcessing
-              ? 'Polishing speech with persona...'
-              : 'Click ⌥ option above or press Option on your keyboard to test'}
-        </span>
-      </div>
 
       {/* Realistic WhisPURR Floating HUD Mockup */}
       <div className="w-full max-w-xl select-none text-left">
@@ -650,14 +673,14 @@ function HoldOptionToSpeakSlide() {
                     ? 'WhisPURR Listening...'
                     : isProcessing
                       ? 'Polishing with Formal...'
-                      : 'WhisPURR Active'}
+                      : 'Typed into active app'}
                 </h3>
                 <p className="text-[11px] text-[#d7ccc8]/70">
                   {isListening
                     ? 'Speak now · Release option to finish'
                     : isProcessing
                       ? 'Adapting tone and custom rules...'
-                      : 'Typed directly into active app'}
+                      : 'Inserted directly at cursor'}
                 </p>
               </div>
             </div>
