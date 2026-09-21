@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mic, Terminal, Briefcase, MessageCircle, Mail, ChevronRight, ChevronLeft, Check, Compass, Globe, Sparkles, Plus, ChevronUp, ChevronDown } from 'lucide-react';
+import { ALL_DIAL_LANGUAGES, LANG_SAMPLES, getSanitizedDialLanguages } from '../constants/languages';
 
 interface TutorialProps {
   onComplete: () => void;
@@ -292,15 +293,15 @@ function renderSlideContent(index: number, onComplete: () => void) {
               <span className="text-xs text-sky-900/70 font-sans font-medium">Instant Voice Typing</span>
             </div>
 
-            {/* Mode Dial */}
+            {/* Persona Dial */}
             <div className="flex-1 min-w-[220px] max-w-[280px] px-7 py-6 bg-gradient-to-b from-coral-50 to-rose-100/50 border-2 border-coral-400 rounded-3xl flex flex-col items-center cursor-pointer hover:scale-105 hover:shadow-xl hover:shadow-coral-500/15 transition-all shadow-md">
               <span className="text-xs font-bold text-coral-800 uppercase tracking-wider mb-3 bg-coral-200/60 px-3 py-1 rounded-full">
-                🧭 Mode Dial
+                🧭 Persona Dial
               </span>
               <span className="text-2xl font-sans font-black text-coral-950 bg-white px-5 py-3 rounded-2xl border-2 border-coral-200 shadow-sm mb-2 whitespace-nowrap">
                 Alt + Scroll
               </span>
-              <span className="text-xs text-coral-900/70 font-sans font-medium">Spin 8 Tone Profiles</span>
+              <span className="text-xs text-coral-900/70 font-sans font-medium">Spin 8 Personas</span>
             </div>
 
             {/* Language Dial */}
@@ -311,7 +312,7 @@ function renderSlideContent(index: number, onComplete: () => void) {
               <span className="text-2xl font-sans font-black text-teal-950 bg-white px-4 py-3 rounded-2xl border-2 border-teal-200 shadow-sm mb-2 whitespace-nowrap">
                 Alt + Right Click
               </span>
-              <span className="text-xs text-teal-900/70 font-sans font-medium">Switch 10 Languages</span>
+              <span className="text-xs text-teal-900/70 font-sans font-medium">Switch 23 Languages</span>
             </div>
           </div>
         </div>
@@ -409,7 +410,7 @@ function renderSlideContent(index: number, onComplete: () => void) {
     case 8:
       return (
         <SurveySlide 
-          title="Global Modes." 
+          title="Global Personas." 
           icon={<Briefcase size={28} />} 
           subtext="Pick WhisPURR's default structural baseline when prowling through other applications." 
           theme="mint"
@@ -440,7 +441,7 @@ function renderSlideContent(index: number, onComplete: () => void) {
               🎙️ Alt to Dictate
             </span>
             <span className="px-3.5 py-1.5 rounded-xl bg-coral-100 text-coral-900 border border-coral-300 text-xs font-bold shadow-xs">
-              🧭 Alt + Scroll for Modes
+              🧭 Alt + Scroll for Personas
             </span>
             <span className="px-3.5 py-1.5 rounded-xl bg-mint-100 text-emerald-900 border border-mint-300 text-xs font-bold shadow-xs">
               🌐 Alt + Right-Click for Languages
@@ -515,7 +516,7 @@ function SurveySlide({
     <div className="flex flex-col items-center w-full text-center -mt-6">
       <div className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border text-xs font-mono font-bold tracking-wider mb-4 shadow-xs backdrop-blur-md ${themeClasses.badge}`}>
         <span>{icon}</span>
-        <span className="uppercase">modes survey</span>
+        <span className="uppercase">persona survey</span>
       </div>
 
       <h1 className="text-5xl sm:text-6xl font-serif font-medium tracking-tight mb-4 text-[#2b1f1a]">{title}</h1>
@@ -533,8 +534,8 @@ function SurveySlide({
             }`}
           >
             {selected === i && (
-              <div className={`absolute -top-3.5 -right-3.5 w-9 h-9 ${themeClasses.indicator} rounded-full flex items-center justify-center text-white shadow-lg`}>
-                <Check size={20} strokeWidth={3} />
+              <div className={`absolute -top-3.5 -right-3.5 w-9 h-9 ${themeClasses.indicator} rounded-full flex items-center justify-center text-[#ffffff] shadow-lg`}>
+                <Check size={20} strokeWidth={3} className="text-[#ffffff]" />
               </div>
             )}
 
@@ -642,32 +643,6 @@ function RadialDialsDemoSlide() {
     }
   };
 
-  const LANG_SAMPLES: Record<string, string> = {
-    AutoDetect: 'Auto-detecting your spoken language in real-time... 🌐',
-    English: 'Hello! How can I help you today? 👋',
-    Hindi: 'नमस्ते! आज मैं आपकी क्या सहायता कर सकता हूँ? 🙏',
-    Spanish: '¡Hola! ¿En qué puedo ayudarte hoy? 🇪🇸',
-    French: "Bonjour ! Comment puis-je vous aider aujourd'hui ? 🇫🇷",
-    German: 'Hallo! Wie kann ich Ihnen heute helfen? 🇩🇪',
-    Japanese: 'こんにちは！今日はどのようなご用件でしょうか？ 🇯🇵',
-    Mandarin: '你好！今天有什么我可以帮你的吗？ 🇨🇳',
-    Italian: 'Ciao! Come posso aiutarti oggi? 🇮🇹',
-    Portuguese: 'Olá! Como posso ajudar você hoje? 🇵🇹'
-  };
-
-  const ALL_DIAL_LANGUAGES = [
-    'AutoDetect',
-    'English',
-    'Hindi',
-    'Spanish',
-    'French',
-    'German',
-    'Japanese',
-    'Mandarin',
-    'Italian',
-    'Portuguese'
-  ];
-
   const ALL_DIAL_MODES = [
     'Formal',
     'Casual',
@@ -679,14 +654,7 @@ function RadialDialsDemoSlide() {
     'Warm'
   ];
 
-  const [dialLanguages, setDialLanguages] = useState<string[]>(() => {
-    try {
-      const saved = localStorage.getItem('whispurr_dial_languages');
-      return saved ? JSON.parse(saved) : ['AutoDetect', 'English', 'Hindi'];
-    } catch (e) {
-      return ['AutoDetect', 'English', 'Hindi'];
-    }
-  });
+  const [dialLanguages, setDialLanguages] = useState<string[]>(getSanitizedDialLanguages);
 
   const [dialModes, setDialModes] = useState<string[]>(() => {
     try {
@@ -760,7 +728,7 @@ function RadialDialsDemoSlide() {
   };
 
   const currentMode = dialModes[modeRotation] || 'Formal';
-  const currentLang = dialLanguages[langRotation] || 'English';
+  const currentLang = dialLanguages[langRotation] || 'English — English';
 
   return (
     <div className="flex flex-col items-center w-full max-w-4xl text-center select-none">
@@ -772,7 +740,7 @@ function RadialDialsDemoSlide() {
         </span>
       </h1>
       <p className="text-sm md:text-base text-[#3e2723]/75 font-serif italic mb-3 max-w-2xl">
-        - hold <strong className="text-sky-700 font-sans font-bold bg-sky-100/90 border border-sky-200/80 px-1.5 py-0.5 rounded-md">Alt</strong> anywhere to spin modes, or <strong className="text-indigo-700 font-sans font-bold bg-indigo-100/90 border border-indigo-200/80 px-1.5 py-0.5 rounded-md">right-click</strong> to spin languages.
+        - hold <strong className="text-sky-700 font-sans font-bold bg-sky-100/90 border border-sky-200/80 px-1.5 py-0.5 rounded-md">Alt</strong> anywhere to spin personas, or <strong className="text-indigo-700 font-sans font-bold bg-indigo-100/90 border border-indigo-200/80 px-1.5 py-0.5 rounded-md">right-click</strong> to spin languages.
       </p>
 
       {/* Main Interactive Dial Simulator Card */}
@@ -788,26 +756,26 @@ function RadialDialsDemoSlide() {
               onClick={() => setActiveDial(0)}
               className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                 activeDial === 0
-                  ? 'bg-gradient-to-r from-sky-500 via-blue-600 to-indigo-600 text-white shadow-md shadow-sky-500/30 scale-[1.02]'
+                  ? 'bg-gradient-to-r from-sky-500 via-blue-600 to-indigo-600 text-[#ffffff] shadow-md shadow-sky-500/30 scale-[1.02]'
                   : 'bg-sky-50 text-sky-800 hover:bg-sky-100/80 border border-sky-200/60'
               }`}
             >
               <Compass className="w-3.5 h-3.5" />
-              <span>Modes</span>
-              <span className={`px-1.5 py-0.5 rounded text-[10px] font-mono font-normal ${activeDial === 0 ? 'bg-black/20 text-white' : 'bg-sky-200/60 text-sky-900'}`}>Alt + Scroll</span>
+              <span>Personas</span>
+              <span className={`px-1.5 py-0.5 rounded text-[10px] font-mono font-normal ${activeDial === 0 ? 'bg-black/20 text-[#ffffff]' : 'bg-sky-200/60 text-sky-900'}`}>Alt + Scroll</span>
             </button>
 
             <button
               onClick={() => setActiveDial(1)}
               className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                 activeDial === 1
-                  ? 'bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-500 text-white shadow-md shadow-indigo-500/30 scale-[1.02]'
+                  ? 'bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-500 text-[#ffffff] shadow-md shadow-indigo-500/30 scale-[1.02]'
                   : 'bg-indigo-50 text-indigo-800 hover:bg-indigo-100/80 border border-indigo-200/60'
               }`}
             >
               <Globe className="w-3.5 h-3.5" />
               <span>Languages</span>
-              <span className={`px-1.5 py-0.5 rounded text-[10px] font-mono font-normal ${activeDial === 1 ? 'bg-black/20 text-white' : 'bg-indigo-200/60 text-indigo-900'}`}>Alt + → / Right-Click</span>
+              <span className={`px-1.5 py-0.5 rounded text-[10px] font-mono font-normal ${activeDial === 1 ? 'bg-black/20 text-[#ffffff]' : 'bg-indigo-200/60 text-indigo-900'}`}>Alt + → / Right-Click</span>
             </button>
 
             <button
@@ -817,7 +785,7 @@ function RadialDialsDemoSlide() {
               onClick={toggleMoods}
               className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer border ${
                 moodsEnabled
-                  ? 'bg-gradient-to-r from-coral-500 to-vibrantOrange-500 text-white border-coral-400 shadow-md shadow-coral-500/30 scale-[1.02]'
+                  ? 'bg-gradient-to-r from-coral-500 to-vibrantOrange-500 text-[#ffffff] border-coral-400 shadow-md shadow-coral-500/30 scale-[1.02]'
                   : 'bg-coral-50 text-coral-800 border-coral-200/80 hover:bg-coral-100/80'
               }`}
               title="Toggle Moods: adds expressive emojis based on your emotions and undertones"
@@ -836,7 +804,7 @@ function RadialDialsDemoSlide() {
         {/* Live Radial Arc Interactive Area */}
         <div className="relative h-36 w-full flex items-center justify-center overflow-hidden bg-gradient-to-br from-sky-50/70 via-indigo-50/40 to-coral-50/30 rounded-2xl border border-sky-100/80">
           <div className="absolute top-2 left-3 text-[10px] font-mono uppercase tracking-wider text-sky-800/70 font-bold bg-white/70 px-2 py-0.5 rounded-md border border-sky-200/50">
-            {activeDial === 0 ? 'Mode Selector (Right Arc)' : 'Language Selector (Left Arc)'}
+            {activeDial === 0 ? 'Persona Selector (Right Arc)' : 'Language Selector (Left Arc)'}
           </div>
 
           {/* Center Indicator */}
@@ -849,7 +817,7 @@ function RadialDialsDemoSlide() {
               {activeDial === 0 ? <Compass className="w-4 h-4" /> : <Globe className="w-4 h-4" />}
             </div>
             <span className="text-[9px] font-mono uppercase tracking-widest text-[#2b1f1a]/70 font-bold">
-              {activeDial === 0 ? 'Modes' : 'Languages'}
+              {activeDial === 0 ? 'Personas' : 'Languages'}
             </span>
           </div>
 
@@ -975,7 +943,7 @@ function RadialDialsDemoSlide() {
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-[#2b1f1a] tracking-tight flex items-center gap-1.5">
               <span className={`w-2 h-2 rounded-full ${activeDial === 0 ? 'bg-sky-500' : 'bg-indigo-500'}`} />
-              {activeDial === 0 ? 'Customise Showcased Modes' : 'Customise Showcased Languages'}
+              {activeDial === 0 ? 'Customise Showcased Personas' : 'Customise Showcased Languages'}
             </span>
             <span className="text-[11px] text-[#3e2723]/65 font-serif italic">
               Click chips to showcase or hide on dial

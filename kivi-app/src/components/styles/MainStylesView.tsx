@@ -149,10 +149,10 @@ export default function MainStylesView({
       <div className="flex items-center justify-between px-1 shrink-0">
         <div>
           <h1 className="text-2xl font-bold text-[#2b170e] tracking-tight">
-            Context Studio
+            Persona Studio
           </h1>
           <p className="text-xs text-[#5d4037] font-medium mt-0.5">
-            WhisPURR understands the context and lets you control how you sound.
+            WhisPURR adapts your persona to where you are and lets you control how you sound.
           </p>
         </div>
 
@@ -233,7 +233,7 @@ export default function MainStylesView({
         {/* 2. Left Column: Context Profiles (Clean, warm coffee list on cream background) */}
         <div className="w-52 md:w-56 shrink-0 flex flex-col h-full overflow-hidden">
           <div className="text-xs font-bold uppercase tracking-wider text-[#5d4037] px-2 mb-2">
-            Context Profiles
+            Active Personas
           </div>
           <div className="flex flex-col gap-1.5 overflow-y-auto pr-1">
             {CONTEXT_ITEMS.map(({ name, icon: Icon }) => {
@@ -466,7 +466,7 @@ function ContextOptionsRenderer({
       <div className="flex flex-col gap-2.5 shrink-0">
         <div className="flex items-center justify-between">
           <span className="text-xs font-bold uppercase tracking-wider text-title-cream">
-            Tone & Output Examples
+            Persona Output Examples
           </span>
           <span className="text-xs text-desc-beige font-normal">
             Select how unscripted speech is shaped
@@ -482,13 +482,13 @@ function ContextOptionsRenderer({
                 onClick={() => setSelectedIndex(i)}
                 className={`relative rounded-2xl p-4 cursor-pointer transition-all flex flex-col justify-between min-h-[160px] ${
                   isSelected
-                    ? 'bg-[#44281c] border-2 border-orange-400 shadow-md ring-2 ring-orange-400/25' 
+                    ? 'bg-[#4a2c20] border-2 border-orange-400 shadow-md ring-2 ring-orange-400/30' 
                     : 'bg-[#251610] border border-[#5e3b2c] hover:border-[#8d5e48] hover:bg-[#2b1912] shadow-xs'
                 }`}
               >
                 <div className="flex items-start justify-between gap-2 mb-2">
                   <div>
-                    <h3 className={`text-sm font-bold tracking-tight ${isSelected ? 'text-white' : 'text-title-cream'}`}>
+                    <h3 className={`text-sm font-bold tracking-tight ${isSelected ? 'text-[#ffffff]' : 'text-title-cream'}`}>
                       {opt.n}
                     </h3>
                     <p className={`text-xs font-normal leading-normal mt-0.5 ${isSelected ? 'text-[#fceee2]' : 'text-desc-beige'}`}>
@@ -497,19 +497,19 @@ function ContextOptionsRenderer({
                   </div>
                   <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5 transition-colors ${
                     isSelected 
-                      ? 'bg-orange-500 text-white shadow-xs' 
+                      ? 'bg-orange-500 text-[#ffffff] shadow-xs' 
                       : 'border border-[#7d5340] bg-[#1a0e0a]/50 text-transparent'
                   }`}>
-                    <Check size={11} strokeWidth={3} className={isSelected ? 'opacity-100' : 'opacity-0'} />
+                    <Check size={11} strokeWidth={3} className={isSelected ? 'opacity-100 text-[#ffffff]' : 'opacity-0'} />
                   </div>
                 </div>
 
                 <div className={`rounded-xl p-3.5 flex items-center transition-colors border ${
                   isSelected 
-                    ? 'bg-[#1c0f0a] border-orange-400/40' 
+                    ? 'bg-[#1c0f0a] border-orange-400/50' 
                     : 'bg-[#1a0e0a] border-[#4d2f22]/70'
                 }`}>
-                  <p className={`text-sm leading-relaxed whitespace-pre-wrap ${isSelected ? 'text-white font-semibold' : 'text-quote-sample font-normal'}`}>
+                  <p className={`text-sm leading-relaxed whitespace-pre-wrap ${isSelected ? 'text-[#ffffff] font-semibold' : 'text-quote-sample font-normal'}`}>
                     "{opt.ex}"
                   </p>
                 </div>
@@ -572,7 +572,7 @@ function ContextOptionsRenderer({
                 onClick={() => handleAddChip(chip)}
                 className={`text-xs px-3 py-1 rounded-lg border transition-all cursor-pointer font-medium ${
                   isChipActive
-                    ? 'bg-orange-500/25 border-orange-400 text-orange-200'
+                    ? 'bg-orange-500/25 border-orange-400 text-[#ffd6b3] font-bold shadow-xs'
                     : 'bg-[#251610] hover:bg-[#3d251a] border-[#5e3b2c] text-desc-beige hover:text-title-cream'
                 }`}
                 title={isChipActive ? "Click to remove" : "Click to add rule"}

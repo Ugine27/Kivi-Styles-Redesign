@@ -182,7 +182,7 @@ export default function MeetStylesIntro({ onProceed, onSkip }: MeetStylesIntroPr
         <div className="flex items-center gap-2 text-[11px] text-[#3e2723]/80 bg-[#8d6e63]/10 border border-[#8d6e63]/25 px-3 py-1.5 rounded-xl shrink-0">
           <Sparkles className="w-3 h-3 text-[#8d6e63] shrink-0" />
           <span className="truncate">
-            <strong>Desktop Dial:</strong> Hold <kbd className="px-1 py-0.2 rounded bg-white border border-[#3e2723]/20 font-mono text-[10px] font-bold">Alt</kbd> + <strong>Scroll</strong> for modes, or <kbd className="px-1 py-0.2 rounded bg-white border border-[#3e2723]/20 font-mono text-[10px] font-bold">Alt</kbd> + <strong>Right-Click</strong> for languages.
+            <strong>Desktop Dial:</strong> Hold <kbd className="px-1 py-0.2 rounded bg-white border border-[#3e2723]/20 font-mono text-[10px] font-bold">Alt</kbd> + <strong>Scroll</strong> for personas, or <kbd className="px-1 py-0.2 rounded bg-white border border-[#3e2723]/20 font-mono text-[10px] font-bold">Alt</kbd> + <strong>Right-Click</strong> for languages.
           </span>
         </div>
       </div>

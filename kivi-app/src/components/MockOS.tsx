@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import WhispurrApp from './WhispurrApp';
 import KiviCatIcon from './KiviCatIcon';
 import FloatingDictationHUD from './FloatingDictationHUD';
+import { getSanitizedDialLanguages } from '../constants/languages';
 
 type AppType = 'email' | 'vscode' | 'ai' | 'whispurr' | null;
 
@@ -94,14 +95,7 @@ const MockOS = memo(({
   const [showModeHud, setShowModeHud] = useState(false);
   const [hudPosition, setHudPosition] = useState({ x: 0, y: 0 });
   
-  const [dialLangs, setDialLangs] = useState<string[]>(() => {
-    try {
-      const saved = localStorage.getItem('whispurr_dial_languages');
-      return saved ? JSON.parse(saved) : ['AutoDetect', 'English', 'Hindi'];
-    } catch (e) {
-      return ['AutoDetect', 'English', 'Hindi'];
-    }
-  });
+  const [dialLangs, setDialLangs] = useState<string[]>(getSanitizedDialLanguages);
 
   const [dialModes, setDialModes] = useState<string[]>(() => {
     try {
@@ -129,8 +123,7 @@ const MockOS = memo(({
   useEffect(() => {
     const handleDialConfigChange = () => {
       try {
-        const savedLangs = localStorage.getItem('whispurr_dial_languages');
-        if (savedLangs) setDialLangs(JSON.parse(savedLangs));
+        setDialLangs(getSanitizedDialLanguages());
         const savedModes = localStorage.getItem('whispurr_dial_modes');
         if (savedModes) setDialModes(JSON.parse(savedModes));
       } catch (e) {}

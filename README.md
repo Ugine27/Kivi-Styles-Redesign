@@ -38,8 +38,8 @@ Whether drafting quick Slack messages, authoring formal executive proposals, wri
 ### 🧭 2. Seamless Dual Radial Dials
 WhisPURR introduces a fluid, non-linear radial interaction model built specifically for mouse wheel and keyboard gesture workflows:
 
-- **Mode Dial (`Alt + Scroll`)**:
-  - Spin seamlessly through **8 Adaptive Tone Profiles**:
+- **Persona Dial (`Alt + Scroll`)**:
+  - Spin seamlessly through **8 Adaptive Personas**:
     - 🤝 **Formal**: Professional, polished corporate and executive communications.
     - ☕ **Casual**: Natural, friendly, everyday conversational tone.
     - 💻 **Developer**: Structured technical syntax, git commit conventions, CLI commands, and code logic.
@@ -49,12 +49,14 @@ WhisPURR introduces a fluid, non-linear radial interaction model built specifica
     - ⚡ **Concise**: Brevity-first summaries and bullet points with zero filler words.
     - 💖 **Warm**: Empathetic, appreciative, and supportive communication.
 - **Language Dial (`Alt + Right-Click` / `Alt + →`)**:
-  - Instant access to **10 World Languages**:
-    - 🌐 Auto-Detect (real-time spoken language detection)
-    - 🇬🇧 English, 🇮🇳 Hindi, 🇪🇸 Spanish, 🇫🇷 French, 🇩🇪 German
-    - 🇯🇵 Japanese, 🇨🇳 Mandarin, 🇮🇹 Italian, 🇵🇹 Portuguese
+  - Instant access to **23 Indian & Regional Languages**:
+    - English — English, Hindi — हिन्दी, Bengali — বাংলা, Tamil — தமிழ், Telugu — తెలుగు
+    - Marathi — मराठी, Gujarati — ગુજરાતી, Kannada — ಕನ್ನಡ, Malayalam — മലയാളം, Punjabi — ਪੰਜਾਬੀ
+    - Odia — ଓଡ଼ିଆ, Assamese — অসমীয়া, Urdu — اردو, Sanskrit — संस्कृतम्, Konkani — कोंकणी
+    - Maithili — मैथिली, Manipuri — মৈতৈলোন্, Nepali — नेपाली, Bodo — बड़ो, Dogri — डोगरी
+    - Kashmiri — کٲشُر, Santali — ᱥᱟᱱᱛᱟᱲᱤ, Sindhi — سنڌي
 - **Interactive Dial Customizer**:
-  - Clickable chips allow users to curate exactly which modes and languages are showcased on their live dials, reducing clutter to only what you need.
+  - Clickable chips allow users to curate exactly which personas and languages are showcased on their live dials, reducing clutter to only what you need.
 
 ---
 
@@ -103,10 +105,10 @@ WhisPURR tracks your productivity gains in real-time, translating minutes saved 
 | Action | Shortcut / Gesture | Description |
 | :--- | :--- | :--- |
 | **Dictate** | `Alt` *(Hold)* | Activates real-time speech dictation HUD |
-| **Spin Modes** | `Alt + Scroll` | Spins the Right Dial through 8 tone profiles |
-| **Spin Languages** | `Alt + Right-Click` or `Alt + →` | Spins the Left Dial through 10 languages |
+| **Spin Personas** | `Alt + Scroll` | Spins the Right Dial through 8 personas |
+| **Spin Languages** | `Alt + Right-Click` or `Alt + →` | Spins the Left Dial through 23 languages |
 | **Toggle Moods** | Click `Moods: ON/OFF` | Enables/disables expressive emotional emojis |
-| **Customize Dials** | Click Mode / Lang Chips | Showcases or hides specific modes on dials |
+| **Customize Dials** | Click Persona / Lang Chips | Showcases or hides specific personas on dials |
 | **Dismiss Popups** | Click Outside or `Esc` | Automatically closes open dialogs |
 | **Launch / Confirm**| `Enter ↵` | Confirms modal actions and launches WhisPURR |
 

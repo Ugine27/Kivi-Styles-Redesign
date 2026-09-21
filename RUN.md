@@ -70,4 +70,4 @@ http://localhost:5173/
 
 ### What to Expect:
 - The browser will load the **Whispurr MockOS** interactive desktop simulation.
-- You can interact with the bottom desktop bar, hold the `Alt` key (or trigger button) to simulate ambient voice dictation, explore the dual radial dials (`Alt + Scroll` for Modes, `Alt + →` for Languages), and walk through the 10-slide onboarding tutorial.
+- You can interact with the bottom desktop bar, hold the `Alt` key (or trigger button) to simulate ambient voice dictation, explore the dual radial dials (`Alt + Scroll` for Personas, `Alt + →` for Languages), and walk through the 10-slide onboarding tutorial.

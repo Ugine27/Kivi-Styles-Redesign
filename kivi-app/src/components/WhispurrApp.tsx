@@ -6,6 +6,7 @@ import StylesManager from './styles/StylesManager';
 import FootprintManager from './FootprintManager';
 import KiviCatIcon from './KiviCatIcon';
 import { transformText } from '../transformEngine';
+import { ALL_DIAL_LANGUAGES, DEFAULT_DIAL_LANGUAGES, getSanitizedDialLanguages } from '../constants/languages';
 
 const CAT_FACTS = [
   "Cats lack a rigid collarbone, meaning that if their head can squeeze through a gap, their whole body is probably going along for the ride!",
@@ -91,8 +92,8 @@ const TOUR_STEPS = [
     { id: 'History', title: 'Chat Registers', text: 'Look back at everything you\'ve said. You can easily copy or reuse your past words here.' },
     { id: 'Dictionary', title: 'Your Custom Dictionary', text: 'Teach WhisPURR your unique vocabulary, like tricky names, special acronyms, or work-specific words.' },
     { id: 'ShortHand', title: 'ShortHand Macros', text: 'Create quick voice shortcuts! For example, say "sig" to automatically type out your entire email signature.' },
-    { id: 'Modes', title: 'Global Modes', text: 'Set up custom modes so WhisPURR always uses the right tone for your current task, like writing emails, chatting, or coding.' },
-    { id: 'ScratchPad', title: 'ScratchPad', text: 'Your personal sandbox! Quickly jot down ideas or play around to test your new custom modes.' },
+    { id: 'Persona', title: 'Global Personas', text: 'Set up custom personas so WhisPURR always uses the right tone for your current task, like writing emails, chatting, or coding.' },
+    { id: 'ScratchPad', title: 'ScratchPad', text: 'Your personal sandbox! Quickly jot down ideas or play around to test your new custom personas.' },
     { id: 'Profile', title: 'Your Profile', text: 'Manage your account details, billing, and tweak your overall settings just the way you like them.' },
     { id: 'CatFacts', title: 'Cat Facts', text: 'Because who doesn\'t need a fun, random cat fact to brighten their workday?' }
   ];
@@ -324,23 +325,6 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
   const [isRecordingQuickEdit, setIsRecordingQuickEdit] = useState(false);
   const [isSeamlessSwitchEnabled, setIsSeamlessSwitchEnabled] = useState(() => localStorage.getItem('whispurr_seamless_switch') !== 'false');
 
-  const ALL_DIAL_LANGUAGES = [
-    'AutoDetect',
-    'English',
-    'Hindi',
-    'Spanish',
-    'French',
-    'German',
-    'Japanese',
-    'Mandarin',
-    'Italian',
-    'Portuguese',
-    'Russian',
-    'Arabic',
-    'Korean',
-    'Dutch'
-  ];
-
   const ALL_DIAL_MODES = [
     'Formal',
     'Casual',
@@ -353,14 +337,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
     'Technical'
   ];
 
-  const [dialLanguages, setDialLanguages] = useState<string[]>(() => {
-    try {
-      const saved = localStorage.getItem('whispurr_dial_languages');
-      return saved ? JSON.parse(saved) : ['AutoDetect', 'English', 'Hindi'];
-    } catch (e) {
-      return ['AutoDetect', 'English', 'Hindi'];
-    }
-  });
+  const [dialLanguages, setDialLanguages] = useState<string[]>(getSanitizedDialLanguages);
 
   const [dialModes, setDialModes] = useState<string[]>(() => {
     try {
@@ -960,12 +937,12 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
         </div>
         
         <div className="flex-1 py-6 flex flex-col gap-2 overflow-y-auto overflow-x-hidden custom-scrollbar">
-          <div onClick={() => {setActiveTab('Home'); }} className={getSidebarItemClass('Home', `flex items-center py-3 rounded-xl cursor-pointer transition-all ${isSidebarOpen ? 'gap-4 px-4 mx-4' : 'gap-0 justify-center mx-4'} ${activeTab === 'Home' ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20 shadow-sm' : 'text-white/50 hover:bg-white/5 hover:text-white'}`)}>
+          <div onClick={() => {setActiveTab('Home'); }} className={getSidebarItemClass('Home', `flex items-center py-3 rounded-xl cursor-pointer transition-all ${isSidebarOpen ? 'gap-4 px-4 mx-4' : 'gap-0 justify-center mx-4'} ${activeTab === 'Home' ? 'sidebar-tab-active bg-orange-500/10 text-orange-400 border border-orange-500/20 shadow-sm' : 'text-white/50 hover:bg-white/5 hover:text-white'}`)}>
             <Home className="w-5 h-5 shrink-0" />
             <motion.div animate={{ opacity: isSidebarOpen ? 1 : 0, width: isSidebarOpen ? 'auto' : 0 }} className="text-base font-medium overflow-hidden">Home</motion.div>
           </div>
           
-          <div onClick={() => {setActiveTab('History'); }} className={getSidebarItemClass('History', `flex items-center py-3 rounded-xl cursor-pointer transition-all ${isSidebarOpen ? 'gap-4 px-4 mx-4' : 'gap-0 justify-center mx-4'} ${activeTab === 'History' ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20 shadow-sm' : 'text-white/50 hover:bg-white/5 hover:text-white'}`)}>
+          <div onClick={() => {setActiveTab('History'); }} className={getSidebarItemClass('History', `flex items-center py-3 rounded-xl cursor-pointer transition-all ${isSidebarOpen ? 'gap-4 px-4 mx-4' : 'gap-0 justify-center mx-4'} ${activeTab === 'History' ? 'sidebar-tab-active bg-orange-500/10 text-orange-400 border border-orange-500/20 shadow-sm' : 'text-white/50 hover:bg-white/5 hover:text-white'}`)}>
             <Clock className="w-5 h-5 shrink-0" />
             <motion.div animate={{ opacity: isSidebarOpen ? 1 : 0, width: isSidebarOpen ? 'auto' : 0 }} className="text-base font-medium overflow-hidden">History</motion.div>
           </div>
@@ -977,16 +954,19 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
           {[
             { name: 'Dictionary', icon: BookOpen },
             { name: 'ShortHand', icon: Zap },
-            { name: 'Modes', icon: Palette },
+            { name: 'Persona', icon: Palette },
             { name: 'ScratchPad', icon: FileText },
-          ].map((tab) => (
-            <div key={tab.name} onClick={() => {
-              setActiveTab(tab.name);
-            }} className={getSidebarItemClass(tab.name, `flex items-center py-3 rounded-xl cursor-pointer transition-all shrink-0 ${isSidebarOpen ? 'gap-4 px-4 mx-4' : 'gap-0 justify-center mx-4'} ${activeTab === tab.name ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20 shadow-sm' : 'text-white/50 hover:bg-white/5 hover:text-white'}`)}>
-              <tab.icon className="w-5 h-5 shrink-0" />
-              <motion.div animate={{ opacity: isSidebarOpen ? 1 : 0, width: isSidebarOpen ? 'auto' : 0 }} className="text-base font-medium overflow-hidden">{tab.name}</motion.div>
-            </div>
-          ))}
+          ].map((tab) => {
+            const isTabActive = activeTab === tab.name || (tab.name === 'Persona' && (activeTab === 'Modes' || activeTab === 'Context'));
+            return (
+              <div key={tab.name} onClick={() => {
+                setActiveTab(tab.name);
+              }} className={getSidebarItemClass(tab.name, `flex items-center py-3 rounded-xl cursor-pointer transition-all shrink-0 ${isSidebarOpen ? 'gap-4 px-4 mx-4' : 'gap-0 justify-center mx-4'} ${isTabActive ? 'sidebar-tab-active bg-orange-500/10 text-orange-400 border border-orange-500/20 shadow-sm' : 'text-white/50 hover:bg-white/5 hover:text-white'}`)}>
+                <tab.icon className="w-5 h-5 shrink-0" />
+                <motion.div animate={{ opacity: isSidebarOpen ? 1 : 0, width: isSidebarOpen ? 'auto' : 0 }} className="text-base font-medium overflow-hidden">{tab.name}</motion.div>
+              </div>
+            );
+          })}
         </div>
         
         {/* Sticky Bottom Profile Section */}
@@ -1078,7 +1058,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                 { name: 'Plans & Billing', icon: CreditCard },
                 { name: 'Tutorial', icon: PlayCircle },
               ].map((tab) => (
-                <div key={tab.name} onClick={() => {setActiveTab(tab.name); }} className={`flex items-center gap-4 py-2.5 rounded-xl cursor-pointer transition-all px-4 mx-4 ${activeTab === tab.name ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20 shadow-sm' : 'text-white/50 hover:bg-white/5 hover:text-white'}`}>
+                <div key={tab.name} onClick={() => {setActiveTab(tab.name); }} className={`flex items-center gap-4 py-2.5 rounded-xl cursor-pointer transition-all px-4 mx-4 ${activeTab === tab.name ? 'sidebar-tab-active bg-orange-500/10 text-orange-400 border border-orange-500/20 shadow-sm' : 'text-white/50 hover:bg-white/5 hover:text-white'}`}>
                   <tab.icon className="w-4 h-4 shrink-0" />
                   <div className="text-sm font-medium">{tab.name}</div>
                 </div>
@@ -1623,7 +1603,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                       layoutId={`note-${note.id}`}
                       initial={{ rotate: note.rotation, x: note.x, y: note.y }}
                       whileHover={{ scale: 1.05, rotate: 0, zIndex: 40 }}
-                      className={`absolute w-56 h-56 p-5 rounded-sm shadow-lg cursor-pointer flex flex-col ${note.color} text-white`}
+                      className={`absolute w-56 h-56 p-5 rounded-sm shadow-lg cursor-pointer flex flex-col ${note.color} text-[#2b170e]`}
                       style={{ 
                         top: `${10 + (index % 2) * 35}%`, 
                         left: `${5 + index * 22}%`,
@@ -1651,12 +1631,12 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                         <motion.div
                           layoutId={`note-${activeNoteId}`}
                           onClick={(e) => e.stopPropagation()}
-                          className={`w-full max-w-lg h-96 p-8 rounded-md shadow-2xl flex flex-col relative ${stickyNotes.find(n => n.id === activeNoteId)?.color} text-white`}
+                          className={`w-full max-w-lg h-96 p-8 rounded-md shadow-2xl flex flex-col relative ${stickyNotes.find(n => n.id === activeNoteId)?.color} text-[#2b170e]`}
                           style={{ boxShadow: '8px 8px 30px rgba(0,0,0,0.5)' }}
                         >
                           <button 
                             onClick={() => setActiveNoteId(null)}
-                            className="absolute top-4 right-4 p-2 text-white/60 hover:text-white hover:bg-[#3e2723]/10 rounded-full transition-colors z-10"
+                            className="absolute top-4 right-4 p-2 text-[#2b170e]/60 hover:text-[#2b170e] hover:bg-black/10 rounded-full transition-colors z-10"
                           >
                             <X className="w-5 h-5" />
                           </button>
@@ -1675,7 +1655,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
               </motion.div>
             )}
 
-            {(activeTab === 'Modes' || activeTab === 'Context') && (
+            {(activeTab === 'Persona' || activeTab === 'Modes' || activeTab === 'Context') && (
               <motion.div key="context" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col p-4 md:p-6 overflow-hidden ${glassPanel}`}>
                 <StylesManager 
                   currentMode={mode || 'Professional'} 
@@ -1776,16 +1756,16 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
 
                       {/* Instructions Cards */}
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
-                        {/* Right Dial: Modes */}
+                        {/* Right Dial: Personas */}
                         <div className="bg-[#1a1a1a]/80 border border-white/10 rounded-2xl p-4 flex flex-col gap-2 shadow-inner">
                           <div className="flex items-center justify-between">
-                            <span className="text-xs font-bold uppercase tracking-wider text-orange-400">Right Dial: Modes</span>
+                            <span className="text-xs font-bold uppercase tracking-wider text-orange-400">Right Dial: Personas</span>
                             <span className="px-2 py-0.5 bg-orange-500/15 border border-orange-500/30 text-orange-300 rounded font-mono text-[11px] font-bold">
                               Alt + Scroll
                             </span>
                           </div>
                           <p className="text-xs text-white/75 leading-relaxed">
-                            Hold <kbd className="px-1.5 py-0.5 bg-white/10 border border-white/20 rounded text-[#f4ece1] font-mono text-[11px]">Alt</kbd> anywhere and <strong>scroll</strong> (or press <kbd className="px-1.5 py-0.5 bg-white/10 border border-white/20 rounded text-[#f4ece1] font-mono text-[11px]">↑</kbd> / <kbd className="px-1.5 py-0.5 bg-white/10 border border-white/20 rounded text-[#f4ece1] font-mono text-[11px]">↓</kbd>) to cycle through your tone modes on the right radial dial.
+                            Hold <kbd className="px-1.5 py-0.5 bg-white/10 border border-white/20 rounded text-[#f4ece1] font-mono text-[11px]">Alt</kbd> anywhere and <strong>scroll</strong> (or press <kbd className="px-1.5 py-0.5 bg-white/10 border border-white/20 rounded text-[#f4ece1] font-mono text-[11px]">↑</kbd> / <kbd className="px-1.5 py-0.5 bg-white/10 border border-white/20 rounded text-[#f4ece1] font-mono text-[11px]">↓</kbd>) to cycle through your personas on the right radial dial.
                           </p>
                         </div>
 
@@ -1817,7 +1797,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                           </div>
                           <button 
                             onClick={() => {
-                              const resetLangs = ['AutoDetect', 'English', 'Hindi'];
+                              const resetLangs = DEFAULT_DIAL_LANGUAGES;
                               setDialLanguages(resetLangs);
                               localStorage.setItem('whispurr_dial_languages', JSON.stringify(resetLangs));
                               window.dispatchEvent(new CustomEvent('whispurr_dial_config_changed'));
@@ -1836,7 +1816,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                                 onClick={() => toggleDialLanguage(lang)}
                                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium transition-all cursor-pointer border ${
                                   isSelected
-                                    ? 'bg-amber-500/20 text-amber-300 border-amber-500/50 shadow-[0_0_10px_rgba(245,158,11,0.15)] font-semibold'
+                                    ? 'dial-chip-active bg-amber-500/20 text-amber-300 border-amber-500/50 shadow-[0_0_10px_rgba(245,158,11,0.15)] font-semibold'
                                     : 'bg-white/5 text-white/50 border-white/5 hover:bg-white/10 hover:text-white/80 hover:border-white/15'
                                 }`}
                               >
@@ -1848,16 +1828,16 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                         </div>
                       </div>
 
-                      {/* Customise Modes to Showcase */}
+                      {/* Customise Personas to Showcase */}
                       <div className="flex flex-col gap-3 bg-[#1a1a1a]/50 border border-white/10 rounded-2xl p-4 md:p-5">
                         <div className="flex items-center justify-between flex-wrap gap-2">
                           <div>
                             <h3 className="text-sm font-bold text-white tracking-tight flex items-center gap-2">
-                              <span>Showcased Modes on Dial</span>
+                              <span>Showcased Personas on Dial</span>
                               <span className="text-xs text-orange-400 font-mono">({dialModes.length} active)</span>
                             </h3>
                             <p className="text-xs text-white/50 mt-0.5">
-                              Click modes to customize which ones are showcased on the right radial dial.
+                              Click personas to customize which ones are showcased on the right radial dial.
                             </p>
                           </div>
                           <button 
@@ -1881,7 +1861,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                                 onClick={() => toggleDialMode(m)}
                                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium transition-all cursor-pointer border ${
                                   isSelected
-                                    ? 'bg-orange-500/20 text-orange-300 border-orange-500/50 shadow-[0_0_10px_rgba(249,115,22,0.15)] font-semibold'
+                                    ? 'dial-chip-active bg-orange-500/20 text-orange-300 border-orange-500/50 shadow-[0_0_10px_rgba(249,115,22,0.15)] font-semibold'
                                     : 'bg-white/5 text-white/50 border-white/5 hover:bg-white/10 hover:text-white/80 hover:border-white/15'
                                 }`}
                               >
@@ -1908,7 +1888,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                   <div className="grid grid-cols-2 gap-6 mt-4">
                     <div 
                       onClick={() => setCurrentTheme('midnight')}
-                      className={`flex flex-col rounded-2xl border p-2 cursor-pointer transition-all ${currentTheme === 'midnight' ? 'border-orange-500 bg-orange-500/10' : 'border-white/10 bg-[#0f0f0f] hover:border-white/30'}`}
+                      className={`flex flex-col rounded-2xl border p-2 cursor-pointer transition-all ${currentTheme === 'midnight' ? 'theme-card-active border-orange-500 bg-orange-500/10' : 'border-white/10 bg-[#0f0f0f] hover:border-white/30'}`}
                     >
                       <div className="h-40 rounded-xl bg-black border border-white/10 mb-4 flex items-center justify-center overflow-hidden relative">
                          <div className="w-16 h-16 rounded-full bg-orange-500/20 flex items-center justify-center">
@@ -1923,7 +1903,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                     
                     <div 
                       onClick={() => setCurrentTheme('coffee')}
-                      className={`flex flex-col rounded-2xl border p-2 cursor-pointer transition-all ${currentTheme === 'coffee' ? 'border-orange-500 bg-orange-500/10' : 'border-white/10 bg-[#0f0f0f] hover:border-white/30'}`}
+                      className={`flex flex-col rounded-2xl border p-2 cursor-pointer transition-all ${currentTheme === 'coffee' ? 'theme-card-active border-orange-500 bg-orange-500/10' : 'border-white/10 bg-[#0f0f0f] hover:border-white/30'}`}
                     >
                       <div className="h-40 rounded-xl bg-[#f4ece1] border border-white/10 mb-4 flex items-center justify-center overflow-hidden relative">
                          <div className="w-16 h-16 rounded-full bg-[#8d6e63]/20 flex items-center justify-center">
@@ -1947,7 +1927,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                 </div>
                 <h1 className="text-3xl font-bold text-white tracking-tight">WhisPURR Tutorial</h1>
                 <p className="text-white/80 text-center max-w-md text-lg mb-4 font-medium">
-                  Need a refresher? Replay the interactive setup tutorial to learn about WhisPURR's features, shortcuts, and modes.
+                  Need a refresher? Replay the interactive setup tutorial to learn about WhisPURR's features, shortcuts, and personas.
                 </p>
                 <button
                   onClick={() => setShowTutorial(true)}
@@ -2029,7 +2009,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                       <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-[#8d6e63]" /> Unlimited Words</li>
                       <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-[#8d6e63]" /> Advanced AI Engine</li>
                       <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-[#8d6e63]" /> Priority Support</li>
-                      <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-[#8d6e63]" /> Adaptive Modes</li>
+                      <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-[#8d6e63]" /> Adaptive Personas</li>
                     </ul>
                     <button className="w-full py-3 rounded-xl bg-[#8d6e63] text-[#f4ece1] hover:bg-[#795548] transition-colors font-bold shadow-md">Upgrade to Lion</button>
                   </div>
@@ -2111,7 +2091,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                     </div>
                     <div className="bg-white/[0.02] border border-white/5 p-4 rounded-2xl flex flex-col items-center justify-center text-center shadow-sm hover:bg-white/[0.04] transition-colors">
                       <div className="text-2xl font-bold text-white mb-1">Formal</div>
-                      <div className="text-[10px] text-white/40 uppercase tracking-wider font-semibold">Top Mode</div>
+                      <div className="text-[10px] text-white/40 uppercase tracking-wider font-semibold">Top Persona</div>
                     </div>
                     <div className="bg-white/[0.02] border border-white/5 p-4 rounded-2xl flex flex-col items-center justify-center text-center shadow-sm hover:bg-white/[0.04] transition-colors">
                       <div className="text-2xl font-bold text-white mb-1">342</div>
@@ -2126,7 +2106,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
               </motion.div>
             )}
 
-            {!['Home', 'History', 'Dictionary', 'ShortHand', 'ScratchPad', 'Modes', 'Context', 'Theme', 'Tutorial', 'Shortcuts', 'Settings', 'Plans & Billing', 'User Policy', 'Profile'].includes(activeTab) && (
+            {!['Home', 'History', 'Dictionary', 'ShortHand', 'ScratchPad', 'Persona', 'Modes', 'Context', 'Theme', 'Tutorial', 'Shortcuts', 'Settings', 'Plans & Billing', 'User Policy', 'Profile'].includes(activeTab) && (
               <motion.div key="fallback" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col items-center justify-center gap-4 p-8 ${glassPanel}`}>
                 <Settings className="w-16 h-16 text-white/10" />
                 <h1 className="text-2xl font-bold text-white/50">{activeTab}</h1>
