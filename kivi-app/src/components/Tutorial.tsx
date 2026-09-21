@@ -382,96 +382,216 @@ function renderSlideContent(index: number, onComplete: () => void, onNext?: () =
     case 5:
       return (
         <SurveySlide 
-          title="Developer Blueprints." 
-          icon={<Terminal size={28} />} 
+          category="Blueprint Setup"
+          title="Developer"
+          highlight="Blueprints."
+          icon={<Terminal size={14} className="text-[#8d5e3b]" />} 
           subtext="Choose how technical prompts and terminal commands are formatted." 
-          theme="sky"
+          storageKey="whispurr_pref_blueprints"
           options={[
-            { n: 'Clear', d: 'The full instruction, plainly written.' },
-            { n: 'Concise', d: 'The fewest words and command flags.' },
-            { n: 'Structured', d: 'Goal, code changes, and verification.' }
+            { 
+              n: 'Clear', 
+              d: 'The full instruction, plainly written.',
+              preview: (
+                <div className="font-mono text-[11px] text-[#5d4037] leading-relaxed">
+                  <span className="text-[#8d5e3b] font-semibold">$</span> npm run build
+                  <div className="text-[10px] text-[#5d4037]/60 mt-1">Plainly written, full instruction.</div>
+                </div>
+              )
+            },
+            { 
+              n: 'Concise', 
+              d: 'The fewest words and command flags.',
+              preview: (
+                <div className="font-mono text-[11px] text-[#5d4037] leading-relaxed">
+                  <span className="text-[#8d5e3b] font-semibold">$</span> git push -f origin main
+                  <div className="text-[10px] text-[#5d4037]/60 mt-1">Minimal syntax, no fluff.</div>
+                </div>
+              )
+            },
+            { 
+              n: 'Structured', 
+              d: 'Goal, code changes, and verification.',
+              preview: (
+                <div className="font-mono text-[10px] text-[#5d4037] leading-tight space-y-1">
+                  <div><span className="text-[#8d5e3b] font-semibold">Goal:</span> fix auth race condition</div>
+                  <div><span className="text-[#8d5e3b] font-semibold">Diff:</span> +3 lines, -1 line</div>
+                  <div><span className="text-[#8d5e3b] font-semibold">Test:</span> pass (2/2)</div>
+                </div>
+              )
+            }
           ]} 
         />
       );
     case 6:
       return (
         <SurveySlide 
-          title="Chat Registers." 
-          icon={<MessageCircle size={28} />} 
+          category="Workplace Chat"
+          title="Chat"
+          highlight="Registers."
+          icon={<MessageCircle size={14} className="text-[#8d5e3b]" />} 
           subtext="Choose how your voice sounds in chat apps like Slack or Teams." 
-          theme="coral"
+          storageKey="whispurr_pref_chat_registers"
           options={[
-            { n: 'Clear', d: 'Clean sentences; essential shorthand kept.' },
-            { n: 'Casual', d: 'Natural lowercase workplace shorthand.' },
-            { n: 'Formal', d: 'Everything spelled out and articulated.' }
+            { 
+              n: 'Clear', 
+              d: 'Clean sentences; essential shorthand kept.',
+              preview: (
+                <div className="text-xs text-[#5d4037] font-sans leading-relaxed">
+                  "Sounds great, let's sync right after the morning standup."
+                </div>
+              )
+            },
+            { 
+              n: 'Casual', 
+              d: 'Natural lowercase workplace shorthand.',
+              preview: (
+                <div className="text-xs text-[#5d4037] font-sans leading-relaxed">
+                  "looks good to me! pushing updates now, thanks for catching that"
+                </div>
+              )
+            },
+            { 
+              n: 'Formal', 
+              d: 'Everything spelled out and articulated.',
+              preview: (
+                <div className="text-xs text-[#5d4037] font-sans leading-relaxed">
+                  "Confirmed. I will review the documentation and provide feedback shortly."
+                </div>
+              )
+            }
           ]} 
         />
       );
     case 7:
       return (
         <SurveySlide 
-          title="Inbox Registers." 
-          icon={<Mail size={28} />} 
+          category="Email Register"
+          title="Inbox"
+          highlight="Registers."
+          icon={<Mail size={14} className="text-[#8d5e3b]" />} 
           subtext="Choose your default tone for emails and correspondence." 
-          theme="lavender"
+          storageKey="whispurr_pref_inbox_registers"
           options={[
-            { n: 'Professional', d: 'Conventional, polished, and to the point.' },
-            { n: 'Friendly', d: 'The exact same note, with warmth.' },
-            { n: 'Formal', d: 'Highest executive formality and structure.' }
+            { 
+              n: 'Professional', 
+              d: 'Conventional, polished, and to the point.',
+              preview: (
+                <div className="text-xs text-[#5d4037] font-serif leading-relaxed italic">
+                  "Good morning — please find the finalized proposal attached for review."
+                </div>
+              )
+            },
+            { 
+              n: 'Friendly', 
+              d: 'The exact same note, with warmth.',
+              preview: (
+                <div className="text-xs text-[#5d4037] font-serif leading-relaxed italic">
+                  "Hope your week is off to a great start! Just wanted to share our project notes."
+                </div>
+              )
+            },
+            { 
+              n: 'Formal', 
+              d: 'Highest executive formality and structure.',
+              preview: (
+                <div className="text-xs text-[#5d4037] font-serif leading-relaxed italic">
+                  "Dear Committee Members, I respectfully submit the quarterly assessment."
+                </div>
+              )
+            }
           ]} 
         />
       );
     case 8:
       return (
         <SurveySlide 
-          title="Global Personas." 
-          icon={<Briefcase size={28} />} 
+          category="Global Baseline"
+          title="Global"
+          highlight="Personas."
+          icon={<Briefcase size={14} className="text-[#8d5e3b]" />} 
           subtext="Choose your baseline tone across other applications." 
-          theme="mint"
+          storageKey="whispurr_pref_global_personas"
           options={[
-            { n: 'Balanced', d: 'Cleaned up, but authentically your voice.' },
-            { n: 'Minimal', d: 'Compressed to rapid bullet fragments.' },
-            { n: 'Polished', d: 'Composed, articulate complete sentences.' }
+            { 
+              n: 'Balanced', 
+              d: 'Cleaned up, but authentically your voice.',
+              preview: (
+                <div className="text-xs text-[#5d4037] font-sans leading-relaxed">
+                  "Balanced tone preserving natural intent with crisp, effortless phrasing."
+                </div>
+              )
+            },
+            { 
+              n: 'Minimal', 
+              d: 'Compressed to rapid bullet fragments.',
+              preview: (
+                <div className="text-xs text-[#5d4037] font-mono leading-tight space-y-1">
+                  <div>• Key deliverables synced</div>
+                  <div>• Zero unnecessary filler words</div>
+                </div>
+              )
+            },
+            { 
+              n: 'Polished', 
+              d: 'Composed, articulate complete sentences.',
+              preview: (
+                <div className="text-xs text-[#5d4037] font-serif leading-relaxed italic">
+                  "Eloquent sentence cadence designed for high-impact writing."
+                </div>
+              )
+            }
           ]} 
         />
       );
     case 9:
       return (
-        <div className="flex flex-col items-center justify-center -mt-8 text-center max-w-3xl">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-800 text-xs font-sans font-bold uppercase tracking-wider mb-5 shadow-xs backdrop-blur-md">
-            <span>🎉 Ready for Action</span>
+        <div className="flex flex-col items-center justify-center text-center max-w-4xl px-4 select-none">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#f4ebe1] border border-[#8d6e63]/25 text-[#5d4037] text-xs font-mono font-medium tracking-wide mb-3 shadow-2xs">
+            <Sparkles className="w-3.5 h-3.5 text-[#8d5e3b]" />
+            <span>Setup Complete</span>
           </div>
 
-          <h1 className="text-6xl sm:text-7xl font-serif font-medium tracking-tight mb-5 text-[#2b1f1a]">
-            You're Ready to <span className="bg-gradient-to-r from-rose-500 via-pink-500 to-amber-500 gradient-text font-bold">Pounce.</span>
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-serif font-normal tracking-tight mb-2 text-[#2b170e]">
+            You're Ready to <span className="font-semibold italic text-[#8d5e3b]">Pounce.</span>
           </h1>
 
-          <p className="text-xl sm:text-2xl text-[#3e2723]/75 font-serif italic mb-8 max-w-xl leading-relaxed">
-            WhisPURR is ready at the bottom of your screen. Hold your shortcut and speak.
+          <p className="text-base sm:text-lg text-[#5d4037]/80 font-serif italic mb-7 max-w-md leading-relaxed">
+            WhisPURR is docked and awaiting your cue. Hold your shortcut to speak.
           </p>
 
-          <div className="flex items-center gap-3 flex-wrap justify-center mb-10 max-w-xl">
-            <span className="px-3.5 py-1.5 rounded-xl bg-sky-100 text-sky-900 border border-sky-300 text-xs font-bold shadow-xs">
-              🎙️ option to dictate
+          <div className="flex items-center gap-3 flex-wrap justify-center mb-8 max-w-lg">
+            <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 border border-[#8d6e63]/20 text-[#5d4037] text-xs font-mono shadow-2xs">
+              <Mic className="w-3.5 h-3.5 text-[#8d5e3b]" />
+              <span><strong className="text-[#2b170e]">option</strong> to dictate</span>
             </span>
-            <span className="px-3.5 py-1.5 rounded-xl bg-coral-100 text-coral-900 border border-coral-300 text-xs font-bold shadow-xs">
-              🧭 option + scroll for personas
+            <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 border border-[#8d6e63]/20 text-[#5d4037] text-xs font-mono shadow-2xs">
+              <Compass className="w-3.5 h-3.5 text-[#8d5e3b]" />
+              <span><strong className="text-[#2b170e]">option + scroll</strong> personas</span>
             </span>
-            <span className="px-3.5 py-1.5 rounded-xl bg-mint-100 text-emerald-900 border border-mint-300 text-xs font-bold shadow-xs">
-              🌐 option + right-click for languages
+            <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 border border-[#8d6e63]/20 text-[#5d4037] text-xs font-mono shadow-2xs">
+              <Globe className="w-3.5 h-3.5 text-[#8d5e3b]" />
+              <span><strong className="text-[#2b170e]">option + right-click</strong> languages</span>
             </span>
-            <span className="px-3.5 py-1.5 rounded-xl bg-sunshine-100 text-amber-900 border border-sunshine-300 text-xs font-bold shadow-xs">
-              ✨ Expressive Moods Emojis
+            <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 border border-[#8d6e63]/20 text-[#5d4037] text-xs font-mono shadow-2xs">
+              <Sparkles className="w-3.5 h-3.5 text-[#8d5e3b]" />
+              <span>Expressive moods</span>
             </span>
           </div>
 
           <button 
+            type="button"
             onClick={onComplete}
-            className="px-10 py-5 bg-gradient-to-r from-sky-500 via-blue-600 to-indigo-600 hover:from-sky-400 hover:via-blue-500 hover:to-indigo-500 text-white font-bold rounded-2xl flex items-center gap-4 transition-all hover:scale-105 text-2xl shadow-[0_12px_35px_rgba(2,132,199,0.35)] hover:shadow-[0_16px_45px_rgba(2,132,199,0.5)] cursor-pointer border border-sky-300/40"
+            className="px-8 py-4 rounded-full bg-[#2b170e] hover:bg-[#43261a] text-[#fdfaf6] text-base font-medium tracking-wide shadow-lg hover:shadow-2xl transition-all duration-300 flex items-center gap-3.5 cursor-pointer group hover:-translate-y-0.5 active:translate-y-0 border border-[#8d6e63]/30"
           >
-            <img src="/kivi_icon.png" className="w-8 h-8 rounded-full shadow-sm" alt="Icon" />
-            <span>Launch WhisPURR</span>
-            <span className="text-sm opacity-80 font-mono font-normal bg-black/20 px-2 py-1 rounded-lg ml-1">[Enter ↵]</span>
+            <div className="w-7 h-7 rounded-full overflow-hidden bg-[#faf6ee] shadow-inner flex items-center justify-center p-0.5">
+              <img src="/kivi_icon.png" className="w-full h-full object-cover rounded-full" alt="WhisPURR Icon" />
+            </div>
+            <span className="font-serif tracking-wide text-lg">Launch WhisPURR</span>
+            <span className="text-xs font-mono text-[#e8d5b5]/80 bg-white/10 px-2.5 py-1 rounded-md ml-1 border border-white/10">
+              Enter ↵
+            </span>
+            <ChevronRight size={18} className="text-[#e8d5b5] group-hover:translate-x-1 transition-transform" />
           </button>
         </div>
       );
@@ -481,94 +601,105 @@ function renderSlideContent(index: number, onComplete: () => void, onNext?: () =
 }
 
 function SurveySlide({ 
+  category,
   title, 
+  highlight,
   icon, 
   subtext, 
   options,
-  theme = 'sky'
+  storageKey
 }: { 
-  title: string, 
-  icon: React.ReactNode, 
-  subtext: string, 
-  options: { n: string, d: string }[],
-  theme?: 'sky' | 'coral' | 'lavender' | 'mint'
+  category: string;
+  title: string;
+  highlight: string;
+  icon: React.ReactNode; 
+  subtext: string; 
+  storageKey?: string;
+  options: { 
+    n: string; 
+    d: string;
+    preview?: React.ReactNode;
+  }[];
 }) {
-  const [selected, setSelected] = useState(0);
-
-  const themeClasses = {
-    sky: {
-      badge: 'bg-sky-50 text-sky-700 border-sky-200',
-      activeBorder: 'border-sky-500 ring-sky-400/40 shadow-sky-500/15',
-      activeBg: 'from-sky-50/90 to-white',
-      indicator: 'bg-sky-500',
-      tagColor: 'text-sky-800'
-    },
-    coral: {
-      badge: 'bg-coral-50 text-coral-700 border-coral-200',
-      activeBorder: 'border-coral-500 ring-coral-400/40 shadow-coral-500/15',
-      activeBg: 'from-coral-50/90 to-white',
-      indicator: 'bg-coral-500',
-      tagColor: 'text-coral-800'
-    },
-    lavender: {
-      badge: 'bg-lavender-50 text-purple-700 border-lavender-200',
-      activeBorder: 'border-purple-500 ring-purple-400/40 shadow-purple-500/15',
-      activeBg: 'from-lavender-50/90 to-white',
-      indicator: 'bg-purple-500',
-      tagColor: 'text-purple-800'
-    },
-    mint: {
-      badge: 'bg-mint-50 text-emerald-700 border-mint-200',
-      activeBorder: 'border-emerald-500 ring-emerald-400/40 shadow-emerald-500/15',
-      activeBg: 'from-mint-50/90 to-white',
-      indicator: 'bg-emerald-500',
-      tagColor: 'text-emerald-800'
+  const [selected, setSelected] = useState<number>(() => {
+    if (storageKey) {
+      try {
+        const saved = localStorage.getItem(storageKey);
+        if (saved !== null) {
+          const idx = parseInt(saved, 10);
+          if (!isNaN(idx) && idx >= 0 && idx < options.length) return idx;
+        }
+      } catch (e) {}
     }
-  }[theme];
-  
+    return 0;
+  });
+
+  const handleSelect = (index: number) => {
+    setSelected(index);
+    if (storageKey) {
+      try {
+        localStorage.setItem(storageKey, String(index));
+      } catch (e) {}
+    }
+  };
+
   return (
-    <div className="flex flex-col items-center w-full text-center -mt-6">
-      <div className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border text-xs font-mono font-bold tracking-wider mb-4 shadow-xs backdrop-blur-md ${themeClasses.badge}`}>
-        <span>{icon}</span>
-        <span className="uppercase">persona survey</span>
+    <div className="flex flex-col items-center justify-center text-center max-w-4xl px-4 select-none">
+      <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#f4ebe1] border border-[#8d6e63]/25 text-[#5d4037] text-xs font-mono font-medium tracking-wide mb-3 shadow-2xs">
+        {icon}
+        <span>{category}</span>
       </div>
 
-      <h1 className="text-5xl sm:text-6xl font-serif font-medium tracking-tight mb-4 text-[#2b1f1a]">{title}</h1>
-      <p className="text-xl sm:text-2xl text-[#3e2723]/75 font-serif italic mb-12 max-w-3xl leading-relaxed">- {subtext}</p>
-      
-      <div className="flex gap-6 w-full justify-center flex-wrap">
-        {options.map((opt, i) => (
-          <div 
-            key={i} 
-            onClick={() => setSelected(i)}
-            className={`relative w-72 h-64 rounded-3xl border-2 p-7 cursor-pointer transition-all flex flex-col justify-between ${
-              selected === i 
-                ? `${themeClasses.activeBorder} bg-gradient-to-b ${themeClasses.activeBg} text-[#2b1f1a] scale-105 shadow-xl ring-2 z-10` 
-                : 'border-black/10 bg-white/90 text-[#2b1f1a]/70 hover:border-black/20 hover:shadow-md'
-            }`}
-          >
-            {selected === i && (
-              <div className={`absolute -top-3.5 -right-3.5 w-9 h-9 ${themeClasses.indicator} rounded-full flex items-center justify-center text-[#ffffff] shadow-lg`}>
-                <Check size={20} strokeWidth={3} className="text-[#ffffff]" />
-              </div>
-            )}
+      <h1 className="text-4xl sm:text-5xl md:text-6xl font-serif font-normal tracking-tight mb-2 text-[#2b170e]">
+        {title} <span className="font-semibold italic text-[#8d5e3b]">{highlight}</span>
+      </h1>
 
-            {/* Visual preview card */}
-            <div className="flex-1 bg-[#fbf8f3] rounded-2xl mb-4 p-4 border border-black/5 flex flex-col justify-center shadow-inner">
-              <div className="flex items-center gap-2 mb-3">
-                <span className={`w-2.5 h-2.5 rounded-full ${themeClasses.indicator}`} />
-                <div className="w-16 h-2 bg-black/10 rounded-full" />
-              </div>
-              <div className="w-full h-2 bg-black/10 rounded-full mb-2.5" />
-              <div className="w-4/5 h-2 bg-black/10 rounded-full" />
-            </div>
+      <p className="text-base sm:text-lg text-[#5d4037]/80 font-serif italic mb-7 max-w-lg leading-relaxed">
+        {subtext}
+      </p>
 
-            <div>
-              <h3 className={`text-2xl font-bold mb-1 font-sans ${themeClasses.tagColor}`}>{opt.n}</h3>
-              <p className="text-sm opacity-80 font-serif italic leading-snug">{opt.d}</p>
+      <div className="flex flex-wrap gap-5 sm:gap-6 justify-center w-full items-stretch">
+        {options.map((opt, i) => {
+          const isSelected = selected === i;
+          return (
+            <div 
+              key={opt.n} 
+              onClick={() => handleSelect(i)}
+              className={`w-full sm:w-[250px] min-h-[250px] p-6 rounded-3xl flex flex-col justify-between cursor-pointer transition-all duration-300 shadow-sm active:scale-95 group text-left ${
+                isSelected 
+                  ? 'bg-white border-2 border-[#8d5e3b] shadow-xl shadow-[#2b170e]/8 scale-[1.03] ring-4 ring-[#8d5e3b]/15' 
+                  : 'bg-white/80 backdrop-blur-md border border-[#8d6e63]/20 hover:border-[#8d6e63]/50 hover:shadow-md hover:-translate-y-0.5'
+              }`}
+            >
+              {/* Visual preview card */}
+              <div className="w-full bg-[#faf6ee] rounded-2xl p-3.5 border border-[#8d6e63]/15 shadow-2xs mb-4 min-h-[82px] flex flex-col justify-center">
+                {opt.preview}
+              </div>
+
+              {/* Title & Description */}
+              <div className="mb-4">
+                <span className="text-xl font-serif font-semibold block mb-1 text-[#2b170e]">
+                  {opt.n}
+                </span>
+                <span className="text-xs text-[#5d4037]/75 block leading-relaxed">
+                  {opt.d}
+                </span>
+              </div>
+
+              {/* Status Indicator Chip */}
+              <div className="flex items-center justify-between pt-1">
+                <span className={`text-[10px] font-mono font-semibold uppercase tracking-wider px-3 py-1 rounded-full transition-all inline-flex items-center gap-1.5 ${
+                  isSelected 
+                    ? 'bg-[#2b170e] text-[#e8d5b5] shadow-xs' 
+                    : 'bg-[#f4ebe1] text-[#5d4037]/60 group-hover:text-[#5d4037]'
+                }`}>
+                  {isSelected && <Check size={11} strokeWidth={2.5} className="text-[#e8d5b5]" />}
+                  <span>{isSelected ? 'Active' : 'Select'}</span>
+                </span>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
