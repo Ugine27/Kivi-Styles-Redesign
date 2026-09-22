@@ -67,10 +67,12 @@ export default function FloatingDictationHUD({
     }
   };
 
-  if (!isOpen) return null;
+  // Remove the early return so AnimatePresence can handle the exit animation
+  // if (!isOpen) return null;
 
   return (
     <AnimatePresence>
+      {isOpen && (
       <motion.div
         initial={{ opacity: 0, y: 25, x: "-50%", scale: 0.96 }}
         animate={{ opacity: 1, y: 0, x: "-50%", scale: 1 }}
@@ -289,6 +291,7 @@ export default function FloatingDictationHUD({
           )}
         </div>
       </motion.div>
+      )}
     </AnimatePresence>
   );
 }

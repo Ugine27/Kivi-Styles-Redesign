@@ -319,7 +319,7 @@ const MockOS = memo(({
 
   // Helper: check if an app is open or active where user is supposed to type
   const hasActiveTypingTarget = useCallback((): boolean => {
-    if (openApp === 'email' || openApp === 'vscode' || openApp === 'ai') return true;
+    if (openApp) return true;
     if (activePopup === 'scratchpad') return true;
     const activeEl = document.activeElement;
     if (activeEl && (activeEl instanceof HTMLInputElement || activeEl instanceof HTMLTextAreaElement)) {
@@ -332,6 +332,7 @@ const MockOS = memo(({
   useEffect(() => {
     if (hasActiveTypingTarget()) {
       setIsHudOpen(false);
+      setShowModeHud(false);
     }
   }, [openApp, activePopup, hasActiveTypingTarget]);
 
@@ -585,7 +586,7 @@ const MockOS = memo(({
           opacity: 1 
         }}
         transition={{ type: 'spring', stiffness: 350, damping: 25 }}
-        className="absolute bottom-0 left-[41.5%] -translate-x-1/2 z-40 w-64 h-64 flex items-center justify-center rounded-full pointer-events-none"
+        className="absolute bottom-0 left-[41.5%] -translate-x-1/2 z-[60] w-64 h-64 flex items-center justify-center rounded-full pointer-events-none"
         onMouseLeave={() => { setIsHovered(false); setActivePopup(null); }}
       >
         <div 
