@@ -317,6 +317,24 @@ const MockOS = memo(({
   const autoDismissTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastTypedTextRef = useRef<string>('');
 
+  // Helper: check if an app is open or active where user is supposed to type
+  const hasActiveTypingTarget = useCallback((): boolean => {
+    if (openApp === 'email' || openApp === 'vscode' || openApp === 'ai') return true;
+    if (activePopup === 'scratchpad') return true;
+    const activeEl = document.activeElement;
+    if (activeEl && (activeEl instanceof HTMLInputElement || activeEl instanceof HTMLTextAreaElement)) {
+      return true;
+    }
+    return false;
+  }, [openApp, activePopup]);
+
+  // Keep HUD closed whenever an active typing app is opened
+  useEffect(() => {
+    if (hasActiveTypingTarget()) {
+      setIsHudOpen(false);
+    }
+  }, [openApp, activePopup, hasActiveTypingTarget]);
+
   // Direct Mac Option key listener inside MockOS for instant HUD invocation & Escape dismiss
   useEffect(() => {
     const isMacOption = (e: KeyboardEvent) => {
@@ -333,7 +351,11 @@ const MockOS = memo(({
 
     const onKeyDown = (e: KeyboardEvent) => {
       if (isMacOption(e) && !e.repeat) {
-        setIsHudOpen(true);
+        if (!hasActiveTypingTarget()) {
+          setIsHudOpen(true);
+        } else {
+          setIsHudOpen(false);
+        }
         if (autoDismissTimerRef.current) {
           clearTimeout(autoDismissTimerRef.current);
           autoDismissTimerRef.current = null;
@@ -347,28 +369,34 @@ const MockOS = memo(({
 
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [resetInputState]);
+  }, [resetInputState, hasActiveTypingTarget]);
 
-  // Open HUD whenever Alt/Option is held or speech begins
+  // Open HUD whenever Alt/Option is held or speech begins ONLY IF NO APP IS ACTIVE
   useEffect(() => {
     if (isAltPressed) {
       if (autoDismissTimerRef.current) {
         clearTimeout(autoDismissTimerRef.current);
         autoDismissTimerRef.current = null;
       }
-      setIsHudOpen(true);
+      if (!hasActiveTypingTarget()) {
+        setIsHudOpen(true);
+      } else {
+        setIsHudOpen(false);
+      }
     }
-  }, [isAltPressed]);
+  }, [isAltPressed, hasActiveTypingTarget]);
 
   useEffect(() => {
-    if (transcript && transcript.trim() && !isHudOpen) {
+    if (transcript && transcript.trim()) {
       if (autoDismissTimerRef.current) {
         clearTimeout(autoDismissTimerRef.current);
         autoDismissTimerRef.current = null;
       }
-      setIsHudOpen(true);
+      if (!hasActiveTypingTarget()) {
+        setIsHudOpen(true);
+      }
     }
-  }, [transcript]);
+  }, [transcript, hasActiveTypingTarget]);
 
   // Determine current active destination app or text field
   const getDestinationApp = () => {
@@ -442,15 +470,17 @@ const MockOS = memo(({
         window.dispatchEvent(new CustomEvent('whispurr-insert-text', { detail: outputText }));
       }
 
-      // Auto-dismiss HUD after 4s since the text has been inserted into the app
+      // App is open: window will NOT pop up / stays closed
+      setIsHudOpen(false);
+    } else {
+      // No active destination: User is on Desktop!
+      // The window pops up with the prominent Copy button!
+      setIsHudOpen(true);
+      // Auto-dismiss HUD window after 5-second countdown if not interacted with
       if (autoDismissTimerRef.current) clearTimeout(autoDismissTimerRef.current);
       autoDismissTimerRef.current = setTimeout(() => {
         setIsHudOpen(false);
-      }, 4000);
-    } else {
-      // No active destination: User is on Desktop!
-      // Keep HUD open with the prominent Copy button so the user can copy and paste from this dialogue box!
-      setIsHudOpen(true);
+      }, 5000);
     }
   }, [translatedText, activeText, isLoading, openApp, activePopup]);
 
@@ -577,6 +607,11 @@ const MockOS = memo(({
           <div 
             onClick={(e) => { 
               if (e.detail === 1 && toggleListening) {
+                if (!hasActiveTypingTarget()) {
+                  setIsHudOpen(prev => !prev);
+                } else {
+                  setIsHudOpen(false);
+                }
                 toggleListening();
               } else {
                 setIsHovered(prev => !prev);
