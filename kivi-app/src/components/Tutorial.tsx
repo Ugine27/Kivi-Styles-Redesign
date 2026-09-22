@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Terminal, Briefcase, MessageCircle, Mail, ChevronRight, ChevronLeft, Check, Compass, Globe, Sparkles, Plus, ChevronUp, ChevronDown, Copy, Mic } from 'lucide-react';
+import { Terminal, Briefcase, MessageCircle, Mail, ChevronRight, ChevronLeft, Check, Compass, Globe, Sparkles, Plus, ChevronUp, ChevronDown, Copy, Mic, PenLine } from 'lucide-react';
 import { ALL_DIAL_LANGUAGES, LANG_SAMPLES, getSanitizedDialLanguages } from '../constants/languages';
 import KiviCatIcon from './KiviCatIcon';
 
@@ -193,10 +193,6 @@ function CompanionFormSlide() {
 
   return (
     <div className="flex flex-col items-center justify-center text-center max-w-4xl px-4 select-none">
-      <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#f4ebe1] border border-[#8d6e63]/25 text-[#5d4037] text-xs font-mono font-medium tracking-wide mb-3 shadow-2xs">
-        <span>Form Factor</span>
-      </div>
-
       <h1 className="text-4xl sm:text-5xl md:text-6xl font-serif font-normal tracking-tight mb-2 text-[#2b170e]">
         Shape Your <span className="font-semibold italic text-[#8d5e3b]">Companion.</span>
       </h1>
@@ -295,24 +291,20 @@ function renderSlideContent(index: number, onComplete: () => void, onNext?: () =
       return <RadialDialsDemoSlide />;
     case 3:
       return (
-        <div className="flex flex-col items-center justify-center text-center max-w-4xl px-4 select-none">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#f4ebe1] border border-[#8d6e63]/25 text-[#5d4037] text-xs font-mono font-medium tracking-wide mb-3 shadow-2xs">
-            <span>Desktop Shortcuts</span>
-          </div>
-
+        <div className="flex flex-col items-center justify-center text-center max-w-5xl px-4 select-none">
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-serif font-normal tracking-tight mb-2 text-[#2b170e]">
             Pick Your <span className="font-semibold italic text-[#8d5e3b]">Paws.</span>
           </h1>
 
-          <p className="text-base sm:text-lg text-[#5d4037]/80 font-serif italic mb-7 max-w-md leading-relaxed">
-            Quick desktop shortcuts to trigger dictation and radial dials.
+          <p className="text-base sm:text-lg text-[#5d4037]/80 font-serif italic mb-7 max-w-lg leading-relaxed">
+            Quick desktop shortcuts to dictate, edit, and spin radial dials.
           </p>
 
-          <div className="flex flex-wrap gap-5 sm:gap-6 justify-center w-full items-stretch">
+          <div className="flex flex-wrap gap-4 sm:gap-5 justify-center w-full items-stretch">
             {/* Hold to Talk */}
             <div 
               onClick={() => goToSlide?.(1)}
-              className="w-full sm:w-[250px] min-h-[235px] p-6 bg-white/85 backdrop-blur-md border border-[#8d6e63]/20 rounded-3xl flex flex-col items-center justify-between cursor-pointer hover:border-[#8d6e63]/50 hover:shadow-xl hover:shadow-[#2b170e]/6 hover:-translate-y-1 transition-all duration-300 shadow-sm active:scale-95 group"
+              className="w-full sm:w-[215px] min-h-[235px] p-5 bg-white/85 backdrop-blur-md border border-[#8d6e63]/20 rounded-3xl flex flex-col items-center justify-between cursor-pointer hover:border-[#8d6e63]/50 hover:shadow-xl hover:shadow-[#2b170e]/6 hover:-translate-y-1 transition-all duration-300 shadow-sm active:scale-95 group"
               title="Click to view Hold option to Speak slide"
             >
               <span className="inline-flex items-center gap-1.5 text-xs font-medium text-[#5d4037] bg-[#f4ebe1]/80 px-3.5 py-1 rounded-full border border-[#8d6e63]/15">
@@ -321,20 +313,41 @@ function renderSlideContent(index: number, onComplete: () => void, onNext?: () =
               </span>
 
               <div className="my-auto py-3">
-                <span className="inline-flex items-center px-6 py-2.5 rounded-xl bg-white border border-[#8d6e63]/25 shadow-[0_3px_0_rgba(141,110,99,0.18)] font-mono font-semibold text-2xl text-[#2b170e]">
+                <span className="inline-flex items-center px-5 py-2 rounded-xl bg-white border border-[#8d6e63]/25 shadow-[0_3px_0_rgba(141,110,99,0.18)] font-mono font-semibold text-xl text-[#2b170e]">
                   option
                 </span>
               </div>
 
-              <span className="text-xs text-[#5d4037]/75 font-sans font-medium">
+              <span className="text-xs text-[#5d4037]/75 font-sans font-medium text-center">
                 Instant Voice Typing
+              </span>
+            </div>
+
+            {/* Quick Edit */}
+            <div 
+              className="w-full sm:w-[215px] min-h-[235px] p-5 bg-white/85 backdrop-blur-md border border-[#8d6e63]/20 rounded-3xl flex flex-col items-center justify-between cursor-pointer hover:border-[#8d6e63]/50 hover:shadow-xl hover:shadow-[#2b170e]/6 hover:-translate-y-1 transition-all duration-300 shadow-sm active:scale-95 group"
+              title="Press option + control to edit or re-dictate the last sentence"
+            >
+              <span className="inline-flex items-center gap-1.5 text-xs font-medium text-[#5d4037] bg-[#f4ebe1]/80 px-3.5 py-1 rounded-full border border-[#8d6e63]/15">
+                <PenLine className="w-3.5 h-3.5 text-[#8d5e3b]" />
+                <span>Quick Edit</span>
+              </span>
+
+              <div className="my-auto py-3">
+                <span className="inline-flex items-center px-3.5 py-2 rounded-xl bg-white border border-[#8d6e63]/25 shadow-[0_3px_0_rgba(141,110,99,0.18)] font-mono font-semibold text-sm sm:text-base text-[#2b170e] whitespace-nowrap">
+                  option + control
+                </span>
+              </div>
+
+              <span className="text-xs text-[#5d4037]/75 font-sans font-medium text-center">
+                Re-dictate & Edit Text
               </span>
             </div>
 
             {/* Persona Dial */}
             <div 
               onClick={() => goToSlide?.(2)}
-              className="w-full sm:w-[250px] min-h-[235px] p-6 bg-white/85 backdrop-blur-md border border-[#8d6e63]/20 rounded-3xl flex flex-col items-center justify-between cursor-pointer hover:border-[#8d6e63]/50 hover:shadow-xl hover:shadow-[#2b170e]/6 hover:-translate-y-1 transition-all duration-300 shadow-sm active:scale-95 group"
+              className="w-full sm:w-[215px] min-h-[235px] p-5 bg-white/85 backdrop-blur-md border border-[#8d6e63]/20 rounded-3xl flex flex-col items-center justify-between cursor-pointer hover:border-[#8d6e63]/50 hover:shadow-xl hover:shadow-[#2b170e]/6 hover:-translate-y-1 transition-all duration-300 shadow-sm active:scale-95 group"
               title="Click to view Persona Dial slide"
             >
               <span className="inline-flex items-center gap-1.5 text-xs font-medium text-[#5d4037] bg-[#f4ebe1]/80 px-3.5 py-1 rounded-full border border-[#8d6e63]/15">
@@ -343,12 +356,12 @@ function renderSlideContent(index: number, onComplete: () => void, onNext?: () =
               </span>
 
               <div className="my-auto py-3">
-                <span className="inline-flex items-center px-4 py-2.5 rounded-xl bg-white border border-[#8d6e63]/25 shadow-[0_3px_0_rgba(141,110,99,0.18)] font-mono font-semibold text-base sm:text-lg text-[#2b170e] whitespace-nowrap">
+                <span className="inline-flex items-center px-3 py-2 rounded-xl bg-white border border-[#8d6e63]/25 shadow-[0_3px_0_rgba(141,110,99,0.18)] font-mono font-semibold text-sm sm:text-base text-[#2b170e] whitespace-nowrap">
                   option + scroll
                 </span>
               </div>
 
-              <span className="text-xs text-[#5d4037]/75 font-sans font-medium">
+              <span className="text-xs text-[#5d4037]/75 font-sans font-medium text-center">
                 Spin 8 Personas
               </span>
             </div>
@@ -356,7 +369,7 @@ function renderSlideContent(index: number, onComplete: () => void, onNext?: () =
             {/* Language Dial */}
             <div 
               onClick={() => goToSlide?.(2)}
-              className="w-full sm:w-[250px] min-h-[235px] p-6 bg-white/85 backdrop-blur-md border border-[#8d6e63]/20 rounded-3xl flex flex-col items-center justify-between cursor-pointer hover:border-[#8d6e63]/50 hover:shadow-xl hover:shadow-[#2b170e]/6 hover:-translate-y-1 transition-all duration-300 shadow-sm active:scale-95 group"
+              className="w-full sm:w-[215px] min-h-[235px] p-5 bg-white/85 backdrop-blur-md border border-[#8d6e63]/20 rounded-3xl flex flex-col items-center justify-between cursor-pointer hover:border-[#8d6e63]/50 hover:shadow-xl hover:shadow-[#2b170e]/6 hover:-translate-y-1 transition-all duration-300 shadow-sm active:scale-95 group"
               title="Click to view Language Dial slide"
             >
               <span className="inline-flex items-center gap-1.5 text-xs font-medium text-[#5d4037] bg-[#f4ebe1]/80 px-3.5 py-1 rounded-full border border-[#8d6e63]/15">
@@ -365,12 +378,12 @@ function renderSlideContent(index: number, onComplete: () => void, onNext?: () =
               </span>
 
               <div className="my-auto py-3">
-                <span className="inline-flex items-center px-3.5 py-2.5 rounded-xl bg-white border border-[#8d6e63]/25 shadow-[0_3px_0_rgba(141,110,99,0.18)] font-mono font-semibold text-sm sm:text-base text-[#2b170e] whitespace-nowrap">
+                <span className="inline-flex items-center px-3 py-2 rounded-xl bg-white border border-[#8d6e63]/25 shadow-[0_3px_0_rgba(141,110,99,0.18)] font-mono font-semibold text-xs sm:text-sm text-[#2b170e] whitespace-nowrap">
                   option + right-click
                 </span>
               </div>
 
-              <span className="text-xs text-[#5d4037]/75 font-sans font-medium">
+              <span className="text-xs text-[#5d4037]/75 font-sans font-medium text-center">
                 Switch 23 Languages
               </span>
             </div>
@@ -382,10 +395,9 @@ function renderSlideContent(index: number, onComplete: () => void, onNext?: () =
     case 5:
       return (
         <SurveySlide 
-          category="Blueprint Setup"
           title="Developer"
           highlight="Blueprints."
-          icon={<Terminal size={14} className="text-[#8d5e3b]" />} 
+          icon={<Terminal size={18} className="text-[#8d5e3b]" />} 
           subtext="Choose how technical prompts and terminal commands are formatted." 
           storageKey="whispurr_pref_blueprints"
           options={[
@@ -426,10 +438,9 @@ function renderSlideContent(index: number, onComplete: () => void, onNext?: () =
     case 6:
       return (
         <SurveySlide 
-          category="Workplace Chat"
           title="Chat"
           highlight="Registers."
-          icon={<MessageCircle size={14} className="text-[#8d5e3b]" />} 
+          icon={<MessageCircle size={18} className="text-[#8d5e3b]" />} 
           subtext="Choose how your voice sounds in chat apps like Slack or Teams." 
           storageKey="whispurr_pref_chat_registers"
           options={[
@@ -466,10 +477,9 @@ function renderSlideContent(index: number, onComplete: () => void, onNext?: () =
     case 7:
       return (
         <SurveySlide 
-          category="Email Register"
           title="Inbox"
           highlight="Registers."
-          icon={<Mail size={14} className="text-[#8d5e3b]" />} 
+          icon={<Mail size={18} className="text-[#8d5e3b]" />} 
           subtext="Choose your default tone for emails and correspondence." 
           storageKey="whispurr_pref_inbox_registers"
           options={[
@@ -506,10 +516,9 @@ function renderSlideContent(index: number, onComplete: () => void, onNext?: () =
     case 8:
       return (
         <SurveySlide 
-          category="Global Baseline"
           title="Global"
           highlight="Personas."
-          icon={<Briefcase size={14} className="text-[#8d5e3b]" />} 
+          icon={<Briefcase size={18} className="text-[#8d5e3b]" />} 
           subtext="Choose your baseline tone across other applications." 
           storageKey="whispurr_pref_global_personas"
           options={[
@@ -555,10 +564,14 @@ function renderSlideContent(index: number, onComplete: () => void, onNext?: () =
             WhisPURR is docked and awaiting your cue. Hold your shortcut to speak.
           </p>
 
-          <div className="flex items-center gap-3 flex-wrap justify-center mb-8 max-w-lg">
+          <div className="flex items-center gap-2.5 sm:gap-3 flex-wrap justify-center mb-8 max-w-2xl">
             <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 border border-[#8d6e63]/20 text-[#5d4037] text-xs font-mono shadow-2xs">
               <Mic className="w-3.5 h-3.5 text-[#8d5e3b]" />
               <span><strong className="text-[#2b170e]">option</strong> to dictate</span>
+            </span>
+            <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 border border-[#8d6e63]/20 text-[#5d4037] text-xs font-mono shadow-2xs">
+              <PenLine className="w-3.5 h-3.5 text-[#8d5e3b]" />
+              <span><strong className="text-[#2b170e]">option + control</strong> to edit</span>
             </span>
             <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 border border-[#8d6e63]/20 text-[#5d4037] text-xs font-mono shadow-2xs">
               <Compass className="w-3.5 h-3.5 text-[#8d5e3b]" />
@@ -567,10 +580,6 @@ function renderSlideContent(index: number, onComplete: () => void, onNext?: () =
             <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 border border-[#8d6e63]/20 text-[#5d4037] text-xs font-mono shadow-2xs">
               <Globe className="w-3.5 h-3.5 text-[#8d5e3b]" />
               <span><strong className="text-[#2b170e]">option + right-click</strong> languages</span>
-            </span>
-            <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 border border-[#8d6e63]/20 text-[#5d4037] text-xs font-mono shadow-2xs">
-              <Sparkles className="w-3.5 h-3.5 text-[#8d5e3b]" />
-              <span>Expressive moods</span>
             </span>
           </div>
 
@@ -596,7 +605,6 @@ function renderSlideContent(index: number, onComplete: () => void, onNext?: () =
 }
 
 function SurveySlide({ 
-  category,
   title, 
   highlight,
   icon, 
@@ -604,7 +612,6 @@ function SurveySlide({
   options,
   storageKey
 }: { 
-  category: string;
   title: string;
   highlight: string;
   icon: React.ReactNode; 
@@ -640,9 +647,8 @@ function SurveySlide({
 
   return (
     <div className="flex flex-col items-center justify-center text-center max-w-4xl px-4 select-none">
-      <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#f4ebe1] border border-[#8d6e63]/25 text-[#5d4037] text-xs font-mono font-medium tracking-wide mb-3 shadow-2xs">
+      <div className="w-9 h-9 rounded-full bg-[#f4ebe1] border border-[#8d6e63]/25 flex items-center justify-center text-[#8d5e3b] mb-3 shadow-2xs">
         {icon}
-        <span>{category}</span>
       </div>
 
       <h1 className="text-4xl sm:text-5xl md:text-6xl font-serif font-normal tracking-tight mb-2 text-[#2b170e]">
