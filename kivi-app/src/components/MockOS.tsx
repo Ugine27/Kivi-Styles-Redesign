@@ -97,7 +97,15 @@ const MockOS = memo(({
     }
   });
 
-  const [modeRotation, setModeRotation] = useState(0);
+  const [_modeRotation, setModeRotation] = useState(0);
+
+  // Meeting Assistant Settings
+  const [meetsAutoTranscribe, setMeetsAutoTranscribe] = useState(true);
+  const [meetsInvisibleOverlay, setMeetsInvisibleOverlay] = useState(true);
+  const [meetsMeetingSummary, setMeetsMeetingSummary] = useState(false);
+  const [showMeetingSummary, setShowMeetingSummary] = useState(false);
+
+  // Cycle handlers
   const [activeDial, setActiveDial] = useState<0 | 1>(0);
   const [langRotation, setLangRotation] = useState(0);
   
@@ -847,7 +855,29 @@ const MockOS = memo(({
               {openApp === 'zoom' && (
                 <div className="flex h-full bg-[#242424] text-white overflow-hidden">
                   {/* Main Video Area */}
-                  <div className="flex-1 flex flex-col p-4">
+                  <div className="flex-1 flex flex-col p-4 relative">
+                    {meetsInvisibleOverlay && (
+                      <AnimatePresence>
+                        {(isAltPressed || transcript || activeText || translatedText) && (
+                          <motion.div 
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            className="absolute bottom-24 left-1/2 -translate-x-1/2 z-50 pointer-events-none max-w-lg w-full px-4"
+                          >
+                            <div className="bg-black/60 backdrop-blur-xl rounded-2xl border border-white/10 p-4 shadow-2xl text-center">
+                              <div className="flex items-center justify-center gap-2 mb-2">
+                                <Sparkles className="w-4 h-4 text-orange-400" />
+                                <span className="text-xs font-medium text-white/70">Live Meeting Overlay</span>
+                              </div>
+                              <p className="text-base text-white font-medium leading-relaxed">
+                                {translatedText || activeText || transcript || "Listening..."}
+                              </p>
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    )}
                     <div className="flex-1 grid grid-cols-2 gap-4 mb-4">
                       {/* Speaker 1 */}
                       <div className="bg-[#1a1a1a] rounded-xl border border-white/10 flex items-center justify-center relative overflow-hidden group">
@@ -869,7 +899,18 @@ const MockOS = memo(({
                       <div className="w-10 h-10 rounded-full bg-red-500/20 text-red-500 flex items-center justify-center"><Mic className="w-5 h-5" /></div>
                       <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center"><Video className="w-5 h-5" /></div>
                       <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center"><Users className="w-5 h-5" /></div>
-                      <div className="px-4 py-2 rounded-full bg-red-600 text-white font-medium text-sm ml-4 cursor-pointer hover:bg-red-700">End</div>
+                      <div 
+                        onClick={() => {
+                          if (meetsMeetingSummary) {
+                            setShowMeetingSummary(true);
+                          } else {
+                            setOpenApp(null);
+                          }
+                        }}
+                        className="px-4 py-2 rounded-full bg-red-600 text-white font-medium text-sm ml-4 cursor-pointer hover:bg-red-700"
+                      >
+                        End
+                      </div>
                     </div>
                   </div>
 
@@ -903,6 +944,65 @@ const MockOS = memo(({
                       </div>
                     </div>
                   </div>
+                  
+                  {/* Meeting Summary Modal */}
+                  <AnimatePresence>
+                    {showMeetingSummary && (
+                      <motion.div 
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="absolute inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
+                      >
+                        <motion.div 
+                          initial={{ scale: 0.95, y: 20 }}
+                          animate={{ scale: 1, y: 0 }}
+                          exit={{ scale: 0.95, y: 20 }}
+                          className="bg-[#1e1e1e] border border-white/10 rounded-2xl p-6 max-w-lg w-full shadow-2xl flex flex-col"
+                        >
+                          <div className="flex items-center justify-between mb-4 pb-4 border-b border-white/10">
+                            <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                              <Sparkles className="w-5 h-5 text-orange-400" />
+                              AI Meeting Summary
+                            </h3>
+                            <div 
+                              className="w-8 h-8 rounded-full hover:bg-white/10 flex items-center justify-center cursor-pointer transition-colors"
+                              onClick={() => {
+                                setShowMeetingSummary(false);
+                                setOpenApp(null);
+                              }}
+                            >
+                              <X className="w-5 h-5 text-white/50" />
+                            </div>
+                          </div>
+                          <div className="space-y-4 text-sm text-white/80 leading-relaxed max-h-96 overflow-y-auto pr-2">
+                            <div>
+                              <h4 className="text-orange-300 font-semibold mb-1">Key Action Items</h4>
+                              <ul className="list-disc pl-5 space-y-1">
+                                <li>Send Q3 report to Sarah Jenkins by EOD.</li>
+                                <li>Schedule follow-up for next week to review the designs.</li>
+                              </ul>
+                            </div>
+                            <div>
+                              <h4 className="text-orange-300 font-semibold mb-1">Summary</h4>
+                              <p>Discussed the Q3 performance metrics and reviewed the upcoming UI changes. Sarah requested the final numbers for her presentation. The team agreed the new glassmorphic styles look much better.</p>
+                            </div>
+                          </div>
+                          <div className="mt-6 pt-4 border-t border-white/10 flex justify-end">
+                            <div 
+                              onClick={() => {
+                                setShowMeetingSummary(false);
+                                setOpenApp(null);
+                              }}
+                              className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-medium text-sm cursor-pointer transition-colors"
+                            >
+                              Done
+                            </div>
+                          </div>
+                        </motion.div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               )}
               {openApp === 'email' && (
@@ -1016,7 +1116,18 @@ const MockOS = memo(({
                 </div>
               )}
 
-              {openApp === 'whispurr' && <WhispurrApp mode={mode} setMode={setMode} />}
+              {openApp === 'whispurr' && (
+                <WhispurrApp 
+                  mode={mode} 
+                  setMode={setMode} 
+                  meetsAutoTranscribe={meetsAutoTranscribe}
+                  setMeetsAutoTranscribe={setMeetsAutoTranscribe}
+                  meetsInvisibleOverlay={meetsInvisibleOverlay}
+                  setMeetsInvisibleOverlay={setMeetsInvisibleOverlay}
+                  meetsMeetingSummary={meetsMeetingSummary}
+                  setMeetsMeetingSummary={setMeetsMeetingSummary}
+                />
+              )}
             </div>
           </motion.div>
         )}

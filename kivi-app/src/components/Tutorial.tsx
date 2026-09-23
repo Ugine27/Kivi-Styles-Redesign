@@ -242,7 +242,7 @@ function CompanionFormSlide() {
   );
 }
 
-function renderSlideContent(index: number, onComplete: () => void, onNext?: () => void, goToSlide?: (idx: number) => void) {
+function renderSlideContent(index: number, onComplete: () => void, _onNext?: () => void, goToSlide?: (idx: number) => void) {
   switch (index) {
     case 0:
       return (
