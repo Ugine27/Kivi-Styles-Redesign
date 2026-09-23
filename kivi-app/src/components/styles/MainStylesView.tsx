@@ -146,12 +146,13 @@ export default function MainStylesView({
   return (
     <div className="flex-1 w-full h-full flex flex-col font-sans overflow-hidden gap-3.5 select-none">
       {/* 1. Page Title + Subtitle & Controls */}
-      <div className="flex items-center justify-between px-1 shrink-0">
+      <div className="flex items-center justify-between px-2 shrink-0">
         <div>
-          <h1 className="text-2xl font-bold text-[#2b170e] tracking-tight">
-            Persona Studio
+          <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
+            <Palette className="text-[#8d6e63] w-8 h-8" />
+            Persona
           </h1>
-          <p className="text-xs text-[#5d4037] font-medium mt-0.5">
+          <p className="text-white/80 font-medium text-sm">
             Customise each persona to match how you sound.
           </p>
         </div>
@@ -161,17 +162,17 @@ export default function MainStylesView({
             <button
               type="button"
               onClick={onRevisitIntro}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#5d4037]/10 hover:bg-[#5d4037]/20 border border-[#8d6e63]/40 text-[#2b170e] text-xs font-bold transition-colors cursor-pointer shadow-xs"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-bold transition-colors cursor-pointer shadow-xs"
               title="Interactive demo"
             >
-              <Sparkles className="w-3.5 h-3.5 text-orange-600" />
+              <Sparkles className="w-3.5 h-3.5 text-orange-400" />
               <span>Demo</span>
             </button>
           )}
 
           {/* Auto-Adapt Toggle Bar */}
-          <div className="flex items-center gap-2 bg-[#5d4037]/10 border border-[#8d6e63]/40 py-1.5 px-3 rounded-xl shrink-0 relative">
-            <span className="text-xs font-bold text-[#2b170e]">
+          <div className="flex items-center gap-2 bg-white/10 border border-white/20 py-1.5 px-3 rounded-xl shrink-0 relative">
+            <span className="text-xs font-bold text-white">
               Auto-Adapt
             </span>
             <button
@@ -181,8 +182,8 @@ export default function MainStylesView({
               onClick={onToggleAdaptive}
               className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border transition-all duration-200 ease-in-out p-0.5 items-center focus:outline-none ${
                 isAdaptiveMode
-                  ? 'bg-[#795548] border-[#5d4037]'
-                  : 'bg-[#dfcebf] border-[#a1887f]'
+                  ? 'bg-orange-500 border-orange-400'
+                  : 'bg-black/20 border-white/20'
               }`}
               title={isAdaptiveMode ? "Disable Auto-Adapt" : "Enable Auto-Adapt"}
             >
@@ -190,18 +191,18 @@ export default function MainStylesView({
               <motion.span
                 layout
                 transition={{ type: "spring", stiffness: 600, damping: 35 }}
-                className={`pointer-events-none inline-block h-3.5 w-3.5 transform rounded-full bg-[#fdfaf6] shadow-sm flex items-center justify-center ${
+                className={`pointer-events-none inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow-sm flex items-center justify-center ${
                   isAdaptiveMode ? 'ml-auto' : 'mr-auto'
                 }`}
               >
-                <span className={`w-1 h-1 rounded-full ${isAdaptiveMode ? 'bg-[#5d4037]' : 'bg-[#a1887f]'}`} />
+                <span className={`w-1 h-1 rounded-full ${isAdaptiveMode ? 'bg-orange-600' : 'bg-transparent'}`} />
               </motion.span>
             </button>
             <div ref={adaptInfoRef} className="relative">
               <button 
                 type="button"
                 onClick={() => setShowAdaptInfo(!showAdaptInfo)}
-                className="p-0.5 rounded-full text-[#5d4037] hover:text-[#2b170e] transition-colors cursor-pointer"
+                className="p-0.5 rounded-full text-white/50 hover:text-white transition-colors cursor-pointer"
                 title="Info"
               >
                 <Info className="w-3.5 h-3.5" />
@@ -212,7 +213,7 @@ export default function MainStylesView({
                     initial={{ opacity: 0, y: -4, scale: 0.96 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: -4, scale: 0.96 }}
-                    className="absolute top-full mt-2 right-0 w-60 bg-[#2b170e] border border-[#6e4938] rounded-xl p-3 shadow-2xl z-50 text-xs text-[#fdfaf6] leading-relaxed font-normal"
+                    className="absolute top-full mt-2 right-0 w-60 bg-black/90 backdrop-blur-xl border border-white/10 rounded-xl p-3 shadow-2xl z-50 text-xs text-white leading-relaxed font-normal"
                   >
                     WhisPURR detects your active app to automatically switch personas.
                   </motion.div>

@@ -843,15 +843,6 @@ const MockOS = memo(({
                   <div className="flex-1 p-8 flex flex-col gap-4 font-serif">
                     <div className="flex items-center justify-between border-b pb-4">
                       <h1 className="text-2xl font-semibold">Daily Comms Update</h1>
-                      <button
-                        type="button"
-                        onClick={() => simulateSpeech ? simulateSpeech("Looking forward to our discussion tomorrow morning.") : toggleListening?.()}
-                        className="px-3 py-1.5 rounded-lg bg-orange-50 hover:bg-orange-100 text-orange-800 border border-orange-200 text-xs font-mono flex items-center gap-1.5 transition-all cursor-pointer active:scale-95"
-                        title="Dictate email with Whispurr (option)"
-                      >
-                        <Mic className="w-3.5 h-3.5 text-orange-600" />
-                        <span>option to dictate</span>
-                      </button>
                     </div>
                     <div className="flex-1 text-gray-800 leading-relaxed text-lg flex flex-col">
                       <p className="mb-4">Hi Team,</p>

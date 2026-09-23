@@ -1444,27 +1444,95 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                   <p className="text-white/80 font-medium text-sm">Review past dictations and usage.</p>
                 </div>
                 
-                {/* Stats Brown Box */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-[#2b1f1a]/90 border border-[#5d4037]/60 rounded-3xl p-6 shrink-0 shadow-xl">
-                  <div className="flex flex-col items-center justify-center p-4 bg-[#190f0b]/50 rounded-2xl border border-[#5d4037]/40 shadow-inner">
-                    <span className="text-white/60 text-xs font-bold uppercase tracking-widest mb-2">Current Streak</span>
-                    <div className="text-3xl font-bold text-[#f4ece1] flex items-center gap-2">
-                      <Sparkles className="w-6 h-6 text-orange-400" />
-                      4 Days
+                {/* Stats Graphs */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 shrink-0">
+                  
+                  {/* Words Graph */}
+                  <div className="bg-[#2b1f1a]/90 border border-[#5d4037]/60 rounded-3xl p-6 shadow-xl flex flex-col relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 p-6 opacity-5 pointer-events-none">
+                      <FileText className="w-24 h-24 text-white" />
+                    </div>
+                    <div className="relative z-10 flex items-center justify-between mb-8">
+                      <div>
+                        <span className="text-white/60 text-xs font-bold uppercase tracking-widest mb-1 block">Words Dictated</span>
+                        <div className="text-3xl font-bold text-[#f4ece1] flex items-baseline gap-2">
+                          13,500 <span className="text-sm font-medium text-white/50">this week</span>
+                        </div>
+                      </div>
+                      <div className="px-3 py-1 bg-[#5d4037]/30 text-[#ffd6b3] text-xs font-bold rounded-lg border border-[#5d4037]/50 flex items-center gap-1">
+                        +12%
+                      </div>
+                    </div>
+                    
+                    <div className="relative z-10 flex-1 flex items-stretch justify-between gap-2 h-32 mt-2">
+                      {[
+                        { day: 'Mon', val: 0.4, label: '1.2k' },
+                        { day: 'Tue', val: 0.8, label: '2.4k' },
+                        { day: 'Wed', val: 0.5, label: '1.5k' },
+                        { day: 'Thu', val: 1.0, label: '3.2k', active: true },
+                        { day: 'Fri', val: 0.6, label: '1.8k' },
+                        { day: 'Sat', val: 0.2, label: '500' },
+                        { day: 'Sun', val: 0.9, label: '2.9k' }
+                      ].map((d, i) => (
+                        <div key={i} className="flex flex-col items-center gap-2 flex-1 group/bar h-full">
+                          <div className="w-full relative flex-1 flex justify-center">
+                            <div className="absolute -top-8 bg-[#190f0b] border border-[#5d4037]/50 text-[#f4ece1] text-[10px] font-bold py-1 px-2 rounded opacity-0 group-hover/bar:opacity-100 transition-opacity z-20 pointer-events-none whitespace-nowrap shadow-lg">
+                              {d.label}
+                            </div>
+                            <div 
+                              className={`absolute bottom-0 w-full max-w-[32px] rounded-t-md transition-all duration-500 group-hover/bar:brightness-110 ${d.active ? 'bg-[#8d6e63] shadow-[0_0_15px_rgba(141,110,99,0.4)]' : 'bg-[#5d4037]/50 hover:bg-[#5d4037]/70'}`}
+                              style={{ height: `${d.val * 100}%` }}
+                            />
+                          </div>
+                          <span className={`text-[10px] font-bold uppercase tracking-wider ${d.active ? 'text-[#8d6e63]' : 'text-white/40'}`}>{d.day}</span>
+                        </div>
+                      ))}
                     </div>
                   </div>
-                  <div className="flex flex-col items-center justify-center p-4 bg-[#190f0b]/50 rounded-2xl border border-[#5d4037]/40 shadow-inner">
-                    <span className="text-white/60 text-xs font-bold uppercase tracking-widest mb-2">Total Words</span>
-                    <div className="text-3xl font-bold text-[#f4ece1]">
-                      12,450
+
+                  {/* Time Saved Graph */}
+                  <div className="bg-[#2b1f1a]/90 border border-[#5d4037]/60 rounded-3xl p-6 shadow-xl flex flex-col relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 p-6 opacity-5 pointer-events-none">
+                      <Clock className="w-24 h-24 text-white" />
+                    </div>
+                    <div className="relative z-10 flex items-center justify-between mb-8">
+                      <div>
+                        <span className="text-white/60 text-xs font-bold uppercase tracking-widest mb-1 block">Time Saved</span>
+                        <div className="text-3xl font-bold text-[#f4ece1] flex items-baseline gap-2">
+                          3.5 <span className="text-sm font-medium text-white/50">hours this week</span>
+                        </div>
+                      </div>
+                      <div className="px-3 py-1 bg-[#5d4037]/30 text-[#ffd6b3] text-xs font-bold rounded-lg border border-[#5d4037]/50 flex items-center gap-1">
+                        +5%
+                      </div>
+                    </div>
+                    
+                    <div className="relative z-10 flex-1 flex items-stretch justify-between gap-2 h-32 mt-2">
+                      {[
+                        { day: 'Mon', val: 0.3, label: '15m' },
+                        { day: 'Tue', val: 0.7, label: '30m' },
+                        { day: 'Wed', val: 0.4, label: '20m' },
+                        { day: 'Thu', val: 1.0, label: '45m', active: true },
+                        { day: 'Fri', val: 0.5, label: '25m' },
+                        { day: 'Sat', val: 0.1, label: '5m' },
+                        { day: 'Sun', val: 0.9, label: '40m' }
+                      ].map((d, i) => (
+                        <div key={i} className="flex flex-col items-center gap-2 flex-1 group/bar h-full">
+                          <div className="w-full relative flex-1 flex justify-center">
+                            <div className="absolute -top-8 bg-[#190f0b] border border-[#5d4037]/50 text-[#f4ece1] text-[10px] font-bold py-1 px-2 rounded opacity-0 group-hover/bar:opacity-100 transition-opacity z-20 pointer-events-none whitespace-nowrap shadow-lg">
+                              {d.label}
+                            </div>
+                            <div 
+                              className={`absolute bottom-0 w-full max-w-[32px] rounded-t-md transition-all duration-500 group-hover/bar:brightness-110 ${d.active ? 'bg-[#8d6e63] shadow-[0_0_15px_rgba(141,110,99,0.4)]' : 'bg-[#5d4037]/50 hover:bg-[#5d4037]/70'}`}
+                              style={{ height: `${d.val * 100}%` }}
+                            />
+                          </div>
+                          <span className={`text-[10px] font-bold uppercase tracking-wider ${d.active ? 'text-[#8d6e63]' : 'text-white/40'}`}>{d.day}</span>
+                        </div>
+                      ))}
                     </div>
                   </div>
-                  <div className="flex flex-col items-center justify-center p-4 bg-[#190f0b]/50 rounded-2xl border border-[#5d4037]/40 shadow-inner">
-                    <span className="text-white/60 text-xs font-bold uppercase tracking-widest mb-2">Hours Saved</span>
-                    <div className="text-3xl font-bold text-[#f4ece1]">
-                      3.5h
-                    </div>
-                  </div>
+
                 </div>
 
                 {/* Past Conversations List */}
