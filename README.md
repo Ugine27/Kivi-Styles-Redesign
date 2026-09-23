@@ -67,8 +67,19 @@ WhisPURR introduces a fluid, non-linear radial interaction model built specifica
 
 ---
 
-### 🎨 4. Vibrant Multi-Color Onboarding Tutorial
-A 10-slide interactive walkthrough that introduces new users to WhisPURR with a vibrant, playful, yet sophisticated Mac aesthetic:
+
+---
+
+### 🎙️ 4. AI Meeting Assistant & Whisper Mode
+WhisPURR automatically steps in as your co-pilot when it detects you're in a virtual meeting (Zoom, Teams).
+- **Invisible Live Overlay**: Renders a floating, glassmorphic HUD directly over your video calls so you can see live transcriptions seamlessly.
+- **Auto-Transcribe**: Detects active meeting windows and automatically logs dictations.
+- **Meeting Summary**: Automatically generates a concise AI summary and extracts action items as soon as the meeting ends.
+- **Whisper Mode**: Heightens mic sensitivity to accurately transcribe soft, quiet speech when you're working late or in a quiet office.
+
+---
+### 🎨 5. Vibrant Multi-Color Onboarding Tutorial
+A 13-slide interactive walkthrough that introduces new users to WhisPURR with a vibrant, playful, yet sophisticated Mac aesthetic:
 - **Atmospheric Aura Lighting Mesh**: Ambient glowing orbs of sky blue, coral, sunshine yellow, soft lavender, and mint.
 - **3D Tactile Keycaps & Concentric Audio Waves**: Interactive visual guides illustrating keypress mechanics.
 - **Interactive Radial Dial Simulator**: Try spinning tone profiles and switching languages with your mousewheel and right-click right inside the tutorial.
@@ -78,11 +89,12 @@ A 10-slide interactive walkthrough that introduces new users to WhisPURR with a 
   - ✨ **Mini**: Ultra-compact minimalist screen notch.
   - 🌊 **Pill**: Dynamic real-time waveform spectrum bar.
 - **Multi-Category Personality Survey**: Color-coded survey slides tailored to Developer Blueprints, Chat Registers, Professional Docs, and Creative Tone.
+- **Meeting Assistant & Moods Showcase**: Dedicated slides to introduce ambient meeting tools and emotional tone mapping.
 - **Keyboard-First Navigation**: Smooth navigation with `←`, `→`, `Space`, `[Esc]` to skip, and `[Enter]` to launch.
 
 ---
 
-### ⏱️ 5. Dynamic "Time Saved" Milestones
+### ⏱️ 6. Dynamic "Time Saved" Milestones
 WhisPURR tracks your productivity gains in real-time, translating minutes saved into relatable human activities:
 - **5–15 minutes**: *"Enough time for a coffee ☕"*
 - **15–30 minutes**: *"Enough time to read a chapter 📖"*
@@ -93,7 +105,7 @@ WhisPURR tracks your productivity gains in real-time, translating minutes saved 
 
 ---
 
-### 💡 6. Thoughtful UX & Ergonomics
+### 💡 7. Thoughtful UX & Ergonomics
 - **Outside-Click & Escape Dismissals**: Info dialogs, modals, and popovers automatically close when clicking outside or pressing `Escape`.
 - **High-Contrast Coffee Theme**: Warm cream base (`#fcf9f5` / `#f4ece1`), deep coffee brown typography (`#2b1f1a` / `#3e2723`), and leather/espresso accents for maximum legibility.
 - **Bottom-Screen Anchoring**: The companion rests comfortably at the bottom of the display, never obscuring primary work.
