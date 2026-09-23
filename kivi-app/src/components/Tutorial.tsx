@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Terminal, Briefcase, MessageCircle, Mail, ChevronRight, ChevronLeft, Check, Compass, Globe, Sparkles, Copy, Mic, PenLine } from 'lucide-react';
+import { Terminal, Briefcase, MessageCircle, Mail, ChevronRight, ChevronLeft, Check, Compass, Globe, Sparkles, Copy, Mic, PenLine, Users, FileText, CheckCircle } from 'lucide-react';
 import { getSanitizedDialLanguages } from '../constants/languages';
 import KiviCatIcon from './KiviCatIcon';
 
@@ -11,7 +11,7 @@ interface TutorialProps {
 
 export default function Tutorial({ onComplete }: TutorialProps) {
   const [slide, setSlide] = useState(0);
-  const totalSlides = 11;
+  const totalSlides = 12;
 
   const nextSlide = useCallback(() => {
     if (slide < totalSlides - 1) {
@@ -137,6 +137,80 @@ export default function Tutorial({ onComplete }: TutorialProps) {
   );
 
   return createPortal(tutorialContent, document.body);
+}
+
+function MeetingAssistantSlide() {
+  return (
+    <div className="flex flex-col items-center justify-center text-center max-w-5xl px-4 select-none">
+      <h1 className="text-4xl sm:text-5xl md:text-6xl font-serif font-normal tracking-tight mb-2 text-[#2b170e]">
+        Your Virtual <span className="font-semibold italic text-[#8d5e3b]">Co-Pilot.</span>
+      </h1>
+
+      <p className="text-base sm:text-lg text-[#5d4037]/80 font-serif italic mb-7 max-w-lg leading-relaxed mx-auto">
+        Let WhisPURR quietly handle transcriptions, overlays, and summaries for your meetings.
+      </p>
+
+      <div className="flex flex-wrap gap-4 sm:gap-5 justify-center w-full items-stretch">
+        
+        {/* Auto-Transcribe */}
+        <div className="w-full sm:flex-1 sm:min-w-[200px] sm:max-w-[240px] h-[235px] p-5 bg-white/85 backdrop-blur-md border border-[#8d6e63]/20 rounded-3xl flex flex-col items-center justify-between cursor-default hover:border-[#8d6e63]/50 hover:shadow-xl hover:shadow-[#2b170e]/6 hover:-translate-y-1 transition-all duration-300 shadow-sm group">
+          <span className="inline-flex items-center gap-1.5 text-xs font-medium text-[#5d4037] bg-[#f4ebe1]/80 px-3.5 py-1 rounded-full border border-[#8d6e63]/15">
+            <Mic className="w-3.5 h-3.5 text-[#8d5e3b]" />
+            <span>Auto-Transcribe</span>
+          </span>
+
+          <div className="my-auto py-3">
+            <div className="w-16 h-16 rounded-2xl bg-[#faf6ee] shadow-inner flex items-center justify-center border border-[#3e2723]/10 mx-auto">
+              <Users className="w-8 h-8 text-[#8d5e3b]" />
+            </div>
+          </div>
+
+          <p className="text-[#5d4037]/70 text-sm font-medium leading-relaxed px-2">
+            Automatically detect and transcribe Zoom or Teams calls.
+          </p>
+        </div>
+
+        {/* Invisible Overlay */}
+        <div className="w-full sm:flex-1 sm:min-w-[200px] sm:max-w-[240px] h-[235px] p-5 bg-white/85 backdrop-blur-md border border-[#8d6e63]/20 rounded-3xl flex flex-col items-center justify-between cursor-default hover:border-[#8d6e63]/50 hover:shadow-xl hover:shadow-[#2b170e]/6 hover:-translate-y-1 transition-all duration-300 shadow-sm group">
+          <span className="inline-flex items-center gap-1.5 text-xs font-medium text-[#5d4037] bg-[#f4ebe1]/80 px-3.5 py-1 rounded-full border border-[#8d6e63]/15">
+            <Sparkles className="w-3.5 h-3.5 text-[#8d5e3b]" />
+            <span>Live Overlay</span>
+          </span>
+
+          <div className="my-auto py-3 relative">
+            <div className="w-16 h-16 rounded-2xl bg-[#faf6ee] shadow-inner flex flex-col items-center justify-center border border-[#3e2723]/10 mx-auto overflow-hidden p-2">
+              <div className="w-full h-3 bg-[#8d5e3b]/20 rounded-md mb-2" />
+              <div className="w-full h-1.5 bg-[#8d5e3b]/10 rounded-full mb-1" />
+              <div className="w-3/4 h-1.5 bg-[#8d5e3b]/10 rounded-full" />
+            </div>
+          </div>
+
+          <p className="text-[#5d4037]/70 text-sm font-medium leading-relaxed px-2">
+            See a floating, transparent overlay of live dictations over your call.
+          </p>
+        </div>
+
+        {/* Meeting Summary */}
+        <div className="w-full sm:flex-1 sm:min-w-[200px] sm:max-w-[240px] h-[235px] p-5 bg-white/85 backdrop-blur-md border border-[#8d6e63]/20 rounded-3xl flex flex-col items-center justify-between cursor-default hover:border-[#8d6e63]/50 hover:shadow-xl hover:shadow-[#2b170e]/6 hover:-translate-y-1 transition-all duration-300 shadow-sm group">
+          <span className="inline-flex items-center gap-1.5 text-xs font-medium text-[#5d4037] bg-[#f4ebe1]/80 px-3.5 py-1 rounded-full border border-[#8d6e63]/15">
+            <CheckCircle className="w-3.5 h-3.5 text-[#8d5e3b]" />
+            <span>AI Summary</span>
+          </span>
+
+          <div className="my-auto py-3">
+             <div className="w-16 h-16 rounded-2xl bg-[#faf6ee] shadow-inner flex items-center justify-center border border-[#3e2723]/10 mx-auto">
+              <FileText className="w-8 h-8 text-[#8d5e3b]" />
+            </div>
+          </div>
+
+          <p className="text-[#5d4037]/70 text-sm font-medium leading-relaxed px-2">
+            Generate concise AI summaries and action items when you end the call.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  );
 }
 
 function CompanionFormSlide() {
@@ -392,8 +466,10 @@ function renderSlideContent(index: number, onComplete: () => void, _onNext?: () 
         </div>
       );
     case 5:
-      return <CompanionFormSlide />;
+      return <MeetingAssistantSlide />;
     case 6:
+      return <CompanionFormSlide />;
+    case 7:
       return (
         <SurveySlide 
           title="Developer"
@@ -436,7 +512,7 @@ function renderSlideContent(index: number, onComplete: () => void, _onNext?: () 
           ]} 
         />
       );
-    case 7:
+    case 8:
       return (
         <SurveySlide 
           title="Chat"
@@ -475,7 +551,7 @@ function renderSlideContent(index: number, onComplete: () => void, _onNext?: () 
           ]} 
         />
       );
-    case 8:
+    case 9:
       return (
         <SurveySlide 
           title="Inbox"
@@ -514,7 +590,7 @@ function renderSlideContent(index: number, onComplete: () => void, _onNext?: () 
           ]} 
         />
       );
-    case 9:
+    case 10:
       return (
         <SurveySlide 
           title="Global"
@@ -554,7 +630,7 @@ function renderSlideContent(index: number, onComplete: () => void, _onNext?: () 
           ]} 
         />
       );
-    case 10:
+    case 11:
       return (
         <div className="flex flex-col items-center justify-center text-center max-w-4xl px-4 select-none">
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-serif font-normal tracking-tight mb-2 text-[#2b170e]">
