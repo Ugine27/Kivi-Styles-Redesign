@@ -223,18 +223,26 @@ const MockOS = memo(({
       const isOptionHeld = isAltPressed || e.altKey || e.key === 'Alt' || e.key === 'Option' || e.code === 'AltLeft' || e.code === 'AltRight';
       if (!isOptionHeld) return;
 
-      if (e.key === 'ArrowLeft') {
+      if (e.key === 'ArrowUp') {
         e.preventDefault();
-        cycleMode(-1);
-      } else if (e.key === 'ArrowRight') {
-        e.preventDefault();
-        cycleMode(1);
+        setActiveDial(1);
+        activeDialRef.current = 1;
+        setShowModeHud(true);
+        resetHudTimer(1200);
       } else if (e.key === 'ArrowDown') {
         e.preventDefault();
-        cycleLang(1);
-      } else if (e.key === 'ArrowUp') {
+        setActiveDial(0);
+        activeDialRef.current = 0;
+        setShowModeHud(true);
+        resetHudTimer(1200);
+      } else if (e.key === 'ArrowLeft') {
         e.preventDefault();
-        cycleLang(-1);
+        if (activeDialRef.current === 0) cycleMode(-1);
+        else cycleLang(-1);
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        if (activeDialRef.current === 0) cycleMode(1);
+        else cycleLang(1);
       }
     };
     
@@ -543,7 +551,7 @@ const MockOS = memo(({
             )}
           </AnimatePresence>
 
-          {/* Persona Arc when Alt is pressed and in app */}
+          {/* Persona / Language Arc when Alt is pressed and in app */}
           <AnimatePresence>
             {isAltPressed && hasActiveTypingTarget() && showModeHud && (
               <motion.div
@@ -551,38 +559,97 @@ const MockOS = memo(({
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.8 }}
                 transition={{ type: "spring", mass: 0.8, stiffness: 280, damping: 24 }}
-                className="absolute inset-0 z-10 pointer-events-none"
+                className="absolute top-1/2 left-1/2 -translate-y-3 z-10 pointer-events-none"
               >
-                {dialModes.map((modeName, i) => {
-                  const isActive = mode === modeName;
-                  const selectedIndex = dialModes.indexOf(mode || '') !== -1 ? dialModes.indexOf(mode || '') : 0;
-                  const angle = 90 + (selectedIndex - i) * 45;
-                  
-                  const rad = (angle * Math.PI) / 180;
-                  const radius = 120;
-                  const x = Math.cos(rad) * radius;
-                  const y = -Math.sin(rad) * radius;
-
-                  const distance = Math.abs(i - selectedIndex);
-                  const scale = isActive ? 1.2 : Math.max(0.7, 0.95 - distance * 0.15);
-                  const itemOpacity = isActive ? 1 : Math.max(0, 0.55 - distance * 0.15);
-
-                  return (
+                <AnimatePresence mode="popLayout">
+                  {activeDial === 0 && (
                     <motion.div
-                      key={modeName}
-                      initial={{ opacity: 0, x: 0, y: 0, scale: 0.5 }}
-                      animate={{ opacity: itemOpacity, x, y, scale }}
+                      key="persona-dial"
+                      initial={{ opacity: 0, y: 80, scale: 0.8 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 80, scale: 0.8 }}
                       transition={{ type: "spring", mass: 0.8, stiffness: 220, damping: 24 }}
-                      className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 px-4 py-2 rounded-full backdrop-blur-xl border flex items-center justify-center font-medium text-[11px] whitespace-nowrap transition-colors duration-300 ${
-                        isActive 
-                          ? 'bg-[#190f0b]/90 border-[#8d6e63]/90 text-[#ffd6b3] shadow-[0_0_25px_rgba(141,110,99,0.5)] z-30'
-                          : 'bg-black/50 border-white/10 text-white/50 z-20'
-                      }`}
+                      className="absolute"
                     >
-                      {modeName}
+                      {dialModes.map((modeName, i) => {
+                        const isActive = mode === modeName;
+                        const selectedIndex = dialModes.indexOf(mode || '') !== -1 ? dialModes.indexOf(mode || '') : 0;
+                        const angle = 90 + (selectedIndex - i) * 45;
+                        
+                        const rad = (angle * Math.PI) / 180;
+                        const radius = 120;
+                        const x = Math.cos(rad) * radius;
+                        const y = -Math.sin(rad) * radius;
+
+                        const distance = Math.abs(i - selectedIndex);
+                        const scale = isActive ? 1.2 : Math.max(0.7, 0.95 - distance * 0.15);
+                        const itemOpacity = isActive ? 1 : Math.max(0, 0.55 - distance * 0.15);
+
+                        return (
+                          <motion.div
+                            key={modeName}
+                            initial={{ opacity: 0, x: 0, y: 0, scale: 0.5 }}
+                            animate={{ opacity: itemOpacity, x, y, scale }}
+                            transition={{ type: "spring", mass: 0.8, stiffness: 220, damping: 24 }}
+                            className="absolute left-0 top-0"
+                          >
+                            <div className={`-translate-x-1/2 -translate-y-1/2 px-4 py-2 rounded-full backdrop-blur-xl border flex items-center justify-center font-medium text-[11px] whitespace-nowrap transition-colors duration-300 ${
+                              isActive 
+                                ? 'bg-[#190f0b]/90 border-[#8d6e63]/90 text-[#ffd6b3] shadow-[0_0_25px_rgba(141,110,99,0.5)] z-30'
+                                : 'bg-black/50 border-white/10 text-white/50 z-20'
+                            }`}>
+                              {modeName}
+                            </div>
+                          </motion.div>
+                        );
+                      })}
                     </motion.div>
-                  );
-                })}
+                  )}
+                  {activeDial === 1 && (
+                    <motion.div
+                      key="lang-dial"
+                      initial={{ opacity: 0, y: -80, scale: 0.8 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -80, scale: 0.8 }}
+                      transition={{ type: "spring", mass: 0.8, stiffness: 220, damping: 24 }}
+                      className="absolute"
+                    >
+                      {dialLangs.map((langName, i) => {
+                        // In language dial, active item is based on langRotation index
+                        const isActive = i === langRotation;
+                        const selectedIndex = langRotation;
+                        const angle = 90 + (selectedIndex - i) * 60;
+                        
+                        const rad = (angle * Math.PI) / 180;
+                        const radius = 120;
+                        const x = Math.cos(rad) * radius;
+                        const y = -Math.sin(rad) * radius;
+
+                        const distance = Math.abs(i - selectedIndex);
+                        const scale = isActive ? 1.2 : Math.max(0.7, 0.95 - distance * 0.15);
+                        const itemOpacity = isActive ? 1 : Math.max(0, 0.55 - distance * 0.15);
+
+                        return (
+                          <motion.div
+                            key={langName}
+                            initial={{ opacity: 0, x: 0, y: 0, scale: 0.5 }}
+                            animate={{ opacity: itemOpacity, x, y, scale }}
+                            transition={{ type: "spring", mass: 0.8, stiffness: 220, damping: 24 }}
+                            className="absolute left-0 top-0"
+                          >
+                            <div className={`-translate-x-1/2 -translate-y-1/2 px-4 py-2 rounded-full backdrop-blur-xl border flex items-center justify-center font-medium text-[11px] whitespace-nowrap transition-colors duration-300 ${
+                              isActive 
+                                ? 'bg-[#190f0b]/90 border-[#8d6e63]/90 text-[#ffd6b3] shadow-[0_0_25px_rgba(141,110,99,0.5)] z-30'
+                                : 'bg-black/50 border-white/10 text-white/50 z-20'
+                            }`}>
+                              {langName}
+                            </div>
+                          </motion.div>
+                        );
+                      })}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </motion.div>
             )}
           </AnimatePresence>
@@ -728,6 +795,8 @@ const MockOS = memo(({
             </AnimatePresence>
             </div>
           </motion.div>
+
+
 
       {/* FULL SCREEN APPS */}
       <AnimatePresence>
