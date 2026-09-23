@@ -1,12 +1,12 @@
 import { useState, useEffect, memo, useRef, useCallback } from 'react';
-import { Mail, Terminal, Sparkles, X, Minus, Wifi, Type, Mic, Pencil, Check, ChevronUp, ChevronDown } from 'lucide-react';
+import { Mail, Terminal, Sparkles, X, Minus, Wifi, Type, Mic, Pencil, Check, Video, Users, MessageSquare } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import WhispurrApp from './WhispurrApp';
 import KiviCatIcon from './KiviCatIcon';
 import FloatingDictationHUD from './FloatingDictationHUD';
 import { getSanitizedDialLanguages } from '../constants/languages';
 
-type AppType = 'email' | 'vscode' | 'ai' | 'whispurr' | null;
+type AppType = 'email' | 'vscode' | 'ai' | 'whispurr' | 'zoom' | null;
 
 
 
@@ -138,13 +138,15 @@ const MockOS = memo(({
     if (isAltPressed) {
       const idx = dialModesRef.current.indexOf(modeRef.current as string);
       setModeRotation(idx >= 0 ? idx : 0);
+    } else {
+      setShowModeHud(false);
     }
   }, [isAltPressed]);
 
   // Dedicated Auto-hide Timer for Mode/Language HUD
   const hudTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const resetHudTimer = useCallback((durationMs = 4000) => {
+  const resetHudTimer = useCallback((durationMs = 1200) => {
     if (hudTimerRef.current) clearTimeout(hudTimerRef.current);
     hudTimerRef.current = setTimeout(() => {
       setShowModeHud(false);
@@ -157,7 +159,7 @@ const MockOS = memo(({
 
   useEffect(() => {
     if (showModeHud) {
-      resetHudTimer(4000);
+      resetHudTimer(1200);
     } else {
       clearHudTimer();
     }
@@ -177,7 +179,7 @@ const MockOS = memo(({
       return nextRot;
     });
     setShowModeHud(true);
-    resetHudTimer(4000);
+    resetHudTimer(1200);
   }, [setMode, resetHudTimer]);
 
   const cycleLang = useCallback((direction: 1 | -1) => {
@@ -189,7 +191,7 @@ const MockOS = memo(({
       return nextRot;
     });
     setShowModeHud(true);
-    resetHudTimer(4000);
+    resetHudTimer(1200);
   }, [resetHudTimer]);
 
   // Option+Scroll or Option+Arrow / Option+Right-Click to change mode/lang
@@ -212,81 +214,35 @@ const MockOS = memo(({
         return next;
       });
       setShowModeHud(true);
-      resetHudTimer(4000);
+      resetHudTimer(1200);
     };
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        if (showModeHudRef.current) {
-          setShowModeHud(false);
-          clearHudTimer();
-        }
-        return;
-      }
-
-      // If Persona/Language HUD is open:
-      // Arrow keys and Enter navigate and select immediately even if Option was released!
-      if (showModeHudRef.current) {
-        if (e.key === 'ArrowDown') {
-          e.preventDefault();
-          if (activeDialRef.current === 0) cycleMode(1);
-          else cycleLang(1);
-          return;
-        }
-        if (e.key === 'ArrowUp') {
-          e.preventDefault();
-          if (activeDialRef.current === 0) cycleMode(-1);
-          else cycleLang(-1);
-          return;
-        }
-        if (e.key === 'ArrowLeft') {
-          e.preventDefault();
-          setActiveDial(1);
-          activeDialRef.current = 1;
-          resetHudTimer(4000);
-          return;
-        }
-        if (e.key === 'ArrowRight') {
-          e.preventDefault();
-          setActiveDial(0);
-          activeDialRef.current = 0;
-          resetHudTimer(4000);
-          return;
-        }
-        if (e.key === 'Enter') {
-          e.preventDefault();
-          setShowModeHud(false);
-          clearHudTimer();
-          return;
-        }
-      }
 
       // When HUD is closed: Option + Left/Right/Up/Down opens HUD and activates corresponding dial
       const isOptionHeld = isAltPressed || e.altKey || e.key === 'Alt' || e.key === 'Option' || e.code === 'AltLeft' || e.code === 'AltRight';
       if (!isOptionHeld) return;
 
-      if (e.key === 'ArrowLeft') {
+      if (e.key === 'ArrowUp') {
         e.preventDefault();
         setActiveDial(1);
         activeDialRef.current = 1;
         setShowModeHud(true);
-        resetHudTimer(4000);
-      } else if (e.key === 'ArrowRight') {
+        resetHudTimer(1200);
+      } else if (e.key === 'ArrowDown') {
         e.preventDefault();
         setActiveDial(0);
         activeDialRef.current = 0;
         setShowModeHud(true);
-        resetHudTimer(4000);
-      } else if (e.key === 'ArrowDown') {
+        resetHudTimer(1200);
+      } else if (e.key === 'ArrowLeft') {
         e.preventDefault();
-        setShowModeHud(true);
-        if (activeDialRef.current === 0) cycleMode(1);
-        else cycleLang(1);
-      } else if (e.key === 'ArrowUp') {
-        e.preventDefault();
-        setShowModeHud(true);
         if (activeDialRef.current === 0) cycleMode(-1);
         else cycleLang(-1);
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        if (activeDialRef.current === 0) cycleMode(1);
+        else cycleLang(1);
       }
     };
     
@@ -304,6 +260,7 @@ const MockOS = memo(({
   const [emailText, setEmailText] = useState('');
   const [vscodeText, setVscodeText] = useState('');
   const [aiText, setAiText] = useState('');
+  const [zoomText, setZoomText] = useState('');
 
   // Auto open Notes (from the Alt+Scroll workflow)
   useEffect(() => {
@@ -397,11 +354,13 @@ const MockOS = memo(({
         setIsHudOpen(true);
       }
     }
-  }, [transcript, hasActiveTypingTarget]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [transcript]);
 
   // Determine current active destination app or text field
   const getDestinationApp = () => {
     if (openApp === 'email') return 'Outlook';
+    if (openApp === 'zoom') return 'Zoom';
     if (openApp === 'vscode') return 'VS Code';
     if (openApp === 'ai') return 'Antigravity AI';
     if (openApp === 'whispurr') return 'WhisPURR';
@@ -446,6 +405,8 @@ const MockOS = memo(({
 
   // Process text typing when final transformed text is ready
   useEffect(() => {
+    if (isAltPressed) return;
+
     const outputText = translatedText || activeText;
     if (!outputText || outputText.trim() === '' || isLoading) return;
     if (lastTypedTextRef.current === outputText) return;
@@ -459,6 +420,8 @@ const MockOS = memo(({
       // 2. ALWAYS update React state for controlled inputs so they stay perfectly in sync
       if (openApp === 'email') {
         setEmailText(prev => prev ? `${prev}\n${outputText}` : outputText);
+      } else if (openApp === 'zoom') {
+        setZoomText(prev => prev ? `${prev}\n${outputText}` : outputText);
       } else if (openApp === 'vscode') {
         setVscodeText(prev => prev ? `${prev} ${outputText}` : outputText);
       } else if (openApp === 'ai') {
@@ -483,7 +446,7 @@ const MockOS = memo(({
         setIsHudOpen(false);
       }, 5000);
     }
-  }, [translatedText, activeText, isLoading, openApp, activePopup]);
+  }, [translatedText, activeText, isLoading, openApp, activePopup, isAltPressed]);
 
 
   return (
@@ -536,6 +499,12 @@ const MockOS = memo(({
                  <Mail className="w-5 h-5 text-blue-300" />
               </div>
               <div 
+                 onClick={() => openApp !== 'zoom' && setOpenApp('zoom')}
+                 className={`w-8 h-8 rounded flex items-center justify-center cursor-pointer transition-colors ${openApp === 'zoom' ? 'bg-white/10 border-b-2 border-blue-500' : 'hover:bg-white/10'}`}
+              >
+                 <Video className="w-5 h-5 text-blue-400" />
+              </div>
+              <div 
                  onClick={() => openApp !== 'vscode' && setOpenApp('vscode')}
                  className={`w-8 h-8 rounded flex items-center justify-center cursor-pointer transition-colors ${openApp === 'vscode' ? 'bg-white/10 border-b-2 border-blue-600' : 'hover:bg-white/10'}`}
               >
@@ -554,18 +523,6 @@ const MockOS = memo(({
                  <KiviCatIcon className="w-5 h-5 text-orange-400" />
               </div>
 
-              {/* Quick option Dictation Trigger */}
-              <div 
-                 onClick={() => {
-                   if (toggleListening) toggleListening();
-                   else if (simulateSpeech) simulateSpeech("WhisPURR dictation active.");
-                 }}
-                 className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/5 hover:bg-orange-500/20 border border-white/10 hover:border-orange-500/30 text-xs font-mono text-white/80 hover:text-orange-300 cursor-pointer transition-all hover:scale-105 active:scale-95 ml-2"
-                 title="WhisPURR Dictation · Click or hold option on keyboard"
-              >
-                 <Mic className="w-3.5 h-3.5 text-orange-400" />
-                 <span>option</span>
-              </div>
            </div>
 
            <div className="flex items-center gap-3 text-white w-48 justify-end cursor-pointer hover:bg-white/10 px-2 py-1 rounded transition-colors">
@@ -604,30 +561,145 @@ const MockOS = memo(({
             )}
           </AnimatePresence>
 
+          {/* Persona / Language Arc when Alt is pressed and in app */}
+          <AnimatePresence>
+            {isAltPressed && hasActiveTypingTarget() && showModeHud && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: 15 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.98, y: 10 }}
+                transition={{ duration: 0.35, ease: [0.32, 0.72, 0, 1] }}
+                className="absolute top-1/2 left-1/2 -translate-y-3 z-10 pointer-events-none transform-gpu will-change-transform will-change-opacity"
+              >
+                <AnimatePresence mode="popLayout">
+                  {activeDial === 0 && (
+                    <motion.div
+                      key="persona-dial"
+                      initial={{ opacity: 0, y: 40 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 40 }}
+                      transition={{ type: "spring", mass: 0.6, stiffness: 250, damping: 24 }}
+                      className="absolute"
+                    >
+                      {dialModes.map((modeName, i) => {
+                        const isActive = mode === modeName;
+                        const selectedIndex = dialModes.indexOf(mode || '') !== -1 ? dialModes.indexOf(mode || '') : 0;
+                        const angle = 90 + (selectedIndex - i) * 45;
+                        
+                        const rad = (angle * Math.PI) / 180;
+                        const radius = 120;
+                        const x = Math.cos(rad) * radius;
+                        const y = -Math.sin(rad) * radius;
+
+                        const distance = Math.abs(i - selectedIndex);
+                        const scale = isActive ? 1.2 : Math.max(0.7, 0.95 - distance * 0.15);
+                        const itemOpacity = isActive ? 1 : Math.max(0, 0.55 - distance * 0.15);
+
+                        return (
+                          <motion.div
+                            key={modeName}
+                            initial={{ opacity: 0, x: 0, y: 0, scale: 0.5 }}
+                            animate={{ opacity: itemOpacity, x, y, scale }}
+                            transition={{ type: "spring", mass: 0.8, stiffness: 220, damping: 24 }}
+                            className="absolute left-0 top-0"
+                          >
+                            <div className={`-translate-x-1/2 -translate-y-1/2 px-4 py-2 rounded-full backdrop-blur-xl border flex items-center justify-center font-medium text-[11px] whitespace-nowrap transition-colors duration-300 ${
+                              isActive 
+                                ? 'bg-[#190f0b]/90 border-[#8d6e63]/90 text-[#ffd6b3] shadow-[0_0_25px_rgba(141,110,99,0.5)] z-30'
+                                : 'bg-black/50 border-white/10 text-white/50 z-20'
+                            }`}>
+                              {modeName}
+                            </div>
+                          </motion.div>
+                        );
+                      })}
+                    </motion.div>
+                  )}
+                  {activeDial === 1 && (
+                    <motion.div
+                      key="lang-dial"
+                      initial={{ opacity: 0, y: -40 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -40 }}
+                      transition={{ type: "spring", mass: 0.6, stiffness: 250, damping: 24 }}
+                      className="absolute"
+                    >
+                      {dialLangs.map((langName, i) => {
+                        // In language dial, active item is based on langRotation index
+                        const isActive = i === langRotation;
+                        const selectedIndex = langRotation;
+                        const angle = 90 + (selectedIndex - i) * 60;
+                        
+                        const rad = (angle * Math.PI) / 180;
+                        const radius = 120;
+                        const x = Math.cos(rad) * radius;
+                        const y = -Math.sin(rad) * radius;
+
+                        const distance = Math.abs(i - selectedIndex);
+                        const scale = isActive ? 1.2 : Math.max(0.7, 0.95 - distance * 0.15);
+                        const itemOpacity = isActive ? 1 : Math.max(0, 0.55 - distance * 0.15);
+
+                        return (
+                          <motion.div
+                            key={langName}
+                            initial={{ opacity: 0, x: 0, y: 0, scale: 0.5 }}
+                            animate={{ opacity: itemOpacity, x, y, scale }}
+                            transition={{ type: "spring", mass: 0.8, stiffness: 220, damping: 24 }}
+                            className="absolute left-0 top-0"
+                          >
+                            <div className={`-translate-x-1/2 -translate-y-1/2 px-4 py-2 rounded-full backdrop-blur-xl border flex items-center justify-center font-medium text-[11px] whitespace-nowrap transition-colors duration-300 ${
+                              isActive 
+                                ? 'bg-[#190f0b]/90 border-[#8d6e63]/90 text-[#ffd6b3] shadow-[0_0_25px_rgba(141,110,99,0.5)] z-30'
+                                : 'bg-black/50 border-white/10 text-white/50 z-20'
+                            }`}>
+                              {langName}
+                            </div>
+                          </motion.div>
+                        );
+                      })}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           {/* Central Cat in Dock */}
-          <div 
-            onClick={(e) => { 
-              if (e.detail === 1 && toggleListening) {
-                if (!hasActiveTypingTarget()) {
-                  setIsHudOpen(prev => !prev);
-                } else {
+          <AnimatePresence>
+            {!isHudOpen && (
+              <motion.div 
+                layoutId="whispurr-morph"
+                transition={{ type: "spring", mass: 0.8, stiffness: 280, damping: 24 }}
+                onDoubleClick={() => {
+                  setOpenApp('whispurr');
                   setIsHudOpen(false);
-                }
-                toggleListening();
-              } else {
-                setIsHovered(prev => !prev);
-                if (activePopup) setActivePopup(null);
-              }
-            }}
-            className={`w-12 h-12 rounded-full border-2 flex items-center justify-center cursor-pointer transition-all duration-300 shadow-2xl relative z-20 overflow-hidden ${
-              (isAltPressed || isLoading)
-                ? 'border-[#8d6e63] shadow-[0_0_35px_rgba(141,110,99,0.8)] scale-110'
-                : 'border-white/20 shadow-[0_0_15px_rgba(0,0,0,0.5)] hover:scale-105 hover:border-white/40'
-            }`}
-            title="WhisPURR Dock Orb · Click to dictate or hover for tools"
-          >
-            <KiviCatIcon className={`w-full h-full object-cover transition-all duration-300 ${isLoading ? 'animate-pulse opacity-100' : 'opacity-100'}`} />
-          </div>
+                }}
+                onClick={(e) => { 
+                  if (e.detail === 1 && toggleListening) {
+                    if (!hasActiveTypingTarget()) {
+                      setIsHudOpen(prev => !prev);
+                    } else {
+                      setIsHudOpen(false);
+                    }
+                    toggleListening();
+                  } else if (e.detail === 1) {
+                    setIsHovered(prev => !prev);
+                    if (activePopup) setActivePopup(null);
+                  }
+                }}
+                className={`w-10 h-10 rounded-full border-2 flex items-center justify-center cursor-pointer will-change-transform transition-all duration-300 shadow-2xl relative z-20 overflow-hidden ${
+                  (isAltPressed || isLoading)
+                    ? (hasActiveTypingTarget() 
+                        ? 'border-[#8d6e63] shadow-[0_0_35px_rgba(141,110,99,0.8)] scale-[1.3] -translate-y-3' 
+                        : 'border-[#8d6e63] shadow-[0_0_35px_rgba(141,110,99,0.8)] scale-110')
+                    : 'border-white/20 shadow-[0_0_15px_rgba(0,0,0,0.5)] hover:scale-105 hover:border-white/40'
+                }`}
+                title="WhisPURR Dock Orb · Click to dictate or hover for tools"
+              >
+                <KiviCatIcon className={`w-full h-full object-cover transition-all duration-300 ${isLoading ? 'animate-pulse opacity-100' : 'opacity-100'}`} />
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           <AnimatePresence>
             {isHovered && (
@@ -734,15 +806,18 @@ const MockOS = memo(({
             </div>
           </motion.div>
 
+
+
       {/* FULL SCREEN APPS */}
-      <AnimatePresence>
+      <AnimatePresence mode="wait">
         {openApp && (
           <motion.div 
-            initial={{ scale: 0.95, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.95, opacity: 0 }}
-            transition={{ type: "spring", stiffness: 300, damping: 25 }}
-            className="absolute inset-0 z-40 bg-[#1e1e1e] flex flex-col"
+            key={openApp}
+            initial={{ scale: 0.96, opacity: 0, y: 10 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.98, opacity: 0, y: 10 }}
+            transition={{ duration: 0.45, ease: [0.32, 0.72, 0, 1] }}
+            className="absolute inset-0 z-40 bg-[#1e1e1e] flex flex-col transform-gpu will-change-transform will-change-opacity"
             style={{ height: openApp === 'whispurr' ? '100vh' : 'calc(100vh - 48px)' }}
           >
             {/* Standard Window Title Bar */}
@@ -750,6 +825,7 @@ const MockOS = memo(({
               {openApp !== 'whispurr' && (
                 <div className="flex items-center gap-2 text-white/70 text-xs font-medium">
                   {openApp === 'email' && <><Mail className="w-4 h-4"/> Outlook</>}
+                  {openApp === 'zoom' && <><Video className="w-4 h-4"/> Zoom Meeting</>}
                   {openApp === 'vscode' && <><Terminal className="w-4 h-4"/> VS Code</>}
                   {openApp === 'ai' && <><Sparkles className="w-4 h-4"/> Antigravity Canvas</>}
                 </div>
@@ -768,6 +844,67 @@ const MockOS = memo(({
 
             {/* App Content */}
             <div className="flex-1 overflow-hidden">
+              {openApp === 'zoom' && (
+                <div className="flex h-full bg-[#242424] text-white overflow-hidden">
+                  {/* Main Video Area */}
+                  <div className="flex-1 flex flex-col p-4">
+                    <div className="flex-1 grid grid-cols-2 gap-4 mb-4">
+                      {/* Speaker 1 */}
+                      <div className="bg-[#1a1a1a] rounded-xl border border-white/10 flex items-center justify-center relative overflow-hidden group">
+                        <div className="absolute top-4 left-4 bg-black/60 px-2 py-1 rounded text-xs font-medium backdrop-blur-sm">Sarah Jenkins</div>
+                        <div className="w-24 h-24 rounded-full bg-blue-600/30 flex items-center justify-center border-4 border-blue-500/20">
+                          <Users className="w-10 h-10 text-blue-400" />
+                        </div>
+                      </div>
+                      {/* Speaker 2 */}
+                      <div className="bg-[#1a1a1a] rounded-xl border border-white/10 flex items-center justify-center relative overflow-hidden">
+                        <div className="absolute top-4 left-4 bg-black/60 px-2 py-1 rounded text-xs font-medium backdrop-blur-sm">Alex Chen (You)</div>
+                        <div className="w-24 h-24 rounded-full bg-emerald-600/30 flex items-center justify-center border-4 border-emerald-500/20">
+                          <Video className="w-10 h-10 text-emerald-400" />
+                        </div>
+                      </div>
+                    </div>
+                    {/* Bottom Controls */}
+                    <div className="h-16 bg-[#1a1a1a] rounded-xl border border-white/10 flex items-center justify-center gap-4">
+                      <div className="w-10 h-10 rounded-full bg-red-500/20 text-red-500 flex items-center justify-center"><Mic className="w-5 h-5" /></div>
+                      <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center"><Video className="w-5 h-5" /></div>
+                      <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center"><Users className="w-5 h-5" /></div>
+                      <div className="px-4 py-2 rounded-full bg-red-600 text-white font-medium text-sm ml-4 cursor-pointer hover:bg-red-700">End</div>
+                    </div>
+                  </div>
+
+                  {/* Chat Sidebar */}
+                  <div className="w-80 bg-[#1a1a1a] border-l border-white/5 flex flex-col">
+                    <div className="h-12 border-b border-white/5 flex items-center px-4 gap-2">
+                      <MessageSquare className="w-4 h-4 text-white/70" />
+                      <span className="font-medium text-sm text-white/90">Meeting Chat</span>
+                    </div>
+                    <div className="flex-1 p-4 overflow-y-auto flex flex-col gap-4">
+                      <div className="flex flex-col gap-1">
+                        <span className="text-xs text-white/50">Sarah Jenkins</span>
+                        <div className="text-sm bg-white/5 rounded-lg p-2.5 w-fit">Can you send the Q3 report?</div>
+                      </div>
+                      {zoomText && (
+                        <div className="flex flex-col gap-1 items-end">
+                          <span className="text-xs text-white/50">You</span>
+                          <div className="text-sm bg-blue-600 rounded-lg p-2.5 text-left max-w-[85%] whitespace-pre-wrap break-words">{zoomText}</div>
+                        </div>
+                      )}
+                    </div>
+                    <div className="p-4 border-t border-white/5">
+                      <div className="bg-[#242424] rounded-lg p-2 border border-white/10 focus-within:border-blue-500 transition-colors">
+                        <textarea
+                          className="w-full bg-transparent resize-none outline-none text-sm text-white placeholder-white/30"
+                          placeholder="Type message here..."
+                          rows={3}
+                          value={zoomText}
+                          onChange={e => setZoomText(e.target.value)}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
               {openApp === 'email' && (
                 <div className="flex h-full bg-white text-black">
                   <div className="w-64 border-r border-gray-200 p-4 bg-gray-50 flex flex-col gap-2">
@@ -779,15 +916,6 @@ const MockOS = memo(({
                   <div className="flex-1 p-8 flex flex-col gap-4 font-serif">
                     <div className="flex items-center justify-between border-b pb-4">
                       <h1 className="text-2xl font-semibold">Daily Comms Update</h1>
-                      <button
-                        type="button"
-                        onClick={() => simulateSpeech ? simulateSpeech("Looking forward to our discussion tomorrow morning.") : toggleListening?.()}
-                        className="px-3 py-1.5 rounded-lg bg-orange-50 hover:bg-orange-100 text-orange-800 border border-orange-200 text-xs font-mono flex items-center gap-1.5 transition-all cursor-pointer active:scale-95"
-                        title="Dictate email with Whispurr (option)"
-                      >
-                        <Mic className="w-3.5 h-3.5 text-orange-600" />
-                        <span>option to dictate</span>
-                      </button>
                     </div>
                     <div className="flex-1 text-gray-800 leading-relaxed text-lg flex flex-col">
                       <p className="mb-4">Hi Team,</p>
@@ -912,176 +1040,11 @@ const MockOS = memo(({
         }}
         onSimulateSpeech={simulateSpeech}
         onTogglePersonaDial={() => {
-          setActiveDial(0);
-          activeDialRef.current = 0;
-          setShowModeHud(prev => !prev);
-          resetHudTimer(4000);
+          cycleMode(1);
         }}
       />
 
-      {/* PERSONA & LANGUAGE FLOATING SELECTOR POPUP (PROPERLY ABOVE DIALOGUE BOX) */}
-      <AnimatePresence>
-        {showModeHud && (
-          <motion.div
-            key="mode-lang-popup"
-            initial={{ opacity: 0, y: 15, scale: 0.94 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 15, scale: 0.94 }}
-            transition={{ type: 'spring', stiffness: 450, damping: 28 }}
-            onMouseEnter={clearHudTimer}
-            onMouseLeave={() => resetHudTimer(2500)}
-            className={`fixed ${isHudOpen ? 'bottom-[330px] md:bottom-[355px]' : 'bottom-24 md:bottom-28'} left-1/2 -translate-x-1/2 z-[100050] select-none pointer-events-auto`}
-          >
-            <div className="bg-[#1C120C]/95 backdrop-blur-2xl border border-[#8D6E63]/70 rounded-3xl p-3.5 md:p-4 shadow-[0_25px_60px_rgba(0,0,0,0.85),0_0_30px_rgba(141,110,99,0.25)] text-[#F4ECE1] w-[320px] sm:w-[350px] flex flex-col gap-3">
-              {/* Top Header with Tabs and Close */}
-              <div className="flex items-center justify-between border-b border-[#5D4037]/50 pb-2.5">
-                <div className="flex items-center gap-1.5 bg-[#2C1810]/80 p-1 rounded-2xl border border-[#8D6E63]/40">
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setActiveDial(1);
-                      activeDialRef.current = 1;
-                      resetHudTimer(4000);
-                    }}
-                    className={`px-3 py-1 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center gap-1 ${
-                      activeDial === 1
-                        ? 'bg-gradient-to-r from-[#8D6E63] to-[#A1887F] text-white shadow-md font-bold'
-                        : 'text-[#E8D5B5]/60 hover:text-[#E8D5B5] hover:bg-white/5'
-                    }`}
-                  >
-                    <span>← Language</span>
-                  </button>
 
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setActiveDial(0);
-                      activeDialRef.current = 0;
-                      resetHudTimer(4000);
-                    }}
-                    className={`px-3 py-1 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center gap-1 ${
-                      activeDial === 0
-                        ? 'bg-gradient-to-r from-[#8D6E63] to-[#A1887F] text-white shadow-md font-bold'
-                        : 'text-[#E8D5B5]/60 hover:text-[#E8D5B5] hover:bg-white/5'
-                    }`}
-                  >
-                    <span>Persona →</span>
-                  </button>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setShowModeHud(false);
-                    clearHudTimer();
-                  }}
-                  className="p-1 rounded-full text-[#E8D5B5]/50 hover:text-white hover:bg-white/10 transition-colors"
-                  title="Close popup"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-
-              {/* Up / Down Navigation Controls & Options List */}
-              <div className="flex flex-col gap-1.5">
-                {/* Header Row */}
-                <div className="flex items-center justify-between px-1">
-                  <span className="text-[11px] font-mono text-[#E8D5B5]/60 uppercase tracking-wider">
-                    {activeDial === 0 ? 'Select Persona' : 'Select Language'}
-                  </span>
-                  <div className="flex items-center gap-1">
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        if (activeDial === 0) cycleMode(-1);
-                        else cycleLang(-1);
-                      }}
-                      className="p-1 rounded-lg bg-white/5 hover:bg-white/15 text-[#E8D5B5] transition-all cursor-pointer active:scale-95"
-                      title="Previous (↑ Arrow)"
-                    >
-                      <ChevronUp className="w-3.5 h-3.5" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        if (activeDial === 0) cycleMode(1);
-                        else cycleLang(1);
-                      }}
-                      className="p-1 rounded-lg bg-white/5 hover:bg-white/15 text-[#E8D5B5] transition-all cursor-pointer active:scale-95"
-                      title="Next (↓ Arrow)"
-                    >
-                      <ChevronDown className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                </div>
-
-                {/* List items */}
-                <div className="max-h-48 overflow-y-auto pr-1 flex flex-col gap-1 scrollbar-thin scrollbar-thumb-[#5D4037]">
-                  {activeDial === 0 ? (
-                    dialModes.map((m, i) => {
-                      const isActive = i === modeRotation || m === mode;
-                      return (
-                        <button
-                          key={m}
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setModeRotation(i);
-                            if (setMode) setMode(m as any);
-                            resetHudTimer(4000);
-                          }}
-                          className={`w-full px-3 py-2 rounded-xl text-left text-sm font-medium transition-all flex items-center justify-between cursor-pointer ${
-                            isActive
-                              ? 'bg-gradient-to-r from-[#8D6E63] to-[#5D4037] text-white font-bold border border-[#E8D5B5]/40 shadow-lg shadow-[#8D6E63]/25 scale-[1.01]'
-                              : 'text-[#E8D5B5]/70 hover:text-white hover:bg-white/5 border border-transparent'
-                          }`}
-                        >
-                          <span>{m}</span>
-                          {isActive && <Check className="w-4 h-4 text-[#E8D5B5] shrink-0" />}
-                        </button>
-                      );
-                    })
-                  ) : (
-                    dialLangs.map((lang, i) => {
-                      const isActive = i === langRotation;
-                      return (
-                        <button
-                          key={lang}
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setLangRotation(i);
-                            resetHudTimer(4000);
-                          }}
-                          className={`w-full px-3 py-2 rounded-xl text-left text-sm font-medium transition-all flex items-center justify-between cursor-pointer ${
-                            isActive
-                              ? 'bg-gradient-to-r from-[#8D6E63] to-[#5D4037] text-white font-bold border border-[#E8D5B5]/40 shadow-lg shadow-[#8D6E63]/25 scale-[1.01]'
-                              : 'text-[#E8D5B5]/70 hover:text-white hover:bg-white/5 border border-transparent'
-                          }`}
-                        >
-                          <span>{lang}</span>
-                          {isActive && <Check className="w-4 h-4 text-[#E8D5B5] shrink-0" />}
-                        </button>
-                      );
-                    })
-                  )}
-                </div>
-              </div>
-
-              {/* Footer Shortcut Instructions */}
-              <div className="flex items-center justify-between pt-2 border-t border-[#5D4037]/40 text-[10px] text-[#E8D5B5]/50 font-mono">
-                <span>↑ ↓ to cycle • Enter to pick</span>
-                <span>option + ← / → to switch</span>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 });

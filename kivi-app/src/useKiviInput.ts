@@ -146,7 +146,6 @@ export function useKiviInput() {
       e.key === 'AltGraph' ||
       e.code === 'AltLeft' ||
       e.code === 'AltRight' ||
-      e.altKey ||
       (e.key && (e.key.toLowerCase() === 'alt' || e.key.toLowerCase() === 'option'))
     );
   };
