@@ -11,7 +11,7 @@ interface TutorialProps {
 
 export default function Tutorial({ onComplete }: TutorialProps) {
   const [slide, setSlide] = useState(0);
-  const totalSlides = 10;
+  const totalSlides = 11;
 
   const nextSlide = useCallback(() => {
     if (slide < totalSlides - 1) {
@@ -276,10 +276,21 @@ function renderSlideContent(index: number, onComplete: () => void, onNext?: () =
         </div>
       );
     case 1:
-      return <HoldOptionToSpeakSlide />;
+      return (
+        <div className="flex flex-col items-center justify-center -mt-4 max-w-3xl text-center relative z-10 px-4">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-serif font-normal tracking-tight mb-6 text-[#2b170e] leading-tight">
+            Think, Talk & <span className="font-semibold italic text-[#8d5e3b]">Let it Type.</span>
+          </h1>
+          <p className="text-lg sm:text-xl text-[#5d4037]/85 font-sans max-w-2xl leading-relaxed font-normal mt-4">
+            WhisPURR doesn't speak or act for you. It helps your thoughts turn into the right words <span className="font-mono text-[#8d5e3b] font-semibold bg-[#8d5e3b]/10 px-2 py-0.5 rounded-md">@</span> the right place.
+          </p>
+        </div>
+      );
     case 2:
-      return <RadialDialsDemoSlide />;
+      return <HoldOptionToSpeakSlide />;
     case 3:
+      return <RadialDialsDemoSlide />;
+    case 4:
       return (
         <div className="flex flex-col items-center justify-center text-center max-w-5xl px-4 select-none">
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-serif font-normal tracking-tight mb-2 text-[#2b170e]">
@@ -293,7 +304,7 @@ function renderSlideContent(index: number, onComplete: () => void, onNext?: () =
           <div className="flex flex-wrap gap-4 sm:gap-5 justify-center w-full items-stretch">
             {/* Hold to Talk */}
             <div 
-              onClick={() => goToSlide?.(1)}
+              onClick={() => goToSlide?.(2)}
               className="w-full sm:flex-1 sm:min-w-[200px] sm:max-w-[240px] h-[235px] p-5 bg-white/85 backdrop-blur-md border border-[#8d6e63]/20 rounded-3xl flex flex-col items-center justify-between cursor-pointer hover:border-[#8d6e63]/50 hover:shadow-xl hover:shadow-[#2b170e]/6 hover:-translate-y-1 transition-all duration-300 shadow-sm active:scale-95 group"
               title="Click to view Hold option to Speak slide"
             >
@@ -336,7 +347,7 @@ function renderSlideContent(index: number, onComplete: () => void, onNext?: () =
 
             {/* Persona Dial */}
             <div 
-              onClick={() => goToSlide?.(2)}
+              onClick={() => goToSlide?.(3)}
               className="w-full sm:flex-1 sm:min-w-[200px] sm:max-w-[240px] h-[235px] p-5 bg-white/85 backdrop-blur-md border border-[#8d6e63]/20 rounded-3xl flex flex-col items-center justify-between cursor-pointer hover:border-[#8d6e63]/50 hover:shadow-xl hover:shadow-[#2b170e]/6 hover:-translate-y-1 transition-all duration-300 shadow-sm active:scale-95 group"
               title="Click to view Persona Dial slide"
             >
@@ -358,7 +369,7 @@ function renderSlideContent(index: number, onComplete: () => void, onNext?: () =
 
             {/* Language Dial */}
             <div 
-              onClick={() => goToSlide?.(2)}
+              onClick={() => goToSlide?.(3)}
               className="w-full sm:flex-1 sm:min-w-[200px] sm:max-w-[240px] h-[235px] p-5 bg-white/85 backdrop-blur-md border border-[#8d6e63]/20 rounded-3xl flex flex-col items-center justify-between cursor-pointer hover:border-[#8d6e63]/50 hover:shadow-xl hover:shadow-[#2b170e]/6 hover:-translate-y-1 transition-all duration-300 shadow-sm active:scale-95 group"
               title="Click to view Language Dial slide"
             >
@@ -380,9 +391,9 @@ function renderSlideContent(index: number, onComplete: () => void, onNext?: () =
           </div>
         </div>
       );
-    case 4:
-      return <CompanionFormSlide />;
     case 5:
+      return <CompanionFormSlide />;
+    case 6:
       return (
         <SurveySlide 
           title="Developer"
@@ -425,7 +436,7 @@ function renderSlideContent(index: number, onComplete: () => void, onNext?: () =
           ]} 
         />
       );
-    case 6:
+    case 7:
       return (
         <SurveySlide 
           title="Chat"
@@ -464,7 +475,7 @@ function renderSlideContent(index: number, onComplete: () => void, onNext?: () =
           ]} 
         />
       );
-    case 7:
+    case 8:
       return (
         <SurveySlide 
           title="Inbox"
@@ -503,7 +514,7 @@ function renderSlideContent(index: number, onComplete: () => void, onNext?: () =
           ]} 
         />
       );
-    case 8:
+    case 9:
       return (
         <SurveySlide 
           title="Global"
@@ -543,7 +554,7 @@ function renderSlideContent(index: number, onComplete: () => void, onNext?: () =
           ]} 
         />
       );
-    case 9:
+    case 10:
       return (
         <div className="flex flex-col items-center justify-center text-center max-w-4xl px-4 select-none">
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-serif font-normal tracking-tight mb-2 text-[#2b170e]">
@@ -1405,3 +1416,4 @@ function RadialDialsDemoSlide() {
     </div>
   );
 }
+
