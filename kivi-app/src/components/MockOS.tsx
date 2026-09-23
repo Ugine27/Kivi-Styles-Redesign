@@ -1,5 +1,5 @@
 import { useState, useEffect, memo, useRef, useCallback } from 'react';
-import { Mail, Terminal, Sparkles, X, Minus, Wifi, Type, Mic, Pencil, Check, ChevronUp, ChevronDown } from 'lucide-react';
+import { Mail, Terminal, Sparkles, X, Minus, Wifi, Type, Mic, Pencil, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import WhispurrApp from './WhispurrApp';
 import KiviCatIcon from './KiviCatIcon';
@@ -677,7 +677,7 @@ const MockOS = memo(({
                     if (activePopup) setActivePopup(null);
                   }
                 }}
-                className={`w-10 h-10 rounded-full border-2 flex items-center justify-center cursor-pointer transition-all duration-300 shadow-2xl relative z-20 overflow-hidden ${
+                className={`w-10 h-10 rounded-full border-2 flex items-center justify-center cursor-pointer will-change-transform transition-all duration-300 shadow-2xl relative z-20 overflow-hidden ${
                   (isAltPressed || isLoading)
                     ? (hasActiveTypingTarget() 
                         ? 'border-[#8d6e63] shadow-[0_0_35px_rgba(141,110,99,0.8)] scale-[1.3] -translate-y-3' 

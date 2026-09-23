@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import SmoothLoader from './SmoothLoader';
 import { Mic, Check, Copy, X, Sparkles, CornerDownLeft } from 'lucide-react';
 
 export interface FloatingDictationHUDProps {
@@ -89,7 +90,7 @@ export default function FloatingDictationHUD({
         animate={{ opacity: 1, y: 0, x: "-50%", scale: 1 }}
         exit={{ opacity: 0, y: 25, x: "-50%", scale: 0.96 }}
         transition={{ type: "spring", mass: 0.8, stiffness: 280, damping: 24 }}
-        className="fixed bottom-16 md:bottom-20 left-1/2 z-[9999] w-[92vw] max-w-md select-none"
+        className="fixed bottom-16 md:bottom-20 left-1/2 z-[9999] w-[92vw] max-w-md select-none will-change-transform will-change-opacity"
       >
         <motion.div 
           layoutId="whispurr-morph" 
@@ -187,8 +188,8 @@ export default function FloatingDictationHUD({
                   </p>
                 ) : (
                   <div className="flex items-center gap-2 text-xs text-[#d7ccc8]/50 italic">
-                    <span className="inline-block w-2 h-2 rounded-full bg-orange-400 animate-ping" />
-                    <span>Listening to your voice... (speak now · release option to finish)</span>
+                    <SmoothLoader color="orange" size="sm" />
+                    <span>Listening to your voice... (speak now & release option to finish)</span>
                   </div>
                 )}
               </div>
@@ -202,9 +203,12 @@ export default function FloatingDictationHUD({
                     Spoke: "{transcript}"
                   </p>
                 )}
-                <div className="flex items-center gap-2 text-xs text-amber-300 font-medium animate-pulse">
+                <div className="flex items-center gap-2 text-xs text-amber-300 font-medium">
                   <Sparkles className="w-3.5 h-3.5 text-amber-400" />
                   <span>Applying {mode} formatting & custom rules...</span>
+                  <div className="ml-2">
+                    <SmoothLoader color="amber" size="sm" />
+                  </div>
                 </div>
               </div>
             )}

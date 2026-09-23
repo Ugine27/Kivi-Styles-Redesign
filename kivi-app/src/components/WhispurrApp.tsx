@@ -5,6 +5,7 @@ import Tutorial from './Tutorial';
 import StylesManager from './styles/StylesManager';
 import FootprintManager from './FootprintManager';
 import KiviCatIcon from './KiviCatIcon';
+import SmoothLoader from './SmoothLoader';
 import { transformText } from '../transformEngine';
 import { ALL_DIAL_LANGUAGES, DEFAULT_DIAL_LANGUAGES, getSanitizedDialLanguages } from '../constants/languages';
 
@@ -188,17 +189,8 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
   const [videoKey, setVideoKey] = useState(0);
 
   useEffect(() => {
-    if (activeTab === 'Home') {
-      setHomeVideo(prev => {
-        let next;
-        do {
-          next = VIDEOS[Math.floor(Math.random() * VIDEOS.length)];
-        } while (next === prev);
-        return next;
-      });
-      setVideoKey(prev => prev + 1);
-    }
-  }, [activeTab]);
+    // Deliberately empty to prevent video destruction and UI lag
+  }, []);
 
   const [funSubtitleIndex, setFunSubtitleIndex] = useState(0);
   const [boopParticles, setBoopParticles] = useState<{ id: number; text: string; x: number }[]>([]);
@@ -830,17 +822,15 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
   
   // Animation variants
   const tabVariants = {
-    initial: { opacity: 0, y: 10, scale: 0.99, zIndex: 0 },
+    initial: { opacity: 0, y: 15, scale: 0.98, zIndex: 0 },
     animate: { 
       opacity: 1, 
       y: 0, 
       scale: 1, 
       zIndex: 10,
       transition: { 
-        type: "spring", 
-        stiffness: 400, 
-        damping: 30, 
-        mass: 0.8 
+        duration: 0.4,
+        ease: [0.32, 0.72, 0, 1]
       } 
     },
     exit: { 
@@ -848,8 +838,8 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
       scale: 0.99, 
       zIndex: 0,
       transition: { 
-        duration: 0.15, 
-        ease: "easeOut" 
+        duration: 0.25, 
+        ease: [0.32, 0.72, 0, 1]
       } 
     }
   };
@@ -1186,10 +1176,9 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                           <h2 className="text-base font-semibold text-white tracking-wide flex items-center gap-2">
                             Voice-to-Text Studio
                             {isHomeListening && (
-                              <span className="flex items-center gap-1.5 text-xs font-normal text-red-400 bg-red-500/15 px-2.5 py-0.5 rounded-full border border-red-500/30 animate-pulse">
-                                <span className="w-2 h-2 rounded-full bg-red-500 animate-ping" />
-                                Listening...
-                              </span>
+                              <div className="flex items-center bg-red-500/10 px-3 py-1 rounded-full border border-red-500/20 shadow-inner">
+                                <SmoothLoader text="Listening" color="red" />
+                              </div>
                             )}
                           </h2>
                           <p className="text-xs text-white/60 font-medium">Speak naturally to convert your voice into text</p>
@@ -1368,9 +1357,14 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                           <span>{homeChatText.length} characters</span>
                         </div>
                         {isHomeCopied && (
-                          <span className="text-emerald-400 font-semibold animate-pulse">
-                            ✓ Copied to clipboard! Ready to paste anywhere (Ctrl+V / Cmd+V)
-                          </span>
+                          <motion.span 
+                            initial={{ opacity: 0, x: -10 }} 
+                            animate={{ opacity: 1, x: 0 }} 
+                            exit={{ opacity: 0 }} 
+                            className="text-emerald-400 font-semibold tracking-wide"
+                          >
+                             Copied to clipboard! Ready to paste anywhere (Ctrl+V / Cmd+V)
+                          </motion.span>
                         )}
                       </div>
                     </div>
