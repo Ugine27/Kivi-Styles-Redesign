@@ -1707,7 +1707,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
               <motion.div key="meets" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col p-8 overflow-hidden ${glassPanel}`}>
                 <div className="px-2 mb-8 shrink-0">
                   <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
-                    <Users className="text-blue-400 w-8 h-8" />
+                    <Users className="text-orange-400 w-8 h-8" />
                     Meeting Assistant
                   </h1>
                   <p className="text-white/40 text-sm">Configure automatic transcriptions and overlays for your virtual meetings.</p>
@@ -1720,7 +1720,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                           <h3 className="text-white font-medium mb-1">Auto-Transcribe Meetings</h3>
                           <p className="text-white/40 text-sm">Automatically detect and transcribe when apps like Zoom or Teams are active.</p>
                         </div>
-                        <div className="w-12 h-6 bg-blue-500 rounded-full relative cursor-pointer">
+                        <div className="w-12 h-6 bg-orange-500 rounded-full relative cursor-pointer shadow-[0_0_10px_rgba(249,115,22,0.3)]">
                           <div className="absolute right-1 top-1 w-4 h-4 bg-white rounded-full"></div>
                         </div>
                       </div>
@@ -1730,7 +1730,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                           <h3 className="text-white font-medium mb-1">Invisible Overlay</h3>
                           <p className="text-white/40 text-sm">Show a floating, invisible overlay over meetings so you can easily see the dictation.</p>
                         </div>
-                        <div className="w-12 h-6 bg-blue-500 rounded-full relative cursor-pointer">
+                        <div className="w-12 h-6 bg-orange-500 rounded-full relative cursor-pointer shadow-[0_0_10px_rgba(249,115,22,0.3)]">
                           <div className="absolute right-1 top-1 w-4 h-4 bg-white rounded-full"></div>
                         </div>
                       </div>
