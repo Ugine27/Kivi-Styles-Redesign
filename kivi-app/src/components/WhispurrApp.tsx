@@ -1072,15 +1072,17 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
             exit={{ opacity: 0 }}
             className="absolute inset-0 z-[1000] bg-black/60 backdrop-blur-md flex items-center justify-center p-12"
           >
-            <div className="bg-[#f4ece1] border-4 border-[#8d6e63] p-10 rounded-[2rem] shadow-[0_0_80px_rgba(0,0,0,0.8)] max-w-lg w-full relative">
-              <div className="absolute -top-6 -left-6 w-14 h-14 bg-[#8d6e63] rounded-full flex items-center justify-center shadow-lg text-[#f4ece1] font-bold text-2xl border-4 border-[#f4ece1]">
+            <div className="bg-[#1a110e] border-4 border-[#8d6e63] p-10 rounded-[2rem] shadow-[0_0_80px_rgba(0,0,0,0.8)] max-w-lg w-full h-[320px] flex flex-col justify-between relative">
+              <div className="absolute -top-6 -left-6 w-14 h-14 bg-[#8d6e63] rounded-full flex items-center justify-center shadow-lg text-[#f4ece1] font-bold text-2xl border-4 border-[#1a110e]">
                 {tourStep + 1}
               </div>
-              <h2 className="text-4xl font-serif font-bold text-white mb-4 tracking-tight">{TOUR_STEPS[tourStep].title}</h2>
-              <p className="text-white/80 text-xl mb-10 leading-relaxed font-sans">{TOUR_STEPS[tourStep].text}</p>
-              <div className="flex justify-between items-center">
+              <div>
+                <h2 className="text-3xl sm:text-4xl font-serif font-bold text-white mb-4 tracking-tight leading-tight">{TOUR_STEPS[tourStep].title}</h2>
+                <p className="text-white/80 text-lg sm:text-xl leading-relaxed font-sans">{TOUR_STEPS[tourStep].text}</p>
+              </div>
+              <div className="flex justify-between items-center mt-auto">
                 <button onClick={() => setIsTourActive(false)} className="text-white/40 hover:text-white transition-colors uppercase tracking-widest text-sm font-bold border-b-2 border-transparent hover:border-[#8d6e63] pb-1">Skip Tour</button>
-                <button onClick={handleNextTourStep} className="px-8 py-4 bg-[#3e2723] text-[#f4ece1] font-bold rounded-2xl hover:bg-[#5d4037] transition-all shadow-xl hover:shadow-2xl hover:scale-105 text-lg">
+                <button onClick={handleNextTourStep} className="px-8 py-4 bg-[#8d6e63] text-white font-bold rounded-2xl hover:bg-[#a1887f] transition-all shadow-xl hover:shadow-2xl hover:scale-105 text-lg">
                   {tourStep < TOUR_STEPS.length - 1 ? 'Next' : 'Finish'}
                 </button>
               </div>

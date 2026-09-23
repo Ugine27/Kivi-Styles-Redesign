@@ -294,7 +294,7 @@ function renderSlideContent(index: number, onComplete: () => void, onNext?: () =
             {/* Hold to Talk */}
             <div 
               onClick={() => goToSlide?.(1)}
-              className="w-full sm:w-[215px] min-h-[235px] p-5 bg-white/85 backdrop-blur-md border border-[#8d6e63]/20 rounded-3xl flex flex-col items-center justify-between cursor-pointer hover:border-[#8d6e63]/50 hover:shadow-xl hover:shadow-[#2b170e]/6 hover:-translate-y-1 transition-all duration-300 shadow-sm active:scale-95 group"
+              className="w-full sm:flex-1 sm:min-w-[200px] sm:max-w-[240px] h-[235px] p-5 bg-white/85 backdrop-blur-md border border-[#8d6e63]/20 rounded-3xl flex flex-col items-center justify-between cursor-pointer hover:border-[#8d6e63]/50 hover:shadow-xl hover:shadow-[#2b170e]/6 hover:-translate-y-1 transition-all duration-300 shadow-sm active:scale-95 group"
               title="Click to view Hold option to Speak slide"
             >
               <span className="inline-flex items-center gap-1.5 text-xs font-medium text-[#5d4037] bg-[#f4ebe1]/80 px-3.5 py-1 rounded-full border border-[#8d6e63]/15">
@@ -303,7 +303,7 @@ function renderSlideContent(index: number, onComplete: () => void, onNext?: () =
               </span>
 
               <div className="my-auto py-3">
-                <span className="inline-flex items-center px-5 py-2 rounded-xl bg-white border border-[#8d6e63]/25 shadow-[0_3px_0_rgba(141,110,99,0.18)] font-mono font-semibold text-xl text-[#2b170e]">
+                <span className="inline-flex items-center px-5 py-2 rounded-xl bg-white border border-[#8d6e63]/25 shadow-[0_3px_0_rgba(141,110,99,0.18)] font-mono font-semibold text-sm sm:text-base text-[#2b170e] tracking-tight">
                   option
                 </span>
               </div>
@@ -315,7 +315,7 @@ function renderSlideContent(index: number, onComplete: () => void, onNext?: () =
 
             {/* Quick Edit */}
             <div 
-              className="w-full sm:w-[215px] min-h-[235px] p-5 bg-white/85 backdrop-blur-md border border-[#8d6e63]/20 rounded-3xl flex flex-col items-center justify-between cursor-pointer hover:border-[#8d6e63]/50 hover:shadow-xl hover:shadow-[#2b170e]/6 hover:-translate-y-1 transition-all duration-300 shadow-sm active:scale-95 group"
+              className="w-full sm:flex-1 sm:min-w-[200px] sm:max-w-[240px] h-[235px] p-5 bg-white/85 backdrop-blur-md border border-[#8d6e63]/20 rounded-3xl flex flex-col items-center justify-between cursor-pointer hover:border-[#8d6e63]/50 hover:shadow-xl hover:shadow-[#2b170e]/6 hover:-translate-y-1 transition-all duration-300 shadow-sm active:scale-95 group"
               title="Press option + control to edit or re-dictate the last sentence"
             >
               <span className="inline-flex items-center gap-1.5 text-xs font-medium text-[#5d4037] bg-[#f4ebe1]/80 px-3.5 py-1 rounded-full border border-[#8d6e63]/15">
@@ -324,7 +324,7 @@ function renderSlideContent(index: number, onComplete: () => void, onNext?: () =
               </span>
 
               <div className="my-auto py-3">
-                <span className="inline-flex items-center px-3.5 py-2 rounded-xl bg-white border border-[#8d6e63]/25 shadow-[0_3px_0_rgba(141,110,99,0.18)] font-mono font-semibold text-sm sm:text-base text-[#2b170e] whitespace-nowrap">
+                <span className="inline-flex items-center px-3.5 py-2 rounded-xl bg-white border border-[#8d6e63]/25 shadow-[0_3px_0_rgba(141,110,99,0.18)] font-mono font-semibold text-xs sm:text-sm text-[#2b170e] whitespace-nowrap tracking-tighter">
                   option + control
                 </span>
               </div>
@@ -337,7 +337,7 @@ function renderSlideContent(index: number, onComplete: () => void, onNext?: () =
             {/* Persona Dial */}
             <div 
               onClick={() => goToSlide?.(2)}
-              className="w-full sm:w-[215px] min-h-[235px] p-5 bg-white/85 backdrop-blur-md border border-[#8d6e63]/20 rounded-3xl flex flex-col items-center justify-between cursor-pointer hover:border-[#8d6e63]/50 hover:shadow-xl hover:shadow-[#2b170e]/6 hover:-translate-y-1 transition-all duration-300 shadow-sm active:scale-95 group"
+              className="w-full sm:flex-1 sm:min-w-[200px] sm:max-w-[240px] h-[235px] p-5 bg-white/85 backdrop-blur-md border border-[#8d6e63]/20 rounded-3xl flex flex-col items-center justify-between cursor-pointer hover:border-[#8d6e63]/50 hover:shadow-xl hover:shadow-[#2b170e]/6 hover:-translate-y-1 transition-all duration-300 shadow-sm active:scale-95 group"
               title="Click to view Persona Dial slide"
             >
               <span className="inline-flex items-center gap-1.5 text-xs font-medium text-[#5d4037] bg-[#f4ebe1]/80 px-3.5 py-1 rounded-full border border-[#8d6e63]/15">
@@ -346,7 +346,7 @@ function renderSlideContent(index: number, onComplete: () => void, onNext?: () =
               </span>
 
               <div className="my-auto py-3">
-                <span className="inline-flex items-center px-3 py-2 rounded-xl bg-white border border-[#8d6e63]/25 shadow-[0_3px_0_rgba(141,110,99,0.18)] font-mono font-semibold text-sm sm:text-base text-[#2b170e] whitespace-nowrap">
+                <span className="inline-flex items-center px-3 py-2 rounded-xl bg-white border border-[#8d6e63]/25 shadow-[0_3px_0_rgba(141,110,99,0.18)] font-mono font-semibold text-xs sm:text-sm text-[#2b170e] whitespace-nowrap tracking-tighter">
                   option + scroll
                 </span>
               </div>
@@ -359,7 +359,7 @@ function renderSlideContent(index: number, onComplete: () => void, onNext?: () =
             {/* Language Dial */}
             <div 
               onClick={() => goToSlide?.(2)}
-              className="w-full sm:w-[215px] min-h-[235px] p-5 bg-white/85 backdrop-blur-md border border-[#8d6e63]/20 rounded-3xl flex flex-col items-center justify-between cursor-pointer hover:border-[#8d6e63]/50 hover:shadow-xl hover:shadow-[#2b170e]/6 hover:-translate-y-1 transition-all duration-300 shadow-sm active:scale-95 group"
+              className="w-full sm:flex-1 sm:min-w-[200px] sm:max-w-[240px] h-[235px] p-5 bg-white/85 backdrop-blur-md border border-[#8d6e63]/20 rounded-3xl flex flex-col items-center justify-between cursor-pointer hover:border-[#8d6e63]/50 hover:shadow-xl hover:shadow-[#2b170e]/6 hover:-translate-y-1 transition-all duration-300 shadow-sm active:scale-95 group"
               title="Click to view Language Dial slide"
             >
               <span className="inline-flex items-center gap-1.5 text-xs font-medium text-[#5d4037] bg-[#f4ebe1]/80 px-3.5 py-1 rounded-full border border-[#8d6e63]/15">
@@ -368,7 +368,7 @@ function renderSlideContent(index: number, onComplete: () => void, onNext?: () =
               </span>
 
               <div className="my-auto py-3">
-                <span className="inline-flex items-center px-3 py-2 rounded-xl bg-white border border-[#8d6e63]/25 shadow-[0_3px_0_rgba(141,110,99,0.18)] font-mono font-semibold text-xs sm:text-sm text-[#2b170e] whitespace-nowrap">
+                <span className="inline-flex items-center px-3 py-2 rounded-xl bg-white border border-[#8d6e63]/25 shadow-[0_3px_0_rgba(141,110,99,0.18)] font-mono font-semibold text-xs sm:text-sm text-[#2b170e] whitespace-nowrap tracking-tighter">
                   option + right-click
                 </span>
               </div>
