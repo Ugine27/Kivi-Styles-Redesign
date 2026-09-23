@@ -1063,13 +1063,15 @@ function RadialDialsDemoSlide() {
         <div className="absolute inset-0 bg-gradient-to-b from-[#8d5e3b]/10 to-transparent pointer-events-none" />
 
         {/* Center Indicator */}
-        <div className="relative z-20 flex flex-col items-center justify-center pointer-events-none transition-transform duration-500 group-hover:scale-105">
-          <div className="w-16 h-16 rounded-full flex items-center justify-center shadow-[0_0_40px_rgba(141,94,59,0.3)] border border-[#8d6e63]/40 mb-2 bg-[#2b170e] text-[#fdfaf6]">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 flex flex-col items-center justify-center pointer-events-none transition-transform duration-500 group-hover:scale-105">
+          <div className="w-16 h-16 rounded-full flex items-center justify-center shadow-[0_0_40px_rgba(141,94,59,0.3)] border border-[#8d6e63]/40 bg-[#2b170e] text-[#fdfaf6]">
             {activeDial === 0 ? <Compass className="w-7 h-7 text-[#e8d5b5]" /> : <Globe className="w-7 h-7 text-[#e8d5b5]" />}
           </div>
-          <span className="text-[11px] font-mono uppercase tracking-widest text-[#e8d5b5] font-semibold opacity-80">
-            {activeDial === 0 ? 'Personas' : 'Languages'}
-          </span>
+          <div className="absolute top-[calc(100%+8px)] flex justify-center w-full">
+            <span className="text-[11px] font-mono uppercase tracking-widest text-[#e8d5b5] font-semibold opacity-80 whitespace-nowrap">
+              {activeDial === 0 ? 'Personas' : 'Languages'}
+            </span>
+          </div>
         </div>
 
         <AnimatePresence mode="popLayout">
@@ -1102,13 +1104,15 @@ function RadialDialsDemoSlide() {
                     initial={false}
                     animate={{ x, y, scale, opacity: itemOpacity }}
                     transition={{ type: "spring", mass: 0.6, stiffness: 250, damping: 24 }}
-                    className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 px-4 py-2 rounded-full whitespace-nowrap text-sm font-medium shadow-xl backdrop-blur-md border transition-colors ${
+                    className="absolute top-1/2 left-1/2"
+                  >
+                    <div className={`-translate-x-1/2 -translate-y-1/2 px-4 py-2 rounded-full whitespace-nowrap text-sm font-medium shadow-xl backdrop-blur-md border transition-colors ${
                       isActive
                         ? 'bg-white/10 text-white border-white/20'
                         : 'bg-transparent text-white/50 border-transparent'
-                    }`}
-                  >
-                    {modeName}
+                    }`}>
+                      {modeName}
+                    </div>
                   </motion.div>
                 );
               })}
@@ -1144,13 +1148,15 @@ function RadialDialsDemoSlide() {
                     initial={false}
                     animate={{ x, y, scale, opacity: itemOpacity }}
                     transition={{ type: "spring", mass: 0.6, stiffness: 250, damping: 24 }}
-                    className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 px-4 py-2 rounded-full whitespace-nowrap text-sm font-medium shadow-xl backdrop-blur-md border transition-colors ${
+                    className="absolute top-1/2 left-1/2"
+                  >
+                    <div className={`-translate-x-1/2 -translate-y-1/2 px-4 py-2 rounded-full whitespace-nowrap text-sm font-medium shadow-xl backdrop-blur-md border transition-colors ${
                       isActive
                         ? 'bg-white/10 text-white border-white/20'
                         : 'bg-transparent text-white/50 border-transparent'
-                    }`}
-                  >
-                    {langName}
+                    }`}>
+                      {langName}
+                    </div>
                   </motion.div>
                 );
               })}
