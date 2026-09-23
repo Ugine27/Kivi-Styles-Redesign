@@ -175,7 +175,27 @@ function getTimeSavedRelatableMessage(minutes: number, isCasual: boolean): strin
     : "That's almost half a workday back.";
 }
 
-export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: string, setMode?: (m: any) => void }) {
+interface WhispurrAppProps {
+  mode?: string;
+  setMode?: (m: any) => void;
+  meetsAutoTranscribe?: boolean;
+  setMeetsAutoTranscribe?: (v: boolean) => void;
+  meetsInvisibleOverlay?: boolean;
+  setMeetsInvisibleOverlay?: (v: boolean) => void;
+  meetsMeetingSummary?: boolean;
+  setMeetsMeetingSummary?: (v: boolean) => void;
+}
+
+export default function WhispurrApp({ 
+  mode, 
+  setMode = () => {},
+  meetsAutoTranscribe = true,
+  setMeetsAutoTranscribe = () => {},
+  meetsInvisibleOverlay = true,
+  setMeetsInvisibleOverlay = () => {},
+  meetsMeetingSummary = false,
+  setMeetsMeetingSummary = () => {}
+}: WhispurrAppProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState(() => {
@@ -1705,44 +1725,54 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
 
             {activeTab === 'Meets' && (
               <motion.div key="meets" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col p-8 overflow-hidden ${glassPanel}`}>
-                <div className="px-2 mb-8 shrink-0">
-                  <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
-                    <Users className="text-orange-400 w-8 h-8" />
+                <div className="px-4 mb-6 shrink-0">
+                  <h1 className="text-2xl font-bold text-[#f4ece1] mb-1.5 flex items-center gap-2.5">
+                    <Users className="text-[#8d6e63] w-6 h-6" />
                     Meeting Assistant
                   </h1>
-                  <p className="text-white/40 text-sm">Configure automatic transcriptions and overlays for your virtual meetings.</p>
+                  <p className="text-[#d7ccc8]/70 text-sm">Automate transcriptions and overlays for your virtual meetings.</p>
                 </div>
-                <div className="flex-1 overflow-y-auto px-2">
-                  <div className="space-y-6 max-w-2xl">
-                    <div className="bg-black/20 rounded-2xl p-6 border border-orange-500/20">
-                      <div className="flex items-center justify-between mb-4">
-                        <div>
-                          <h3 className="text-white font-medium mb-1">Auto-Transcribe Meetings</h3>
-                          <p className="text-white/40 text-sm">Automatically detect and transcribe when apps like Zoom or Teams are active.</p>
-                        </div>
-                        <div className="w-12 h-6 bg-orange-500 rounded-full relative cursor-pointer shadow-[0_0_10px_rgba(249,115,22,0.3)]">
-                          <div className="absolute right-1 top-1 w-4 h-4 bg-white rounded-full"></div>
-                        </div>
+                <div className="flex-1 overflow-y-auto px-4 pb-12">
+                  <div className="max-w-xl bg-white/[0.03] backdrop-blur-md rounded-2xl border border-white/10 p-2 shadow-sm">
+                    {/* Auto-Transcribe */}
+                    <div className="flex items-center justify-between p-3.5 rounded-xl hover:bg-white/[0.02] transition-colors group">
+                      <div className="pr-4">
+                        <h3 className="text-[#f4ece1] font-medium text-sm mb-0.5 group-hover:text-white transition-colors">Auto-Transcribe Meetings</h3>
+                        <p className="text-[#d7ccc8]/50 text-xs leading-relaxed">Automatically detect and transcribe when Zoom or Teams is active.</p>
                       </div>
-                      
-                      <div className="flex items-center justify-between pt-4 border-t border-orange-500/20">
-                        <div>
-                          <h3 className="text-white font-medium mb-1">Invisible Overlay</h3>
-                          <p className="text-white/40 text-sm">Show a floating, invisible overlay over meetings so you can easily see the dictation.</p>
-                        </div>
-                        <div className="w-12 h-6 bg-orange-500 rounded-full relative cursor-pointer shadow-[0_0_10px_rgba(249,115,22,0.3)]">
-                          <div className="absolute right-1 top-1 w-4 h-4 bg-white rounded-full"></div>
-                        </div>
+                      <div 
+                        onClick={() => setMeetsAutoTranscribe(!meetsAutoTranscribe)}
+                        className={`w-10 h-5 rounded-full relative cursor-pointer transition-all shrink-0 ${meetsAutoTranscribe ? 'bg-[#8d6e63] shadow-[0_0_10px_rgba(141,110,99,0.3)]' : 'bg-white/10 hover:bg-white/15'}`}
+                      >
+                        <div className={`absolute top-0.5 w-4 h-4 rounded-full transition-all ${meetsAutoTranscribe ? 'right-0.5 bg-[#f4ece1]' : 'left-0.5 bg-white/40'}`}></div>
                       </div>
+                    </div>
+                    
+                    {/* Invisible Overlay */}
+                    <div className="flex items-center justify-between p-3.5 rounded-xl hover:bg-white/[0.02] transition-colors border-t border-white/5 group mt-1">
+                      <div className="pr-4">
+                        <h3 className="text-[#f4ece1] font-medium text-sm mb-0.5 group-hover:text-white transition-colors">Invisible Overlay</h3>
+                        <p className="text-[#d7ccc8]/50 text-xs leading-relaxed">Show a floating, invisible overlay over meetings so you can easily see the dictation.</p>
+                      </div>
+                      <div 
+                        onClick={() => setMeetsInvisibleOverlay(!meetsInvisibleOverlay)}
+                        className={`w-10 h-5 rounded-full relative cursor-pointer transition-all shrink-0 ${meetsInvisibleOverlay ? 'bg-[#8d6e63] shadow-[0_0_10px_rgba(141,110,99,0.3)]' : 'bg-white/10 hover:bg-white/15'}`}
+                      >
+                        <div className={`absolute top-0.5 w-4 h-4 rounded-full transition-all ${meetsInvisibleOverlay ? 'right-0.5 bg-[#f4ece1]' : 'left-0.5 bg-white/40'}`}></div>
+                      </div>
+                    </div>
 
-                      <div className="flex items-center justify-between pt-4 border-t border-orange-500/20 mt-4">
-                        <div>
-                          <h3 className="text-white font-medium mb-1">Meeting Summary</h3>
-                          <p className="text-white/40 text-sm">Generate a concise AI summary when the meeting concludes.</p>
-                        </div>
-                        <div className="w-12 h-6 bg-[#333] rounded-full relative cursor-pointer">
-                          <div className="absolute left-1 top-1 w-4 h-4 bg-white/50 rounded-full"></div>
-                        </div>
+                    {/* Meeting Summary */}
+                    <div className="flex items-center justify-between p-3.5 rounded-xl hover:bg-white/[0.02] transition-colors border-t border-white/5 group mt-1">
+                      <div className="pr-4">
+                        <h3 className="text-[#f4ece1] font-medium text-sm mb-0.5 group-hover:text-white transition-colors">Meeting Summary</h3>
+                        <p className="text-[#d7ccc8]/50 text-xs leading-relaxed">Generate a concise AI summary and action items when the meeting concludes.</p>
+                      </div>
+                      <div 
+                        onClick={() => setMeetsMeetingSummary(!meetsMeetingSummary)}
+                        className={`w-10 h-5 rounded-full relative cursor-pointer transition-all shrink-0 ${meetsMeetingSummary ? 'bg-[#8d6e63] shadow-[0_0_10px_rgba(141,110,99,0.3)]' : 'bg-white/10 hover:bg-white/15'}`}
+                      >
+                        <div className={`absolute top-0.5 w-4 h-4 rounded-full transition-all ${meetsMeetingSummary ? 'right-0.5 bg-[#f4ece1]' : 'left-0.5 bg-white/40'}`}></div>
                       </div>
                     </div>
                   </div>
