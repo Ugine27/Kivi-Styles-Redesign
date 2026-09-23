@@ -799,14 +799,15 @@ const MockOS = memo(({
 
 
       {/* FULL SCREEN APPS */}
-      <AnimatePresence>
+      <AnimatePresence mode="wait">
         {openApp && (
           <motion.div 
+            key={openApp}
             initial={{ scale: 0.95, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.95, opacity: 0 }}
             transition={{ type: "spring", stiffness: 300, damping: 25 }}
-            className="absolute inset-0 z-40 bg-[#1e1e1e] flex flex-col"
+            className="absolute inset-0 z-40 bg-[#1e1e1e] flex flex-col transform-gpu will-change-transform will-change-opacity"
             style={{ height: openApp === 'whispurr' ? '100vh' : 'calc(100vh - 48px)' }}
           >
             {/* Standard Window Title Bar */}

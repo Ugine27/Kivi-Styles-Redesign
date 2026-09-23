@@ -183,6 +183,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
       return 'Home';
     }
   });
+  const [historyView, setHistoryView] = useState<'days' | 'months'>('days');
   const [homeVideo, setHomeVideo] = useState(() => VIDEOS[Math.floor(Math.random() * VIDEOS.length)]);
   const [videoKey, setVideoKey] = useState(0);
 
@@ -829,12 +830,12 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
   
   // Animation variants
   const tabVariants = {
-    initial: { opacity: 0, y: 10, scale: 0.99, filter: 'blur(4px)' },
+    initial: { opacity: 0, y: 10, scale: 0.99, zIndex: 0 },
     animate: { 
       opacity: 1, 
       y: 0, 
       scale: 1, 
-      filter: 'blur(0px)',
+      zIndex: 10,
       transition: { 
         type: "spring", 
         stiffness: 400, 
@@ -845,7 +846,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
     exit: { 
       opacity: 0, 
       scale: 0.99, 
-      filter: 'blur(4px)',
+      zIndex: 0,
       transition: { 
         duration: 0.15, 
         ease: "easeOut" 
@@ -854,7 +855,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
   };
 
   // Glassmorphism classes
-  const glassPanel = "bg-[#0f0f0f] shadow-lg border border-white/[0.08] rounded-3xl";
+  const glassPanel = "bg-transparent shadow-lg border border-white/[0.08] rounded-3xl";
   const glassInput = "bg-black/20 border border-white/10 rounded-2xl p-4 text-white outline-none focus:border-orange-500/50 focus:bg-black/40 transition-all text-sm";
   const glassButton = "bg-orange-500/90 hover:bg-orange-400 text-black font-bold px-8 py-3 rounded-2xl transition-all shadow-[0_0_15px_rgba(249,115,22,0.2)] hover:shadow-[0_0_25px_rgba(249,115,22,0.4)] text-sm";
 
@@ -1099,7 +1100,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
 
 
         <div className="flex-1 p-4 flex gap-4 overflow-hidden relative">
-          <AnimatePresence mode="wait">
+          <AnimatePresence>
               {activeTab === 'Home' && (
               <motion.div key="home" variants={tabVariants} initial="initial" animate="animate" exit="exit" className="absolute inset-4 flex gap-4">
                 <div className="flex-1 flex flex-col gap-4 relative z-10">
@@ -1435,13 +1436,29 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
             )}
 
             {activeTab === 'History' && (
-              <motion.div key="history" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col gap-6 p-8 overflow-y-auto ${glassPanel}`}>
-                <div className="px-2 shrink-0">
-                  <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
-                    <Clock className="text-[#8d6e63] w-8 h-8" />
-                    History
-                  </h1>
-                  <p className="text-white/80 font-medium text-sm">Review past dictations and usage.</p>
+              <motion.div key="history" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col gap-6 p-8 overflow-y-scroll ${glassPanel}`}>
+                <div className="px-2 shrink-0 flex items-center justify-between">
+                  <div>
+                    <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
+                      <Clock className="text-[#8d6e63] w-8 h-8" />
+                      History
+                    </h1>
+                    <p className="text-white/80 font-medium text-sm">Review past dictations and usage.</p>
+                  </div>
+                  <div className="flex bg-[#5d4037]/20 border border-[#5d4037]/40 rounded-xl p-1 shrink-0">
+                    <button 
+                      onClick={() => setHistoryView('days')}
+                      className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${historyView === 'days' ? 'bg-[#8d6e63] text-white shadow-sm' : 'text-white/50 hover:text-white/80'}`}
+                    >
+                      Days
+                    </button>
+                    <button 
+                      onClick={() => setHistoryView('months')}
+                      className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${historyView === 'months' ? 'bg-[#8d6e63] text-white shadow-sm' : 'text-white/50 hover:text-white/80'}`}
+                    >
+                      Months
+                    </button>
+                  </div>
                 </div>
                 
                 {/* Stats Graphs */}
@@ -1454,9 +1471,9 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                     </div>
                     <div className="relative z-10 flex items-center justify-between mb-8">
                       <div>
-                        <span className="text-white/60 text-xs font-bold uppercase tracking-widest mb-1 block">Words Dictated</span>
+                        <span className="text-[#f4ece1]/80 text-xs font-bold uppercase tracking-widest mb-1 block">Words Dictated</span>
                         <div className="text-3xl font-bold text-[#f4ece1] flex items-baseline gap-2">
-                          13,500 <span className="text-sm font-medium text-white/50">this week</span>
+                          {historyView === 'days' ? '15,600' : '124,500'} <span className="text-sm font-medium text-[#f4ece1]/60">this {historyView === 'days' ? 'week' : 'month'}</span>
                         </div>
                       </div>
                       <div className="px-3 py-1 bg-[#5d4037]/30 text-[#ffd6b3] text-xs font-bold rounded-lg border border-[#5d4037]/50 flex items-center gap-1">
@@ -1465,26 +1482,42 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                     </div>
                     
                     <div className="relative z-10 flex-1 flex items-stretch justify-between gap-2 h-32 mt-2">
-                      {[
+                      {(historyView === 'days' ? [
+                        { day: 'Thu', val: 0.7, label: '2.1k' },
+                        { day: 'Fri', val: 0.6, label: '1.8k' },
+                        { day: 'Sat', val: 0.2, label: '500' },
+                        { day: 'Sun', val: 0.9, label: '2.9k' },
                         { day: 'Mon', val: 0.4, label: '1.2k' },
                         { day: 'Tue', val: 0.8, label: '2.4k' },
                         { day: 'Wed', val: 0.5, label: '1.5k' },
                         { day: 'Thu', val: 1.0, label: '3.2k', active: true },
-                        { day: 'Fri', val: 0.6, label: '1.8k' },
-                        { day: 'Sat', val: 0.2, label: '500' },
-                        { day: 'Sun', val: 0.9, label: '2.9k' }
-                      ].map((d, i) => (
+                        { day: 'Fri', val: 0, label: '0' },
+                        { day: 'Sat', val: 0, label: '0' }
+                      ] : [
+                        { day: 'Jan', val: 0.3, label: '12k' },
+                        { day: 'Feb', val: 0.5, label: '18k' },
+                        { day: 'Mar', val: 0.4, label: '14k' },
+                        { day: 'Apr', val: 0.8, label: '28k' },
+                        { day: 'May', val: 0.6, label: '21k' },
+                        { day: 'Jun', val: 1.0, label: '35k' },
+                        { day: 'Jul', val: 0.8, label: '26k' },
+                        { day: 'Aug', val: 0.4, label: '15k' },
+                        { day: 'Sep', val: 0.9, label: '31k', active: true },
+                        { day: 'Oct', val: 0, label: '0' },
+                        { day: 'Nov', val: 0, label: '0' },
+                        { day: 'Dec', val: 0, label: '0' }
+                      ]).map((d, i) => (
                         <div key={i} className="flex flex-col items-center gap-2 flex-1 group/bar h-full">
-                          <div className="w-full relative flex-1 flex justify-center">
+                          <div className="w-full relative h-24 flex justify-center items-end mt-auto">
                             <div className="absolute -top-8 bg-[#190f0b] border border-[#5d4037]/50 text-[#f4ece1] text-[10px] font-bold py-1 px-2 rounded opacity-0 group-hover/bar:opacity-100 transition-opacity z-20 pointer-events-none whitespace-nowrap shadow-lg">
                               {d.label}
                             </div>
                             <div 
-                              className={`absolute bottom-0 w-full max-w-[32px] rounded-t-md transition-all duration-500 group-hover/bar:brightness-110 ${d.active ? 'bg-[#8d6e63] shadow-[0_0_15px_rgba(141,110,99,0.4)]' : 'bg-[#5d4037]/50 hover:bg-[#5d4037]/70'}`}
+                              className={`w-full max-w-[32px] rounded-t-md transition-all duration-500 group-hover/bar:brightness-110 ${d.active ? 'bg-[#8d6e63] shadow-[0_0_15px_rgba(141,110,99,0.4)]' : 'bg-[#5d4037]/50 hover:bg-[#5d4037]/70'}`}
                               style={{ height: `${d.val * 100}%` }}
                             />
                           </div>
-                          <span className={`text-[10px] font-bold uppercase tracking-wider ${d.active ? 'text-[#8d6e63]' : 'text-white/40'}`}>{d.day}</span>
+                          <span className={`text-[10px] font-bold uppercase tracking-wider ${d.active ? 'text-[#f4ece1]' : 'text-[#f4ece1]/50'}`}>{d.day}</span>
                         </div>
                       ))}
                     </div>
@@ -1497,9 +1530,9 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                     </div>
                     <div className="relative z-10 flex items-center justify-between mb-8">
                       <div>
-                        <span className="text-white/60 text-xs font-bold uppercase tracking-widest mb-1 block">Time Saved</span>
+                        <span className="text-[#f4ece1]/80 text-xs font-bold uppercase tracking-widest mb-1 block">Time Saved</span>
                         <div className="text-3xl font-bold text-[#f4ece1] flex items-baseline gap-2">
-                          3.5 <span className="text-sm font-medium text-white/50">hours this week</span>
+                          {historyView === 'days' ? '3.3' : '82'} <span className="text-sm font-medium text-[#f4ece1]/60">hours this {historyView === 'days' ? 'week' : 'month'}</span>
                         </div>
                       </div>
                       <div className="px-3 py-1 bg-[#5d4037]/30 text-[#ffd6b3] text-xs font-bold rounded-lg border border-[#5d4037]/50 flex items-center gap-1">
@@ -1508,26 +1541,42 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                     </div>
                     
                     <div className="relative z-10 flex-1 flex items-stretch justify-between gap-2 h-32 mt-2">
-                      {[
+                      {(historyView === 'days' ? [
+                        { day: 'Thu', val: 0.6, label: '25m' },
+                        { day: 'Fri', val: 0.5, label: '20m' },
+                        { day: 'Sat', val: 0.1, label: '5m' },
+                        { day: 'Sun', val: 0.9, label: '40m' },
                         { day: 'Mon', val: 0.3, label: '15m' },
                         { day: 'Tue', val: 0.7, label: '30m' },
                         { day: 'Wed', val: 0.4, label: '20m' },
                         { day: 'Thu', val: 1.0, label: '45m', active: true },
-                        { day: 'Fri', val: 0.5, label: '25m' },
-                        { day: 'Sat', val: 0.1, label: '5m' },
-                        { day: 'Sun', val: 0.9, label: '40m' }
-                      ].map((d, i) => (
+                        { day: 'Fri', val: 0, label: '0' },
+                        { day: 'Sat', val: 0, label: '0' }
+                      ] : [
+                        { day: 'Jan', val: 0.2, label: '10h' },
+                        { day: 'Feb', val: 0.4, label: '15h' },
+                        { day: 'Mar', val: 0.3, label: '12h' },
+                        { day: 'Apr', val: 0.7, label: '20h' },
+                        { day: 'May', val: 0.5, label: '16h' },
+                        { day: 'Jun', val: 1.0, label: '25h' },
+                        { day: 'Jul', val: 0.8, label: '22h' },
+                        { day: 'Aug', val: 0.3, label: '11h' },
+                        { day: 'Sep', val: 0.9, label: '24h', active: true },
+                        { day: 'Oct', val: 0, label: '0' },
+                        { day: 'Nov', val: 0, label: '0' },
+                        { day: 'Dec', val: 0, label: '0' }
+                      ]).map((d, i) => (
                         <div key={i} className="flex flex-col items-center gap-2 flex-1 group/bar h-full">
-                          <div className="w-full relative flex-1 flex justify-center">
+                          <div className="w-full relative h-24 flex justify-center items-end mt-auto">
                             <div className="absolute -top-8 bg-[#190f0b] border border-[#5d4037]/50 text-[#f4ece1] text-[10px] font-bold py-1 px-2 rounded opacity-0 group-hover/bar:opacity-100 transition-opacity z-20 pointer-events-none whitespace-nowrap shadow-lg">
                               {d.label}
                             </div>
                             <div 
-                              className={`absolute bottom-0 w-full max-w-[32px] rounded-t-md transition-all duration-500 group-hover/bar:brightness-110 ${d.active ? 'bg-[#8d6e63] shadow-[0_0_15px_rgba(141,110,99,0.4)]' : 'bg-[#5d4037]/50 hover:bg-[#5d4037]/70'}`}
+                              className={`w-full max-w-[32px] rounded-t-md transition-all duration-500 group-hover/bar:brightness-110 ${d.active ? 'bg-[#8d6e63] shadow-[0_0_15px_rgba(141,110,99,0.4)]' : 'bg-[#5d4037]/50 hover:bg-[#5d4037]/70'}`}
                               style={{ height: `${d.val * 100}%` }}
                             />
                           </div>
-                          <span className={`text-[10px] font-bold uppercase tracking-wider ${d.active ? 'text-[#8d6e63]' : 'text-white/40'}`}>{d.day}</span>
+                          <span className={`text-[10px] font-bold uppercase tracking-wider ${d.active ? 'text-[#f4ece1]' : 'text-[#f4ece1]/50'}`}>{d.day}</span>
                         </div>
                       ))}
                     </div>
@@ -1557,7 +1606,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
             )}
 
             {activeTab === 'Dictionary' && (
-              <motion.div key="dict" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col gap-6 p-8 overflow-y-auto ${glassPanel}`}>
+              <motion.div key="dict" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col gap-6 p-8 overflow-y-scroll ${glassPanel}`}>
                 <div className="px-2">
                   <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
                     <BookOpen className="text-orange-400 w-8 h-8" />
@@ -1605,7 +1654,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
             )}
 
             {activeTab === 'ShortHand' && (
-              <motion.div key="shortcuts" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col gap-6 p-8 overflow-y-auto ${glassPanel}`}>
+              <motion.div key="shortcuts" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col gap-6 p-8 overflow-y-scroll ${glassPanel}`}>
                 <div className="px-2">
                   <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
                     <Zap className="text-orange-400 w-8 h-8" />
@@ -1734,7 +1783,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
             )}
           
                         {activeTab === 'Shortcuts' && (
-              <motion.div id="shortcuts-tab-scroll" key="shortcuts" variants={tabVariants} initial="initial" animate="animate" exit="exit" className="absolute inset-4 overflow-y-auto pr-2 pb-16 custom-scrollbar">
+              <motion.div id="shortcuts-tab-scroll" key="shortcuts" variants={tabVariants} initial="initial" animate="animate" exit="exit" className="absolute inset-4 overflow-y-scroll pr-2 pb-16 custom-scrollbar">
                 <div className="flex flex-col gap-6 max-w-4xl mx-auto">
                   <div className="px-2 mt-4">
                     <h1 className="text-3xl font-bold tracking-tight mb-2 text-white">Keyboard Shortcuts</h1>
@@ -2009,7 +2058,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
             )}
 
             {activeTab === 'Settings' && (
-              <motion.div key="settings" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col gap-6 p-8 overflow-y-auto ${glassPanel}`}>
+              <motion.div key="settings" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col gap-6 p-8 overflow-y-scroll ${glassPanel}`}>
                 <div className="px-2 shrink-0">
                   <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
                     <Settings className="text-[#8d6e63] w-8 h-8" />
@@ -2047,7 +2096,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
             )}
 
             {activeTab === 'Plans & Billing' && (
-              <motion.div key="billing" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col gap-6 p-8 overflow-y-auto ${glassPanel}`}>
+              <motion.div key="billing" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col gap-6 p-8 overflow-y-scroll ${glassPanel}`}>
                 <div className="px-2 shrink-0">
                   <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
                     <CreditCard className="text-[#8d6e63] w-8 h-8" />
@@ -2100,7 +2149,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
             )}
 
             {activeTab === 'User Policy' && (
-              <motion.div key="policy" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col gap-6 p-8 overflow-y-auto ${glassPanel}`}>
+              <motion.div key="policy" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col gap-6 p-8 overflow-y-scroll ${glassPanel}`}>
                 <div className="px-2 shrink-0 border-b border-white/5 pb-6">
                   <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
                     <Shield className="text-[#8d6e63] w-8 h-8" />
