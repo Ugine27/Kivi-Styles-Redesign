@@ -11,7 +11,7 @@ interface TutorialProps {
 
 export default function Tutorial({ onComplete }: TutorialProps) {
   const [slide, setSlide] = useState(0);
-  const totalSlides = 12;
+  const totalSlides = 13;
 
   const nextSlide = useCallback(() => {
     if (slide < totalSlides - 1) {
@@ -205,6 +205,49 @@ function MeetingAssistantSlide() {
 
           <p className="text-[#5d4037]/70 text-sm font-medium leading-relaxed px-2">
             Generate concise AI summaries and action items when you end the call.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  );
+}
+
+
+function MoodsWhisperSlide() {
+  return (
+    <div className="flex flex-col items-center justify-center text-center max-w-5xl px-4 select-none">
+      <h1 className="text-4xl sm:text-5xl md:text-6xl font-serif font-normal tracking-tight mb-2 text-[#2b170e]">
+        Speak Your <span className="font-semibold italic text-[#8d5e3b]">Way.</span>
+      </h1>
+
+      <p className="text-base sm:text-lg text-[#5d4037]/80 font-serif italic mb-7 max-w-lg leading-relaxed mx-auto">
+        Adapt WhisPURR to your environment and emotions instantly.
+      </p>
+
+      <div className="flex flex-wrap gap-4 sm:gap-5 justify-center w-full items-stretch">
+        
+        {/* Whisper Mode */}
+        <div className="w-full sm:flex-1 sm:min-w-[200px] sm:max-w-[300px] h-[210px] p-6 bg-white/85 backdrop-blur-md border border-[#8d6e63]/20 rounded-3xl flex flex-col items-center justify-start gap-4 cursor-default hover:border-[#8d6e63]/50 hover:shadow-xl hover:shadow-[#2b170e]/6 hover:-translate-y-1 transition-all duration-300 shadow-sm group">
+          <span className="inline-flex items-center gap-1.5 text-xs font-medium text-[#5d4037] bg-[#f4ebe1]/80 px-3.5 py-1 rounded-full border border-[#8d6e63]/15">
+            <Mic className="w-3.5 h-3.5 text-[#8d5e3b]" />
+            <span>Whisper Mode</span>
+          </span>
+
+          <p className="text-[#5d4037]/80 text-sm font-medium leading-relaxed px-2 mt-2">
+            Working late or in a quiet office? Toggle <strong className="text-[#2b170e]">Whisper Mode</strong> to heighten mic sensitivity and accurately transcribe very soft, quiet speech.
+          </p>
+        </div>
+
+        {/* Moods */}
+        <div className="w-full sm:flex-1 sm:min-w-[200px] sm:max-w-[300px] h-[210px] p-6 bg-white/85 backdrop-blur-md border border-[#8d6e63]/20 rounded-3xl flex flex-col items-center justify-start gap-4 cursor-default hover:border-[#8d6e63]/50 hover:shadow-xl hover:shadow-[#2b170e]/6 hover:-translate-y-1 transition-all duration-300 shadow-sm group">
+          <span className="inline-flex items-center gap-1.5 text-xs font-medium text-[#5d4037] bg-[#f4ebe1]/80 px-3.5 py-1 rounded-full border border-[#8d6e63]/15">
+            <Sparkles className="w-3.5 h-3.5 text-[#8d5e3b]" />
+            <span>Moods</span>
+          </span>
+
+          <p className="text-[#5d4037]/80 text-sm font-medium leading-relaxed px-2 mt-2">
+            Turn on <strong className="text-[#2b170e]">Moods</strong> to let WhisPURR analyze your vocal tone and automatically apply the appropriate emotional phrasing and punctuation to your text.
           </p>
         </div>
 
@@ -465,11 +508,11 @@ function renderSlideContent(index: number, onComplete: () => void, _onNext?: () 
           </div>
         </div>
       );
-    case 5:
+    case 10:
       return <MeetingAssistantSlide />;
-    case 6:
+    case 5:
       return <CompanionFormSlide />;
-    case 7:
+    case 6:
       return (
         <SurveySlide 
           title="Developer"
@@ -512,7 +555,7 @@ function renderSlideContent(index: number, onComplete: () => void, _onNext?: () 
           ]} 
         />
       );
-    case 8:
+    case 7:
       return (
         <SurveySlide 
           title="Chat"
@@ -551,7 +594,7 @@ function renderSlideContent(index: number, onComplete: () => void, _onNext?: () 
           ]} 
         />
       );
-    case 9:
+    case 8:
       return (
         <SurveySlide 
           title="Inbox"
@@ -590,7 +633,7 @@ function renderSlideContent(index: number, onComplete: () => void, _onNext?: () 
           ]} 
         />
       );
-    case 10:
+    case 9:
       return (
         <SurveySlide 
           title="Global"
@@ -630,7 +673,10 @@ function renderSlideContent(index: number, onComplete: () => void, _onNext?: () 
           ]} 
         />
       );
+
     case 11:
+      return <MoodsWhisperSlide />;
+    case 12:
       return (
         <div className="flex flex-col items-center justify-center text-center max-w-4xl px-4 select-none">
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-serif font-normal tracking-tight mb-2 text-[#2b170e]">
