@@ -1,12 +1,12 @@
 import { useState, useEffect, memo, useRef, useCallback } from 'react';
-import { Mail, Terminal, Sparkles, X, Minus, Wifi, Type, Mic, Pencil, Check } from 'lucide-react';
+import { Mail, Terminal, Sparkles, X, Minus, Wifi, Type, Mic, Pencil, Check, Video, Users, MessageSquare } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import WhispurrApp from './WhispurrApp';
 import KiviCatIcon from './KiviCatIcon';
 import FloatingDictationHUD from './FloatingDictationHUD';
 import { getSanitizedDialLanguages } from '../constants/languages';
 
-type AppType = 'email' | 'vscode' | 'ai' | 'whispurr' | null;
+type AppType = 'email' | 'vscode' | 'ai' | 'whispurr' | 'zoom' | null;
 
 
 
@@ -260,6 +260,7 @@ const MockOS = memo(({
   const [emailText, setEmailText] = useState('');
   const [vscodeText, setVscodeText] = useState('');
   const [aiText, setAiText] = useState('');
+  const [zoomText, setZoomText] = useState('');
 
   // Auto open Notes (from the Alt+Scroll workflow)
   useEffect(() => {
@@ -359,6 +360,7 @@ const MockOS = memo(({
   // Determine current active destination app or text field
   const getDestinationApp = () => {
     if (openApp === 'email') return 'Outlook';
+    if (openApp === 'zoom') return 'Zoom';
     if (openApp === 'vscode') return 'VS Code';
     if (openApp === 'ai') return 'Antigravity AI';
     if (openApp === 'whispurr') return 'WhisPURR';
@@ -418,6 +420,8 @@ const MockOS = memo(({
       // 2. ALWAYS update React state for controlled inputs so they stay perfectly in sync
       if (openApp === 'email') {
         setEmailText(prev => prev ? `${prev}\n${outputText}` : outputText);
+      } else if (openApp === 'zoom') {
+        setZoomText(prev => prev ? `${prev}\n${outputText}` : outputText);
       } else if (openApp === 'vscode') {
         setVscodeText(prev => prev ? `${prev} ${outputText}` : outputText);
       } else if (openApp === 'ai') {
@@ -493,6 +497,12 @@ const MockOS = memo(({
                  className={`w-8 h-8 rounded flex items-center justify-center cursor-pointer transition-colors ${openApp === 'email' ? 'bg-white/10 border-b-2 border-blue-400' : 'hover:bg-white/10'}`}
               >
                  <Mail className="w-5 h-5 text-blue-300" />
+              </div>
+              <div 
+                 onClick={() => openApp !== 'zoom' && setOpenApp('zoom')}
+                 className={`w-8 h-8 rounded flex items-center justify-center cursor-pointer transition-colors ${openApp === 'zoom' ? 'bg-white/10 border-b-2 border-blue-500' : 'hover:bg-white/10'}`}
+              >
+                 <Video className="w-5 h-5 text-blue-400" />
               </div>
               <div 
                  onClick={() => openApp !== 'vscode' && setOpenApp('vscode')}
@@ -815,6 +825,7 @@ const MockOS = memo(({
               {openApp !== 'whispurr' && (
                 <div className="flex items-center gap-2 text-white/70 text-xs font-medium">
                   {openApp === 'email' && <><Mail className="w-4 h-4"/> Outlook</>}
+                  {openApp === 'zoom' && <><Video className="w-4 h-4"/> Zoom Meeting</>}
                   {openApp === 'vscode' && <><Terminal className="w-4 h-4"/> VS Code</>}
                   {openApp === 'ai' && <><Sparkles className="w-4 h-4"/> Antigravity Canvas</>}
                 </div>
@@ -833,6 +844,67 @@ const MockOS = memo(({
 
             {/* App Content */}
             <div className="flex-1 overflow-hidden">
+              {openApp === 'zoom' && (
+                <div className="flex h-full bg-[#242424] text-white overflow-hidden">
+                  {/* Main Video Area */}
+                  <div className="flex-1 flex flex-col p-4">
+                    <div className="flex-1 grid grid-cols-2 gap-4 mb-4">
+                      {/* Speaker 1 */}
+                      <div className="bg-[#1a1a1a] rounded-xl border border-white/10 flex items-center justify-center relative overflow-hidden group">
+                        <div className="absolute top-4 left-4 bg-black/60 px-2 py-1 rounded text-xs font-medium backdrop-blur-sm">Sarah Jenkins</div>
+                        <div className="w-24 h-24 rounded-full bg-blue-600/30 flex items-center justify-center border-4 border-blue-500/20">
+                          <Users className="w-10 h-10 text-blue-400" />
+                        </div>
+                      </div>
+                      {/* Speaker 2 */}
+                      <div className="bg-[#1a1a1a] rounded-xl border border-white/10 flex items-center justify-center relative overflow-hidden">
+                        <div className="absolute top-4 left-4 bg-black/60 px-2 py-1 rounded text-xs font-medium backdrop-blur-sm">Alex Chen (You)</div>
+                        <div className="w-24 h-24 rounded-full bg-emerald-600/30 flex items-center justify-center border-4 border-emerald-500/20">
+                          <Video className="w-10 h-10 text-emerald-400" />
+                        </div>
+                      </div>
+                    </div>
+                    {/* Bottom Controls */}
+                    <div className="h-16 bg-[#1a1a1a] rounded-xl border border-white/10 flex items-center justify-center gap-4">
+                      <div className="w-10 h-10 rounded-full bg-red-500/20 text-red-500 flex items-center justify-center"><Mic className="w-5 h-5" /></div>
+                      <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center"><Video className="w-5 h-5" /></div>
+                      <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center"><Users className="w-5 h-5" /></div>
+                      <div className="px-4 py-2 rounded-full bg-red-600 text-white font-medium text-sm ml-4 cursor-pointer hover:bg-red-700">End</div>
+                    </div>
+                  </div>
+
+                  {/* Chat Sidebar */}
+                  <div className="w-80 bg-[#1a1a1a] border-l border-white/5 flex flex-col">
+                    <div className="h-12 border-b border-white/5 flex items-center px-4 gap-2">
+                      <MessageSquare className="w-4 h-4 text-white/70" />
+                      <span className="font-medium text-sm text-white/90">Meeting Chat</span>
+                    </div>
+                    <div className="flex-1 p-4 overflow-y-auto flex flex-col gap-4">
+                      <div className="flex flex-col gap-1">
+                        <span className="text-xs text-white/50">Sarah Jenkins</span>
+                        <div className="text-sm bg-white/5 rounded-lg p-2.5 w-fit">Can you send the Q3 report?</div>
+                      </div>
+                      {zoomText && (
+                        <div className="flex flex-col gap-1 items-end">
+                          <span className="text-xs text-white/50">You</span>
+                          <div className="text-sm bg-blue-600 rounded-lg p-2.5 text-left max-w-[85%] whitespace-pre-wrap break-words">{zoomText}</div>
+                        </div>
+                      )}
+                    </div>
+                    <div className="p-4 border-t border-white/5">
+                      <div className="bg-[#242424] rounded-lg p-2 border border-white/10 focus-within:border-blue-500 transition-colors">
+                        <textarea
+                          className="w-full bg-transparent resize-none outline-none text-sm text-white placeholder-white/30"
+                          placeholder="Type message here..."
+                          rows={3}
+                          value={zoomText}
+                          onChange={e => setZoomText(e.target.value)}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
               {openApp === 'email' && (
                 <div className="flex h-full bg-white text-black">
                   <div className="w-64 border-r border-gray-200 p-4 bg-gray-50 flex flex-col gap-2">
