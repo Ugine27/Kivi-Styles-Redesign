@@ -272,17 +272,7 @@ function renderSlideContent(index: number, onComplete: () => void, onNext?: () =
             Your thoughts, seamlessly translated into work. WhisPURR stays quietly in the background, automatically shaping your words to your active app.
           </p>
 
-          {/* Classy Action Button */}
-          {onNext && (
-            <button
-              type="button"
-              onClick={onNext}
-              className="px-8 py-3.5 rounded-full bg-[#2b170e] hover:bg-[#43261a] text-[#fdfaf6] text-sm font-medium tracking-wide shadow-md hover:shadow-xl transition-all duration-200 flex items-center gap-3 cursor-pointer group hover:-translate-y-0.5 active:translate-y-0"
-            >
-              <span>Explore WhisPURR</span>
-              <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform text-[#e8d5b5]" />
-            </button>
-          )}
+
         </div>
       );
     case 1:
