@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Terminal, Briefcase, MessageCircle, Mail, ChevronRight, ChevronLeft, Check, Compass, Globe, Sparkles, Plus, ChevronUp, ChevronDown, Copy, Mic, PenLine } from 'lucide-react';
-import { ALL_DIAL_LANGUAGES, LANG_SAMPLES, getSanitizedDialLanguages } from '../constants/languages';
+import { Terminal, Briefcase, MessageCircle, Mail, ChevronRight, ChevronLeft, Check, Compass, Globe, Sparkles, Copy, Mic, PenLine } from 'lucide-react';
+import { getSanitizedDialLanguages } from '../constants/languages';
 import KiviCatIcon from './KiviCatIcon';
 
 interface TutorialProps {
@@ -955,93 +955,14 @@ function HoldOptionToSpeakSlide() {
     </div>
   );
 }
-
 function RadialDialsDemoSlide() {
-  const [activeDial, setActiveDial] = useState<0 | 1>(0); // 0: Modes (right arc), 1: Languages (left arc)
+  const [activeDial, setActiveDial] = useState<0 | 1>(0); // 0: Modes, 1: Languages
   const [modeRotation, setModeRotation] = useState(0);
   const [langRotation, setLangRotation] = useState(0);
 
-  const [moodsEnabled, setMoodsEnabled] = useState<boolean>(() => {
-    try {
-      return localStorage.getItem('whispurr_moods') === 'true';
-    } catch (e) {
-      return false;
-    }
-  });
+  const [dialLanguages] = useState<string[]>(getSanitizedDialLanguages);
 
-  useEffect(() => {
-    const handleMoodsChanged = (e: Event) => {
-      const custom = e as CustomEvent;
-      if (custom.detail && typeof custom.detail.enabled === 'boolean') {
-        setMoodsEnabled(custom.detail.enabled);
-      } else {
-        try {
-          setMoodsEnabled(localStorage.getItem('whispurr_moods') === 'true');
-        } catch {}
-      }
-    };
-    window.addEventListener('whispurr_moods_changed', handleMoodsChanged);
-    return () => window.removeEventListener('whispurr_moods_changed', handleMoodsChanged);
-  }, []);
-
-  const toggleMoods = () => {
-    const next = !moodsEnabled;
-    setMoodsEnabled(next);
-    try {
-      localStorage.setItem('whispurr_moods', String(next));
-      window.dispatchEvent(new CustomEvent('whispurr_moods_changed', { detail: { enabled: next } }));
-    } catch (e) {}
-  };
-
-  const MODE_SAMPLES: Record<string, { plain: string; mood: string }> = {
-    Formal: {
-      plain: "Let's align our deliverables by next Tuesday.",
-      mood: "Let's align our deliverables by next Tuesday. 🤝📅"
-    },
-    Casual: {
-      plain: "Hey, sounds awesome, count me in!",
-      mood: "Hey, sounds awesome, count me in! 🙌✨"
-    },
-    Developer: {
-      plain: "Refactored the async hook and merged the PR.",
-      mood: "Refactored the async hook and merged the PR. 🚀💻"
-    },
-    Prompts: {
-      plain: "Act as a senior system architect and evaluate trade-offs.",
-      mood: "Act as a senior system architect and evaluate trade-offs. 🧠🤖"
-    },
-    'Other apps': {
-      plain: "Pasted formatted summary into Notion notes.",
-      mood: "Pasted formatted summary into Notion notes. 📂✨"
-    },
-    Academic: {
-      plain: "Empirical analysis demonstrates statistically significant variance.",
-      mood: "Empirical analysis demonstrates statistically significant variance. 📚🎓"
-    },
-    Concise: {
-      plain: "Done. Fixed bug in auth flow.",
-      mood: "Done. Fixed bug in auth flow. 👍"
-    },
-    Warm: {
-      plain: "Thank you so much for your thoughtful feedback, really appreciate it!",
-      mood: "Thank you so much for your thoughtful feedback, really appreciate it! 💖🌸"
-    }
-  };
-
-  const ALL_DIAL_MODES = [
-    'Formal',
-    'Casual',
-    'Developer',
-    'Prompts',
-    'Other apps',
-    'Academic',
-    'Concise',
-    'Warm'
-  ];
-
-  const [dialLanguages, setDialLanguages] = useState<string[]>(getSanitizedDialLanguages);
-
-  const [dialModes, setDialModes] = useState<string[]>(() => {
+  const [dialModes] = useState<string[]>(() => {
     try {
       const saved = localStorage.getItem('whispurr_dial_modes');
       return saved ? JSON.parse(saved) : ['Formal', 'Casual', 'Developer', 'Prompts'];
@@ -1049,40 +970,6 @@ function RadialDialsDemoSlide() {
       return ['Formal', 'Casual', 'Developer', 'Prompts'];
     }
   });
-
-  const toggleDialLanguage = (lang: string) => {
-    setDialLanguages(prev => {
-      let next: string[];
-      if (prev.includes(lang)) {
-        if (prev.length <= 1) return prev;
-        next = prev.filter(l => l !== lang);
-      } else {
-        next = [...prev, lang];
-      }
-      try {
-        localStorage.setItem('whispurr_dial_languages', JSON.stringify(next));
-        window.dispatchEvent(new CustomEvent('whispurr_dial_config_changed'));
-      } catch (e) {}
-      return next;
-    });
-  };
-
-  const toggleDialMode = (m: string) => {
-    setDialModes(prev => {
-      let next: string[];
-      if (prev.includes(m)) {
-        if (prev.length <= 1) return prev;
-        next = prev.filter(x => x !== m);
-      } else {
-        next = [...prev, m];
-      }
-      try {
-        localStorage.setItem('whispurr_dial_modes', JSON.stringify(next));
-        window.dispatchEvent(new CustomEvent('whispurr_dial_config_changed'));
-      } catch (e) {}
-      return next;
-    });
-  };
 
   const cycle = (direction: 1 | -1) => {
     if (activeDial === 0) {
@@ -1112,7 +999,6 @@ function RadialDialsDemoSlide() {
     setActiveDial(prev => (prev === 0 ? 1 : 0));
   };
 
-  // Global listener while on this demo slide so Option+scroll works anywhere on Mac
   useEffect(() => {
     const handleGlobalWheel = (e: WheelEvent) => {
       if (e.altKey) {
@@ -1158,14 +1044,13 @@ function RadialDialsDemoSlide() {
   }, [activeDial, dialModes.length, dialLanguages.length]);
 
   const currentMode = dialModes[modeRotation] || 'Formal';
-  const currentLang = dialLanguages[langRotation] || 'English — English';
 
   return (
     <div className="flex flex-col items-center w-full max-w-4xl text-center select-none px-2 sm:px-4">
       <h1 className="text-4xl sm:text-5xl font-serif font-normal tracking-tight mb-2 text-[#2b170e]">
         Seamless <span className="font-semibold italic text-[#8d5e3b]">Radial Dials.</span>
       </h1>
-      <p className="text-base sm:text-lg text-[#5d4037]/80 font-serif italic mb-6 max-w-xl leading-relaxed">
+      <p className="text-base sm:text-lg text-[#5d4037]/80 font-serif italic mb-10 max-w-xl leading-relaxed">
         Hold <strong className="text-[#2b170e] font-sans font-semibold bg-[#f4ebe1] border border-[#8d6e63]/25 px-2 py-0.5 rounded-md text-xs">option</strong> to spin personas, or right-click to spin languages.
       </p>
 
@@ -1173,247 +1058,112 @@ function RadialDialsDemoSlide() {
       <div 
         onWheel={handleWheel}
         onContextMenu={handleContextMenu}
-        className="w-full bg-white/85 backdrop-blur-xl rounded-3xl border border-[#8d6e63]/20 shadow-[0_20px_50px_rgba(43,23,14,0.06)] p-6 md:p-7 flex flex-col gap-5 relative overflow-hidden"
+        className="w-full max-w-[400px] h-[360px] relative flex flex-col items-center justify-center rounded-[3rem] bg-[#1a110e]/95 backdrop-blur-3xl shadow-[0_30px_80px_rgba(43,23,14,0.15)] border border-[#8d6e63]/30 overflow-hidden cursor-ns-resize group"
       >
-        {/* Dial Switcher Bar */}
-        <div className="flex items-center justify-between border-b border-[#8d6e63]/15 pb-3.5 flex-wrap gap-3">
-          <div className="flex items-center gap-2.5 flex-wrap">
-            <div className="inline-flex p-1 rounded-full bg-[#f4ebe1]/70 border border-[#8d6e63]/20 shadow-inner">
-              <button
-                type="button"
-                onClick={() => setActiveDial(0)}
-                className={`flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-medium transition-all cursor-pointer ${
-                  activeDial === 0
-                    ? 'bg-[#2b170e] text-[#fdfaf6] shadow-sm font-semibold'
-                    : 'text-[#5d4037]/75 hover:text-[#2b170e]'
-                }`}
-              >
-                <Compass className="w-3.5 h-3.5 text-[#e8d5b5]" />
-                <span>Personas</span>
-                <span className={`px-1.5 py-0.5 rounded text-[10px] font-mono ${activeDial === 0 ? 'bg-white/15 text-[#fdfaf6]' : 'bg-[#8d6e63]/10 text-[#5d4037]'}`}>option + scroll</span>
-              </button>
+        <div className="absolute inset-0 bg-gradient-to-b from-[#8d5e3b]/10 to-transparent pointer-events-none" />
 
-              <button
-                type="button"
-                onClick={() => setActiveDial(1)}
-                className={`flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-medium transition-all cursor-pointer ${
-                  activeDial === 1
-                    ? 'bg-[#2b170e] text-[#fdfaf6] shadow-sm font-semibold'
-                    : 'text-[#5d4037]/75 hover:text-[#2b170e]'
-                }`}
-              >
-                <Globe className="w-3.5 h-3.5 text-[#e8d5b5]" />
-                <span>Languages</span>
-                <span className={`px-1.5 py-0.5 rounded text-[10px] font-mono ${activeDial === 1 ? 'bg-white/15 text-[#fdfaf6]' : 'bg-[#8d6e63]/10 text-[#5d4037]'}`}>option + →</span>
-              </button>
-            </div>
-
-            {/* Moods Toggle Button - No emojis, just "Moods" */}
-            <button
-              type="button"
-              role="switch"
-              aria-checked={moodsEnabled}
-              onClick={toggleMoods}
-              className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-medium transition-all cursor-pointer border ${
-                moodsEnabled
-                  ? 'bg-[#8d5e3b] text-white border-[#8d5e3b] shadow-sm font-semibold'
-                  : 'bg-white/80 text-[#5d4037] border-[#8d6e63]/25 hover:bg-white'
-              }`}
-              title="Toggle Moods"
-            >
-              <span>Moods</span>
-              <span className={`w-2 h-2 rounded-full transition-colors ${moodsEnabled ? 'bg-[#f4ece1]' : 'bg-[#8d6e63]/30'}`} />
-            </button>
+        {/* Center Indicator */}
+        <div className="relative z-20 flex flex-col items-center justify-center pointer-events-none transition-transform duration-500 group-hover:scale-105">
+          <div className="w-16 h-16 rounded-full flex items-center justify-center shadow-[0_0_40px_rgba(141,94,59,0.3)] border border-[#8d6e63]/40 mb-2 bg-[#2b170e] text-[#fdfaf6]">
+            {activeDial === 0 ? <Compass className="w-7 h-7 text-[#e8d5b5]" /> : <Globe className="w-7 h-7 text-[#e8d5b5]" />}
           </div>
-
-          <span className="text-xs text-[#8d6e63]/70 font-serif italic hidden md:inline">
-            Scroll or use arrows to spin
+          <span className="text-[11px] font-mono uppercase tracking-widest text-[#e8d5b5] font-semibold opacity-80">
+            {activeDial === 0 ? 'Personas' : 'Languages'}
           </span>
         </div>
 
-        {/* Live Radial Arc Interactive Area */}
-        <div className="relative h-44 sm:h-48 w-full flex items-center justify-center overflow-hidden bg-gradient-to-b from-[#faf6f0] to-[#f4ede4]/60 rounded-2xl border border-[#8d6e63]/15">
-          <div className="absolute top-3 left-4 text-[10px] font-mono uppercase tracking-wider text-[#8d6e63] font-semibold bg-white/80 px-2.5 py-1 rounded-md border border-[#8d6e63]/20 shadow-2xs">
-            {activeDial === 0 ? 'Persona Dial (Right Arc)' : 'Language Dial (Left Arc)'}
-          </div>
-
-          {/* Center Indicator */}
-          <div className="flex flex-col items-center justify-center pointer-events-none z-10">
-            <div className="w-11 h-11 rounded-full flex items-center justify-center shadow-md border-2 border-white mb-1 bg-[#2b170e] text-[#fdfaf6]">
-              {activeDial === 0 ? <Compass className="w-5 h-5 text-[#e8d5b5]" /> : <Globe className="w-5 h-5 text-[#e8d5b5]" />}
-            </div>
-            <span className="text-[10px] font-mono uppercase tracking-widest text-[#5d4037] font-bold">
-              {activeDial === 0 ? 'Personas' : 'Languages'}
-            </span>
-          </div>
-
-          {/* Dial Items mapped along arc */}
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            {activeDial === 0 ? (
-              <>
-                <svg className="absolute pointer-events-none" style={{ width: 240, height: 240 }}>
-                  <path d="M 120 20 A 100 100 0 0 1 120 220" fill="none" stroke="#8d6e63" strokeWidth="2" strokeDasharray="4 4" opacity="0.35" />
-                </svg>
-                {dialModes.map((m, i) => {
-                  const diff = i - modeRotation;
-                  const distance = Math.abs(diff);
-                  const angle = diff * 24;
-                  const angleRad = angle * (Math.PI / 180);
-                  const radius = 115;
-                  const x = Math.cos(angleRad) * radius;
-                  const y = Math.sin(angleRad) * radius;
-                  const isActive = diff === 0;
-                  const opacity = distance === 0 ? 1 : distance === 1 ? 0.7 : distance === 2 ? 0.3 : 0;
-                  return (
-                    <motion.div
-                      key={m}
-                      className="absolute"
-                      animate={{ x, y, scale: isActive ? 1.08 : 0.85, opacity }}
-                      transition={{ type: 'spring', stiffness: 350, damping: 28 }}
-                    >
-                      <div className={`-translate-y-1/2 px-3.5 py-1.5 whitespace-nowrap text-xs font-semibold tracking-wide transition-all ${
-                        isActive
-                          ? 'rounded-full shadow-md bg-[#2b170e] text-[#fdfaf6] border border-[#5d4037]'
-                          : 'text-[#5d4037]/70 font-medium'
-                      }`}>
-                        {m}
-                      </div>
-                    </motion.div>
-                  );
-                })}
-              </>
-            ) : (
-              <>
-                <svg className="absolute pointer-events-none" style={{ width: 240, height: 240 }}>
-                  <path d="M 120 20 A 100 100 0 0 0 120 220" fill="none" stroke="#8d6e63" strokeWidth="2" strokeDasharray="4 4" opacity="0.35" />
-                </svg>
-                {dialLanguages.map((l, i) => {
-                  const diff = i - langRotation;
-                  const distance = Math.abs(diff);
-                  const angle = 180 - diff * 24;
-                  const angleRad = angle * (Math.PI / 180);
-                  const radius = 115;
-                  const x = Math.cos(angleRad) * radius;
-                  const y = Math.sin(angleRad) * radius;
-                  const isActive = diff === 0;
-                  const opacity = distance === 0 ? 1 : distance === 1 ? 0.7 : distance === 2 ? 0.3 : 0;
-                  return (
-                    <motion.div
-                      key={l}
-                      className="absolute"
-                      animate={{ x, y, scale: isActive ? 1.08 : 0.85, opacity }}
-                      transition={{ type: 'spring', stiffness: 350, damping: 28 }}
-                    >
-                      <div className={`-translate-y-1/2 px-3.5 py-1.5 whitespace-nowrap text-xs font-semibold tracking-wide transition-all ${
-                        isActive
-                          ? 'rounded-full shadow-md bg-[#2b170e] text-[#fdfaf6] border border-[#5d4037]'
-                          : 'text-[#5d4037]/70 font-medium'
-                      }`}>
-                        {l}
-                      </div>
-                    </motion.div>
-                  );
-                })}
-              </>
-            )}
-          </div>
-
-          {/* Quick cycle arrow buttons */}
-          <div className="absolute right-4 flex flex-col gap-2 z-20">
-            <button
-              onClick={(e) => { e.stopPropagation(); cycle(-1); }}
-              className="w-8 h-8 rounded-full bg-white/90 hover:bg-white text-[#5d4037] hover:text-[#2b170e] border border-[#8d6e63]/20 flex items-center justify-center shadow-xs cursor-pointer transition-all hover:scale-105 active:scale-95"
-              title="Cycle Up"
-            >
-              <ChevronUp size={16} />
-            </button>
-            <button
-              onClick={(e) => { e.stopPropagation(); cycle(1); }}
-              className="w-8 h-8 rounded-full bg-white/90 hover:bg-white text-[#5d4037] hover:text-[#2b170e] border border-[#8d6e63]/20 flex items-center justify-center shadow-xs cursor-pointer transition-all hover:scale-105 active:scale-95"
-              title="Cycle Down"
-            >
-              <ChevronDown size={16} />
-            </button>
-          </div>
-        </div>
-
-        {/* Live Output Preview Strip */}
-        <div className="flex items-center justify-between px-4 py-3 rounded-2xl bg-[#faf6ee] border border-[#8d6e63]/15 text-xs shadow-xs">
-          <div className="flex items-center gap-3 overflow-hidden text-left flex-1 mr-2">
-            <span className="px-3 py-1 rounded-full text-[10px] font-mono font-semibold uppercase tracking-wider shrink-0 bg-[#2b170e] text-[#e8d5b5]">
-              {activeDial === 0 ? currentMode : currentLang}
-            </span>
-            <span className="text-[#2b170e] font-serif italic text-sm truncate">
-              "{activeDial === 0
-                ? (moodsEnabled
-                    ? (MODE_SAMPLES[currentMode]?.mood || `${MODE_SAMPLES[currentMode]?.plain || 'Your adapted thoughts will flow here.'} ✨`)
-                    : (MODE_SAMPLES[currentMode]?.plain || 'Your adapted thoughts will flow here.'))
-                : (moodsEnabled
-                    ? `${LANG_SAMPLES[currentLang] || 'Your translated voice appears here in real-time.'} ✨`
-                    : (LANG_SAMPLES[currentLang] || 'Your translated voice appears here in real-time.'))}"
-            </span>
-          </div>
+        <AnimatePresence mode="popLayout">
           {activeDial === 0 && (
-            <span className="text-[11px] font-mono text-[#8d6e63] shrink-0 hidden sm:inline">
-              {moodsEnabled ? 'Moods Active' : 'Neutral Tone'}
-            </span>
+            <motion.div
+              key="persona-dial"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.4, ease: [0.32, 0.72, 0, 1] }}
+              className="absolute inset-0 z-10 pointer-events-none"
+            >
+              {dialModes.map((modeName, i) => {
+                const isActive = modeName === currentMode;
+                const selectedIndex = modeRotation;
+                const angle = 90 + (selectedIndex - i) * 45;
+                
+                const rad = (angle * Math.PI) / 180;
+                const radius = 100;
+                const x = Math.cos(rad) * radius;
+                const y = -Math.sin(rad) * radius;
+
+                const distance = Math.abs(i - selectedIndex);
+                const scale = isActive ? 1.15 : Math.max(0.75, 0.95 - distance * 0.1);
+                const itemOpacity = isActive ? 1 : Math.max(0, 0.6 - distance * 0.2);
+
+                return (
+                  <motion.div
+                    key={modeName}
+                    initial={false}
+                    animate={{ x, y, scale, opacity: itemOpacity }}
+                    transition={{ type: "spring", mass: 0.6, stiffness: 250, damping: 24 }}
+                    className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 px-4 py-2 rounded-full whitespace-nowrap text-sm font-medium shadow-xl backdrop-blur-md border transition-colors ${
+                      isActive
+                        ? 'bg-white/10 text-white border-white/20'
+                        : 'bg-transparent text-white/50 border-transparent'
+                    }`}
+                  >
+                    {modeName}
+                  </motion.div>
+                );
+              })}
+            </motion.div>
           )}
-        </div>
 
-        {/* Customization Chips Section */}
-        <div className="flex flex-col gap-2.5 pt-2 border-t border-[#8d6e63]/15 text-left">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-[#2b170e] tracking-tight flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-[#8d5e3b]" />
-              {activeDial === 0 ? 'Customise Showcased Personas' : 'Customise Showcased Languages'}
-            </span>
-            <span className="text-xs text-[#8d6e63]/70 font-serif italic">
-              Click chips to showcase or hide on dial
-            </span>
-          </div>
+          {activeDial === 1 && (
+            <motion.div
+              key="lang-dial"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.4, ease: [0.32, 0.72, 0, 1] }}
+              className="absolute inset-0 z-10 pointer-events-none"
+            >
+              {dialLanguages.map((langName, i) => {
+                const isActive = i === langRotation;
+                const selectedIndex = langRotation;
+                const angle = 90 + (selectedIndex - i) * 45;
+                
+                const rad = (angle * Math.PI) / 180;
+                const radius = 100;
+                const x = Math.cos(rad) * radius;
+                const y = -Math.sin(rad) * radius;
 
-          <div className="flex flex-wrap gap-2 pt-1">
-            {activeDial === 0 ? (
-              ALL_DIAL_MODES.map(m => {
-                const isSelected = dialModes.includes(m);
+                const distance = Math.abs(i - selectedIndex);
+                const scale = isActive ? 1.15 : Math.max(0.75, 0.95 - distance * 0.1);
+                const itemOpacity = isActive ? 1 : Math.max(0, 0.6 - distance * 0.2);
+
                 return (
-                  <button
-                    key={m}
-                    onClick={() => toggleDialMode(m)}
-                    className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium transition-all cursor-pointer border ${
-                      isSelected
-                        ? 'bg-[#2b170e] text-[#fdfaf6] border-[#2b170e] shadow-xs hover:bg-[#3e2417]'
-                        : 'bg-white/80 text-[#5d4037]/65 border-[#8d6e63]/20 hover:border-[#8d6e63]/40 hover:text-[#2b170e]'
+                  <motion.div
+                    key={langName}
+                    initial={false}
+                    animate={{ x, y, scale, opacity: itemOpacity }}
+                    transition={{ type: "spring", mass: 0.6, stiffness: 250, damping: 24 }}
+                    className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 px-4 py-2 rounded-full whitespace-nowrap text-sm font-medium shadow-xl backdrop-blur-md border transition-colors ${
+                      isActive
+                        ? 'bg-white/10 text-white border-white/20'
+                        : 'bg-transparent text-white/50 border-transparent'
                     }`}
                   >
-                    {isSelected ? <Check className="w-3 h-3 text-[#e8d5b5] stroke-[2.5]" /> : <Plus className="w-3 h-3 opacity-40" />}
-                    <span>{m}</span>
-                  </button>
+                    {langName}
+                  </motion.div>
                 );
-              })
-            ) : (
-              ALL_DIAL_LANGUAGES.map(l => {
-                const isSelected = dialLanguages.includes(l);
-                return (
-                  <button
-                    key={l}
-                    onClick={() => toggleDialLanguage(l)}
-                    className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium transition-all cursor-pointer border ${
-                      isSelected
-                        ? 'bg-[#2b170e] text-[#fdfaf6] border-[#2b170e] shadow-xs hover:bg-[#3e2417]'
-                        : 'bg-white/80 text-[#5d4037]/65 border-[#8d6e63]/20 hover:border-[#8d6e63]/40 hover:text-[#2b170e]'
-                    }`}
-                  >
-                    {isSelected ? <Check className="w-3 h-3 text-[#e8d5b5] stroke-[2.5]" /> : <Plus className="w-3 h-3 opacity-40" />}
-                    <span>{l}</span>
-                  </button>
-                );
-              })
-            )}
-          </div>
-        </div>
+              })}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
+
+      <p className="text-sm text-[#8d6e63] font-serif italic mt-6 opacity-80">
+        Scroll with your mouse or use arrow keys
+      </p>
     </div>
   );
 }
+
 
