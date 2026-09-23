@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { PanelLeftClose, Keyboard, PanelLeft, Home, BookOpen, Zap, Palette, Clock, FileText, X, Mic, Pencil, User, Settings, Shield, LayoutTemplate, CreditCard, PlayCircle, Square, Trash2, Sparkles, Copy, Check, Info, PawPrint, Plus } from 'lucide-react';
+import { PanelLeftClose, Keyboard, PanelLeft, Home, BookOpen, Zap, Palette, Clock, FileText, X, Mic, Pencil, User, Users, Settings, Shield, LayoutTemplate, CreditCard, PlayCircle, Square, Trash2, Sparkles, Copy, Check, Info, PawPrint, Plus } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Tutorial from './Tutorial';
 import StylesManager from './styles/StylesManager';
@@ -94,6 +94,7 @@ const TOUR_STEPS = [
     { id: 'Dictionary', title: 'Your Custom Dictionary', text: 'Teach WhisPURR jargon, acronyms, and unique names.' },
     { id: 'ShortHand', title: 'ShortHand Macros', text: 'Set voice shortcuts that expand into full text.' },
     { id: 'Persona', title: 'Global Personas', text: 'Tailor your output tone for each app or task.' },
+    { id: 'Meets', title: 'Meeting Assistant', text: 'Manage meeting transcriptions and overlays.' },
     { id: 'ScratchPad', title: 'ScratchPad', text: 'Test personas and capture quick notes.' },
     { id: 'Profile', title: 'Your Profile', text: 'Manage your settings, shortcuts, and preferences.' },
     { id: 'CatFacts', title: 'Cat Facts', text: 'Enjoy a quick cat fact while you work.' }
@@ -948,6 +949,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
             { name: 'Dictionary', icon: BookOpen },
             { name: 'ShortHand', icon: Zap },
             { name: 'Persona', icon: Palette },
+            { name: 'Meets', icon: Users },
             { name: 'ScratchPad', icon: FileText },
           ].map((tab) => {
             const isTabActive = activeTab === tab.name || (tab.name === 'Persona' && (activeTab === 'Modes' || activeTab === 'Context'));
@@ -1701,6 +1703,53 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
               </motion.div>
             )}
 
+            {activeTab === 'Meets' && (
+              <motion.div key="meets" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col p-8 overflow-hidden ${glassPanel}`}>
+                <div className="px-2 mb-8 shrink-0">
+                  <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
+                    <Users className="text-blue-400 w-8 h-8" />
+                    Meeting Assistant
+                  </h1>
+                  <p className="text-white/40 text-sm">Configure automatic transcriptions and overlays for your virtual meetings.</p>
+                </div>
+                <div className="flex-1 overflow-y-auto px-2">
+                  <div className="space-y-6 max-w-2xl">
+                    <div className="bg-black/20 rounded-2xl p-6 border border-white/5">
+                      <div className="flex items-center justify-between mb-4">
+                        <div>
+                          <h3 className="text-white font-medium mb-1">Auto-Transcribe Meetings</h3>
+                          <p className="text-white/40 text-sm">Automatically detect and transcribe when apps like Zoom or Teams are active.</p>
+                        </div>
+                        <div className="w-12 h-6 bg-blue-500 rounded-full relative cursor-pointer">
+                          <div className="absolute right-1 top-1 w-4 h-4 bg-white rounded-full"></div>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center justify-between pt-4 border-t border-white/5">
+                        <div>
+                          <h3 className="text-white font-medium mb-1">Invisible Overlay</h3>
+                          <p className="text-white/40 text-sm">Show a floating, invisible overlay over meetings so you can easily see the dictation.</p>
+                        </div>
+                        <div className="w-12 h-6 bg-blue-500 rounded-full relative cursor-pointer">
+                          <div className="absolute right-1 top-1 w-4 h-4 bg-white rounded-full"></div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between pt-4 border-t border-white/5 mt-4">
+                        <div>
+                          <h3 className="text-white font-medium mb-1">Meeting Summary</h3>
+                          <p className="text-white/40 text-sm">Generate a concise AI summary when the meeting concludes.</p>
+                        </div>
+                        <div className="w-12 h-6 bg-[#333] rounded-full relative cursor-pointer">
+                          <div className="absolute left-1 top-1 w-4 h-4 bg-white/50 rounded-full"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
             {activeTab === 'ScratchPad' && (
               <motion.div key="stickynotes" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col p-8 overflow-hidden ${glassPanel}`}>
                 <div className="px-2 mb-8 shrink-0">
@@ -2221,7 +2270,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
               </motion.div>
             )}
 
-            {!['Home', 'History', 'Dictionary', 'ShortHand', 'ScratchPad', 'Persona', 'Modes', 'Context', 'Theme', 'Tutorial', 'Shortcuts', 'Settings', 'Plans & Billing', 'User Policy', 'Profile'].includes(activeTab) && (
+            {!['Home', 'History', 'Dictionary', 'ShortHand', 'Meets', 'ScratchPad', 'Persona', 'Modes', 'Context', 'Theme', 'Tutorial', 'Shortcuts', 'Settings', 'Plans & Billing', 'User Policy', 'Profile'].includes(activeTab) && (
               <motion.div key="fallback" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col items-center justify-center gap-4 p-8 ${glassPanel}`}>
                 <Settings className="w-16 h-16 text-white/10" />
                 <h1 className="text-2xl font-bold text-white/50">{activeTab}</h1>
