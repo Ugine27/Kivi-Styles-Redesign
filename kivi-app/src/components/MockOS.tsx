@@ -555,20 +555,20 @@ const MockOS = memo(({
           <AnimatePresence>
             {isAltPressed && hasActiveTypingTarget() && showModeHud && (
               <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
-                transition={{ type: "spring", mass: 0.8, stiffness: 280, damping: 24 }}
-                className="absolute top-1/2 left-1/2 -translate-y-3 z-10 pointer-events-none"
+                initial={{ opacity: 0, scale: 0.95, y: 15 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.98, y: 10 }}
+                transition={{ duration: 0.35, ease: [0.32, 0.72, 0, 1] }}
+                className="absolute top-1/2 left-1/2 -translate-y-3 z-10 pointer-events-none transform-gpu will-change-transform will-change-opacity"
               >
                 <AnimatePresence mode="popLayout">
                   {activeDial === 0 && (
                     <motion.div
                       key="persona-dial"
-                      initial={{ opacity: 0, y: 80, scale: 0.8 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: 80, scale: 0.8 }}
-                      transition={{ type: "spring", mass: 0.8, stiffness: 220, damping: 24 }}
+                      initial={{ opacity: 0, y: 40 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 40 }}
+                      transition={{ type: "spring", mass: 0.6, stiffness: 250, damping: 24 }}
                       className="absolute"
                     >
                       {dialModes.map((modeName, i) => {
@@ -608,10 +608,10 @@ const MockOS = memo(({
                   {activeDial === 1 && (
                     <motion.div
                       key="lang-dial"
-                      initial={{ opacity: 0, y: -80, scale: 0.8 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: -80, scale: 0.8 }}
-                      transition={{ type: "spring", mass: 0.8, stiffness: 220, damping: 24 }}
+                      initial={{ opacity: 0, y: -40 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -40 }}
+                      transition={{ type: "spring", mass: 0.6, stiffness: 250, damping: 24 }}
                       className="absolute"
                     >
                       {dialLangs.map((langName, i) => {
@@ -803,10 +803,10 @@ const MockOS = memo(({
         {openApp && (
           <motion.div 
             key={openApp}
-            initial={{ scale: 0.95, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.95, opacity: 0 }}
-            transition={{ type: "spring", stiffness: 300, damping: 25 }}
+            initial={{ scale: 0.96, opacity: 0, y: 10 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.98, opacity: 0, y: 10 }}
+            transition={{ duration: 0.45, ease: [0.32, 0.72, 0, 1] }}
             className="absolute inset-0 z-40 bg-[#1e1e1e] flex flex-col transform-gpu will-change-transform will-change-opacity"
             style={{ height: openApp === 'whispurr' ? '100vh' : 'calc(100vh - 48px)' }}
           >

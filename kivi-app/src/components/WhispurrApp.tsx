@@ -873,9 +873,10 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
             className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm"
           >
             <motion.div
-              initial={{ scale: 0.9, y: 20 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.9, y: 20 }}
+              initial={{ scale: 0.95, y: 15, opacity: 0 }}
+              animate={{ scale: 1, y: 0, opacity: 1 }}
+              exit={{ scale: 0.98, y: 10, opacity: 0 }}
+              transition={{ duration: 0.35, ease: [0.32, 0.72, 0, 1] }}
               className="w-full max-w-2xl bg-[#1a110e] border border-[#5d4037]/60 rounded-2xl shadow-2xl p-6"
             >
               <h2 className="text-xl font-bold text-orange-200 mb-4 flex items-center gap-2">
