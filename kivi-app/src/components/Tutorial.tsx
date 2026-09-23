@@ -228,27 +228,33 @@ function MoodsWhisperSlide() {
       <div className="flex flex-wrap gap-4 sm:gap-5 justify-center w-full items-stretch">
         
         {/* Whisper Mode */}
-        <div className="w-full sm:flex-1 sm:min-w-[200px] sm:max-w-[300px] h-[210px] p-6 bg-white/85 backdrop-blur-md border border-[#8d6e63]/20 rounded-3xl flex flex-col items-center justify-start gap-4 cursor-default hover:border-[#8d6e63]/50 hover:shadow-xl hover:shadow-[#2b170e]/6 hover:-translate-y-1 transition-all duration-300 shadow-sm group">
+        <div className="w-full sm:flex-1 sm:min-w-[240px] sm:max-w-[340px] h-[235px] p-6 bg-white/85 backdrop-blur-md border border-[#8d6e63]/20 rounded-3xl flex flex-col items-center justify-start gap-4 cursor-default hover:border-[#8d6e63]/50 hover:shadow-xl hover:shadow-[#2b170e]/6 hover:-translate-y-1 transition-all duration-300 shadow-sm group">
           <span className="inline-flex items-center gap-1.5 text-xs font-medium text-[#5d4037] bg-[#f4ebe1]/80 px-3.5 py-1 rounded-full border border-[#8d6e63]/15">
             <Mic className="w-3.5 h-3.5 text-[#8d5e3b]" />
             <span>Whisper Mode</span>
           </span>
 
-          <p className="text-[#5d4037]/80 text-sm font-medium leading-relaxed px-2 mt-2">
-            Working late or in a quiet office? Toggle <strong className="text-[#2b170e]">Whisper Mode</strong> to heighten mic sensitivity and accurately transcribe very soft, quiet speech.
+          <p className="text-[#5d4037]/90 text-[15px] font-medium leading-relaxed px-2 mt-4 text-center">
+            In a quiet space? Toggle <strong className="text-[#2b170e]">Whisper Mode</strong> to boost mic sensitivity and flawlessly catch soft speech.
           </p>
         </div>
 
         {/* Moods */}
-        <div className="w-full sm:flex-1 sm:min-w-[200px] sm:max-w-[300px] h-[210px] p-6 bg-white/85 backdrop-blur-md border border-[#8d6e63]/20 rounded-3xl flex flex-col items-center justify-start gap-4 cursor-default hover:border-[#8d6e63]/50 hover:shadow-xl hover:shadow-[#2b170e]/6 hover:-translate-y-1 transition-all duration-300 shadow-sm group">
+        <div className="w-full sm:flex-1 sm:min-w-[240px] sm:max-w-[340px] h-[235px] p-6 bg-white/85 backdrop-blur-md border border-[#8d6e63]/20 rounded-3xl flex flex-col items-center justify-start gap-4 cursor-default hover:border-[#8d6e63]/50 hover:shadow-xl hover:shadow-[#2b170e]/6 hover:-translate-y-1 transition-all duration-300 shadow-sm group">
           <span className="inline-flex items-center gap-1.5 text-xs font-medium text-[#5d4037] bg-[#f4ebe1]/80 px-3.5 py-1 rounded-full border border-[#8d6e63]/15">
             <Sparkles className="w-3.5 h-3.5 text-[#8d5e3b]" />
             <span>Moods</span>
           </span>
 
-          <p className="text-[#5d4037]/80 text-sm font-medium leading-relaxed px-2 mt-2">
-            Turn on <strong className="text-[#2b170e]">Moods</strong> to let WhisPURR analyze your vocal tone and automatically apply the appropriate emotional phrasing and punctuation to your text.
+          <p className="text-[#5d4037]/90 text-[15px] font-medium leading-relaxed px-2 mt-1 text-center">
+            Let <strong className="text-[#2b170e]">Moods</strong> analyze your vocal tone to auto-format text with matching emotion.
           </p>
+
+          <div className="mt-auto w-full bg-white rounded-xl p-3 border border-[#8d6e63]/20 shadow-sm text-left relative overflow-hidden group-hover:border-[#8d6e63]/40 transition-colors">
+            <div className="absolute top-0 left-0 w-1 h-full bg-[#8d5e3b]"></div>
+            <div className="text-[10px] text-[#8d5e3b] font-bold uppercase tracking-widest mb-1 pl-2">Excited Voice</div>
+            <div className="text-sm text-[#2b170e] font-medium italic pl-2">"That's absolutely brilliant!"</div>
+          </div>
         </div>
 
       </div>
