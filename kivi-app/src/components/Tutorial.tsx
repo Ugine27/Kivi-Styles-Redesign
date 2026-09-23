@@ -253,7 +253,7 @@ function MoodsWhisperSlide() {
           <div className="mt-auto w-full bg-white rounded-xl p-3 border border-[#8d6e63]/20 shadow-sm text-left relative overflow-hidden group-hover:border-[#8d6e63]/40 transition-colors">
             <div className="absolute top-0 left-0 w-1 h-full bg-[#8d5e3b]"></div>
             <div className="text-[10px] text-[#8d5e3b] font-bold uppercase tracking-widest mb-1 pl-2">Excited Voice</div>
-            <div className="text-sm text-[#2b170e] font-medium italic pl-2">"That's absolutely brilliant!"</div>
+            <div className="text-sm text-[#2b170e] font-medium italic pl-2">"That's absolutely brilliant! 🎉"</div>
           </div>
         </div>
 
