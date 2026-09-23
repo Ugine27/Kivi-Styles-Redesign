@@ -846,8 +846,8 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
   };
 
   // Glassmorphism classes
-  const glassPanel = "bg-transparent shadow-lg border border-white/[0.08] rounded-3xl";
-  const glassInput = "bg-black/20 border border-white/10 rounded-2xl p-4 text-white outline-none focus:border-orange-500/50 focus:bg-black/40 transition-all text-sm";
+  const glassPanel = "bg-transparent shadow-lg border border-orange-500/30 rounded-3xl";
+  const glassInput = "bg-black/20 border border-orange-500/20 rounded-2xl p-4 text-white outline-none focus:border-orange-500/50 focus:bg-black/40 transition-all text-sm";
   const glassButton = "bg-orange-500/90 hover:bg-orange-400 text-black font-bold px-8 py-3 rounded-2xl transition-all shadow-[0_0_15px_rgba(249,115,22,0.2)] hover:shadow-[0_0_25px_rgba(249,115,22,0.4)] text-sm";
 
   const getSidebarItemClass = (id: string, baseClass: string) => {
@@ -900,7 +900,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                 className="w-full h-32 bg-black/40 border border-orange-500/30 rounded-xl p-4 text-white text-lg focus:outline-none focus:border-orange-500/80 resize-none shadow-inner"
               />
               <div className="flex justify-between items-center mt-4 text-xs text-white/40">
-                <span>Press <kbd className="bg-white/10 px-1.5 py-0.5 rounded border border-white/20 font-mono">Enter</kbd> to save</span>
+                <span>Press <kbd className="bg-white/10 px-1.5 py-0.5 rounded border border-orange-500/30 font-mono">Enter</kbd> to save</span>
                 <div className="flex gap-3">
                   <button onClick={() => setShowQuickEditModal(false)} className="px-4 py-2 rounded-lg text-white/60 hover:text-white hover:bg-white/10 transition-colors">Cancel</button>
                   <button onClick={saveQuickEdit} className="px-6 py-2 rounded-lg bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold hover:shadow-[0_0_15px_rgba(249,115,22,0.4)] transition-all">Save Changes</button>
@@ -916,9 +916,9 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
       <motion.div 
         animate={{ width: isSidebarOpen ? 260 : 80 }}
         transition={{ type: 'spring', stiffness: 400, damping: 35 }}
-        className="h-full bg-white/[0.01] border-r border-white/5 flex flex-col whitespace-nowrap overflow-hidden shrink-0 relative z-20 shadow-[4px_0_24px_rgba(0,0,0,0.5)]"
+        className="h-full bg-white/[0.01] border-r border-orange-500/20 flex flex-col whitespace-nowrap overflow-hidden shrink-0 relative z-20 shadow-[4px_0_24px_rgba(0,0,0,0.5)]"
       >
-        <div className={`h-16 flex items-center border-b border-white/5 relative shrink-0 transition-all ${isSidebarOpen ? 'px-6' : 'justify-center'}`}>
+        <div className={`h-16 flex items-center border-b border-orange-500/20 relative shrink-0 transition-all ${isSidebarOpen ? 'px-6' : 'justify-center'}`}>
           <motion.div animate={{ opacity: isSidebarOpen ? 1 : 0, width: isSidebarOpen ? 'auto' : 0 }} className="flex items-center gap-3 overflow-hidden">
             <div className="w-8 h-8 flex items-center justify-center shrink-0 drop-shadow-md">
               <KiviCatIcon size={32} />
@@ -965,7 +965,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
         </div>
         
         {/* Sticky Bottom Profile Section */}
-        <div className="mb-6 w-full px-4 flex flex-col gap-2 shrink-0 border-t border-white/5 pt-4">
+        <div className="mb-6 w-full px-4 flex flex-col gap-2 shrink-0 border-t border-orange-500/20 pt-4">
           <div 
             onClick={() => setIsSettingsOpen(!isSettingsOpen)} 
             className={getSidebarItemClass('Profile', `flex items-center py-3 px-3 rounded-xl cursor-pointer transition-all ${isSettingsOpen ? 'bg-white/10 shadow-inner' : 'hover:bg-white/5'} ${isSidebarOpen ? 'gap-3' : 'gap-0 justify-center'}`)}
@@ -1038,9 +1038,9 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
             initial={{ width: 0, opacity: 0 }}
             animate={{ width: 240, opacity: 1 }}
             exit={{ width: 0, opacity: 0 }}
-            className="h-full bg-white/[0.02] border-r border-white/5 flex flex-col whitespace-nowrap overflow-hidden shrink-0 relative z-10 shadow-[4px_0_24px_rgba(0,0,0,0.3)]"
+            className="h-full bg-white/[0.02] border-r border-orange-500/20 flex flex-col whitespace-nowrap overflow-hidden shrink-0 relative z-10 shadow-[4px_0_24px_rgba(0,0,0,0.3)]"
           >
-            <div className="h-16 flex items-center px-6 border-b border-white/5 shrink-0">
+            <div className="h-16 flex items-center px-6 border-b border-orange-500/20 shrink-0">
               <span className="font-bold text-white">Settings</span>
             </div>
             <div className="flex-1 py-6 flex flex-col gap-2 overflow-y-auto">
@@ -1162,9 +1162,9 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                     </motion.div>
                   </div>
                   {/* Voice-to-Text Chat Box */}
-                  <div className={`h-fit ${glassPanel} p-6 flex flex-col relative z-10 overflow-hidden shadow-2xl border border-white/10`}>
+                  <div className={`h-fit ${glassPanel} p-6 flex flex-col relative z-10 overflow-hidden shadow-2xl border border-orange-500/20`}>
                     {/* Header */}
-                    <div className="flex items-center justify-between pb-4 border-b border-white/5 mb-4 shrink-0">
+                    <div className="flex items-center justify-between pb-4 border-b border-orange-500/20 mb-4 shrink-0">
                       <div className="flex items-center gap-3">
                         <button 
                           onClick={toggleHomeListening}
@@ -1218,7 +1218,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                                 ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
                                 : homeChatText.trim()
                                 ? 'bg-white/10 hover:bg-white/15 text-white border border-white/15 shadow-sm active:scale-95'
-                                : 'bg-white/5 text-white/30 border border-white/5 cursor-not-allowed'
+                                : 'bg-white/5 text-white/30 border border-orange-500/20 cursor-not-allowed'
                             }`}
                             title="Copy to Clipboard"
                           >
@@ -1352,7 +1352,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                             ? 'Listening to your voice... Speak clearly into your microphone...'
                             : 'Click the Mic icon to speak, or type here directly to convert and copy anywhere...'
                         }
-                        className="flex-1 w-full bg-black/40 border border-white/5 focus:border-orange-500/40 rounded-2xl p-5 text-white placeholder-white/40 resize-none outline-none font-sans text-base leading-relaxed transition-all shadow-inner"
+                        className="flex-1 w-full bg-black/40 border border-orange-500/20 focus:border-orange-500/40 rounded-2xl p-5 text-white placeholder-white/40 resize-none outline-none font-sans text-base leading-relaxed transition-all shadow-inner"
                       />
                       
                       {/* Character & Word count */}
@@ -1377,7 +1377,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                 </div>
 
                 <div className={`w-[320px] ${glassPanel} bg-black/40 p-6 flex flex-col relative z-10 overflow-hidden`}>
-                  <div className="w-full flex-1 min-h-[160px] rounded-2xl bg-[#0f0f0f] mb-6 relative border border-white/5 flex flex-col items-center justify-center group overflow-hidden">
+                  <div className="w-full flex-1 min-h-[160px] rounded-2xl bg-[#0f0f0f] mb-6 relative border border-orange-500/20 flex flex-col items-center justify-center group overflow-hidden">
                     <motion.video 
                       key={homeVideo + videoKey}
                       variants={{
@@ -1403,7 +1403,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                     />
                   </div>
                   
-                  <h3 className="text-lg font-bold text-white mb-4 text-center border-b border-white/10 pb-3">Today's Impact</h3>
+                  <h3 className="text-lg font-bold text-white mb-4 text-center border-b border-orange-500/20 pb-3">Today's Impact</h3>
                   <div className="flex flex-col gap-4 items-center">
                     <div className="flex flex-col items-center justify-center p-4 w-full rounded-2xl bg-orange-500/10 border border-orange-500/20 shadow-[0_0_20px_rgba(249,115,22,0.05)]">
                       <div className="text-xs text-orange-200 mb-1 uppercase tracking-wider font-bold">Time Saved Today</div>
@@ -1414,14 +1414,14 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                       <div className="text-xs text-orange-200 mt-2 font-semibold">Weekly Total: {timeSavedWeekHrs} Hours</div>
                     </div>
                     <div className="flex w-full gap-3">
-                      <div className="flex-1 flex flex-col items-center gap-2 p-3 rounded-xl bg-white/5 border border-white/5">
+                      <div className="flex-1 flex flex-col items-center gap-2 p-3 rounded-xl bg-white/5 border border-orange-500/20">
                         <Clock className="w-5 h-5 text-orange-400" />
                         <div className="text-center">
                           <div className="font-bold text-sm text-white">24m</div>
                           <div className="text-[10px] text-white/70 uppercase font-bold tracking-wider">Dictating</div>
                         </div>
                       </div>
-                      <div className="flex-1 flex flex-col items-center gap-2 p-3 rounded-xl bg-white/5 border border-white/5">
+                      <div className="flex-1 flex flex-col items-center gap-2 p-3 rounded-xl bg-white/5 border border-orange-500/20">
                         <FileText className="w-5 h-5 text-orange-400" />
                         <div className="text-center">
                           <div className="font-bold text-sm text-white">3.4k</div>
@@ -1613,7 +1613,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                   </h1>
                   <p className="text-white/40 text-sm">Teach WhisPURR jargon, acronyms, and unique names.</p>
                 </div>
-                <div className="flex gap-4 p-5 rounded-2xl bg-white/5 border border-white/10 items-end shadow-lg">
+                <div className="flex gap-4 p-5 rounded-2xl bg-white/5 border border-orange-500/20 items-end shadow-lg">
                   <div className="flex-1">
                     <label className="block text-xs font-bold text-white/40 mb-2 uppercase tracking-wider">When I say...</label>
                     <div className="relative">
@@ -1630,13 +1630,13 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                   <button onClick={addDictItem} className={`${glassButton} h-[52px]`}>Teach</button>
                 </div>
                 <div className="flex-1 flex flex-col gap-3 mt-4">
-                  <div className="grid grid-cols-2 px-6 py-2 text-xs font-bold text-white/30 uppercase tracking-widest border-b border-white/5">
+                  <div className="grid grid-cols-2 px-6 py-2 text-xs font-bold text-white/30 uppercase tracking-widest border-b border-orange-500/20">
                     <div>What you speak</div>
                     <div>What it means</div>
                   </div>
                   <AnimatePresence>
                     {dictItems.map(item => (
-                      <motion.div key={item.id} layout initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }} className="grid grid-cols-2 px-6 py-4 rounded-xl bg-white/[0.02] border border-white/5 hover:bg-white/10 hover:border-white/10 transition-colors group items-center text-sm shadow-sm">
+                      <motion.div key={item.id} layout initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }} className="grid grid-cols-2 px-6 py-4 rounded-xl bg-white/[0.02] border border-orange-500/20 hover:bg-white/10 hover:border-orange-500/20 transition-colors group items-center text-sm shadow-sm">
                         <div className="font-medium text-white/70">{item.spoken}</div>
                         <div className="flex justify-between items-center">
                           <span className="font-bold text-orange-300">{item.correct}</span>
@@ -1661,7 +1661,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                   </h1>
                   <p className="text-white/40 text-sm">Expand quick voice triggers into full phrases.</p>
                 </div>
-                <div className="flex gap-4 p-5 rounded-2xl bg-white/5 border border-white/10 shadow-lg">
+                <div className="flex gap-4 p-5 rounded-2xl bg-white/5 border border-orange-500/20 shadow-lg">
                   <div className="w-1/3">
                     <label className="block text-xs font-bold text-white/40 mb-2 uppercase tracking-wider">When I say...</label>
                     <div className="relative">
@@ -1680,16 +1680,16 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                   </div>
                 </div>
                 <div className="flex-1 flex flex-col gap-3 mt-4">
-                  <div className="grid grid-cols-3 px-6 py-2 text-xs font-bold text-white/30 uppercase tracking-widest border-b border-white/5">
+                  <div className="grid grid-cols-3 px-6 py-2 text-xs font-bold text-white/30 uppercase tracking-widest border-b border-orange-500/20">
                     <div className="col-span-1">Voice Trigger</div>
                     <div className="col-span-2">Expanded Output</div>
                   </div>
                   <AnimatePresence>
                     {shortcutItems.map(item => (
-                      <motion.div key={item.id} layout initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }} className="grid grid-cols-3 px-6 py-4 rounded-xl bg-white/[0.02] border border-white/5 hover:bg-white/10 hover:border-white/10 transition-colors group items-start gap-6 text-sm shadow-sm">
+                      <motion.div key={item.id} layout initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }} className="grid grid-cols-3 px-6 py-4 rounded-xl bg-white/[0.02] border border-orange-500/20 hover:bg-white/10 hover:border-orange-500/20 transition-colors group items-start gap-6 text-sm shadow-sm">
                         <div className="font-medium text-white/70 col-span-1 mt-1.5">"{item.trigger}"</div>
                         <div className="col-span-2 flex justify-between items-start gap-4">
-                          <div className="text-orange-200/80 whitespace-pre-wrap font-mono text-sm bg-black/30 p-4 rounded-lg flex-1 border border-white/5">{item.expansion}</div>
+                          <div className="text-orange-200/80 whitespace-pre-wrap font-mono text-sm bg-black/30 p-4 rounded-lg flex-1 border border-orange-500/20">{item.expansion}</div>
                           <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all shrink-0 mt-2">
                             <button onClick={() => editShortcutItem(item)} className="text-white/30 hover:text-orange-400 p-2"><Pencil className="w-4 h-4" /></button>
                             <button onClick={() => setShortcutItems(shortcutItems.filter(i => i.id !== item.id))} className="text-white/30 hover:text-red-400 p-2"><X className="w-4 h-4" /></button>
@@ -1714,7 +1714,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                 </div>
                 <div className="flex-1 overflow-y-auto px-2">
                   <div className="space-y-6 max-w-2xl">
-                    <div className="bg-black/20 rounded-2xl p-6 border border-white/5">
+                    <div className="bg-black/20 rounded-2xl p-6 border border-orange-500/20">
                       <div className="flex items-center justify-between mb-4">
                         <div>
                           <h3 className="text-white font-medium mb-1">Auto-Transcribe Meetings</h3>
@@ -1725,7 +1725,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                         </div>
                       </div>
                       
-                      <div className="flex items-center justify-between pt-4 border-t border-white/5">
+                      <div className="flex items-center justify-between pt-4 border-t border-orange-500/20">
                         <div>
                           <h3 className="text-white font-medium mb-1">Invisible Overlay</h3>
                           <p className="text-white/40 text-sm">Show a floating, invisible overlay over meetings so you can easily see the dictation.</p>
@@ -1735,7 +1735,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                         </div>
                       </div>
 
-                      <div className="flex items-center justify-between pt-4 border-t border-white/5 mt-4">
+                      <div className="flex items-center justify-between pt-4 border-t border-orange-500/20 mt-4">
                         <div>
                           <h3 className="text-white font-medium mb-1">Meeting Summary</h3>
                           <p className="text-white/40 text-sm">Generate a concise AI summary when the meeting concludes.</p>
@@ -1837,7 +1837,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                   </div>
                   
                   <div className={`mt-4 ${glassPanel} p-8 flex flex-col gap-6`}>
-                    <div className="flex items-center justify-between pb-6 border-b border-white/5">
+                    <div className="flex items-center justify-between pb-6 border-b border-orange-500/20">
                       <div className="flex flex-col gap-1.5">
                         <span className="text-xl font-bold text-white tracking-tight">Talk to WhisPURR</span>
                         <span className="text-[15px] text-white/50">Hold to dictate</span>
@@ -1847,14 +1847,14 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                         className={`min-w-[120px] px-6 py-4 rounded-xl border-2 font-mono text-base tracking-wider font-bold transition-all shadow-md ${
                           isRecordingShortcut 
                             ? 'bg-orange-500/20 text-orange-400 border-orange-500 animate-pulse' 
-                            : 'bg-[#1a1a1a] text-[#f4ece1] border-white/10 hover:border-orange-500/50 hover:bg-[#222]'
+                            : 'bg-[#1a1a1a] text-[#f4ece1] border-orange-500/20 hover:border-orange-500/50 hover:bg-[#222]'
                         }`}
                       >
                         {isRecordingShortcut ? 'Press a key...' : talkShortcut}
                       </button>
                     </div>
 
-                    <div className="flex items-center justify-between pb-6 border-b border-white/5">
+                    <div className="flex items-center justify-between pb-6 border-b border-orange-500/20">
                       <div className="flex flex-col gap-1.5">
                         <span className="text-xl font-bold text-white tracking-tight">Quicklaunch</span>
                         <span className="text-[15px] text-white/50">Double-tap to open or close</span>
@@ -1864,14 +1864,14 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                         className={`min-w-[120px] px-6 py-4 rounded-xl border-2 font-mono text-base tracking-wider font-bold transition-all shadow-md ${
                           isRecordingQuicklaunch 
                             ? 'bg-orange-500/20 text-orange-400 border-orange-500 animate-pulse' 
-                            : 'bg-[#1a1a1a] text-[#f4ece1] border-white/10 hover:border-orange-500/50 hover:bg-[#222]'
+                            : 'bg-[#1a1a1a] text-[#f4ece1] border-orange-500/20 hover:border-orange-500/50 hover:bg-[#222]'
                         }`}
                       >
                         {isRecordingQuicklaunch ? 'Press a key...' : quicklaunchShortcut}
                       </button>
                     </div>
 
-                    <div className="flex items-center justify-between pb-6 border-b border-white/5">
+                    <div className="flex items-center justify-between pb-6 border-b border-orange-500/20">
                       <div className="flex flex-col gap-1.5">
                         <span className="text-xl font-bold text-white tracking-tight">Quick Edit</span>
                         <span className="text-[15px] text-white/50">Re-dictate or edit the last sentence</span>
@@ -1881,7 +1881,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                         className={`min-w-[120px] px-6 py-4 rounded-xl border-2 font-mono text-base tracking-wider font-bold transition-all shadow-md ${
                           isRecordingQuickEdit 
                             ? 'bg-orange-500/20 text-orange-400 border-orange-500 animate-pulse' 
-                            : 'bg-[#1a1a1a] text-[#f4ece1] border-white/10 hover:border-orange-500/50 hover:bg-[#222]'
+                            : 'bg-[#1a1a1a] text-[#f4ece1] border-orange-500/20 hover:border-orange-500/50 hover:bg-[#222]'
                         }`}
                       >
                         {isRecordingQuickEdit ? 'Press combo...' : quickEditShortcut}
@@ -1889,7 +1889,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                     </div>
 
                     {/* Seamless Switch & Radial Dials */}
-                    <div className="flex flex-col gap-5 pt-6 border-t border-white/5">
+                    <div className="flex flex-col gap-5 pt-6 border-t border-orange-500/20">
                       <div className="flex items-center justify-between">
                         <div className="flex flex-col gap-1.5">
                           <div className="flex items-center gap-2">
@@ -1921,7 +1921,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                       {/* Instructions Cards */}
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
                         {/* Right Dial: Personas */}
-                        <div className="bg-[#1a1a1a]/80 border border-white/10 rounded-2xl p-4 flex flex-col gap-2 shadow-inner">
+                        <div className="bg-[#1a1a1a]/80 border border-orange-500/20 rounded-2xl p-4 flex flex-col gap-2 shadow-inner">
                           <div className="flex items-center justify-between">
                             <span className="text-xs font-bold uppercase tracking-wider text-orange-400">Right Dial: Personas</span>
                             <span className="px-2 py-0.5 bg-orange-500/15 border border-orange-500/30 text-orange-300 rounded font-mono text-[11px] font-bold">
@@ -1929,12 +1929,12 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                             </span>
                           </div>
                           <p className="text-xs text-white/75 leading-relaxed">
-                            Hold <kbd className="px-1.5 py-0.5 bg-white/10 border border-white/20 rounded text-[#f4ece1] font-mono text-[11px]">option</kbd> and <strong>scroll</strong> to cycle personas on the right radial dial.
+                            Hold <kbd className="px-1.5 py-0.5 bg-white/10 border border-orange-500/30 rounded text-[#f4ece1] font-mono text-[11px]">option</kbd> and <strong>scroll</strong> to cycle personas on the right radial dial.
                           </p>
                         </div>
 
                         {/* Left Dial: Languages */}
-                        <div className="bg-[#1a1a1a]/80 border border-white/10 rounded-2xl p-4 flex flex-col gap-2 shadow-inner">
+                        <div className="bg-[#1a1a1a]/80 border border-orange-500/20 rounded-2xl p-4 flex flex-col gap-2 shadow-inner">
                           <div className="flex items-center justify-between">
                             <span className="text-xs font-bold uppercase tracking-wider text-amber-400">Left Dial: Languages</span>
                             <span className="px-2 py-0.5 bg-amber-500/15 border border-amber-500/30 text-amber-300 rounded font-mono text-[11px] font-bold">
@@ -1942,13 +1942,13 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                             </span>
                           </div>
                           <p className="text-xs text-white/75 leading-relaxed">
-                            Hold <kbd className="px-1.5 py-0.5 bg-white/10 border border-white/20 rounded text-[#f4ece1] font-mono text-[11px]">option</kbd> + <strong>Right-Click</strong> to cycle languages on the left radial dial.
+                            Hold <kbd className="px-1.5 py-0.5 bg-white/10 border border-orange-500/30 rounded text-[#f4ece1] font-mono text-[11px]">option</kbd> + <strong>Right-Click</strong> to cycle languages on the left radial dial.
                           </p>
                         </div>
                       </div>
 
                       {/* Customise Languages to Showcase */}
-                      <div className="flex flex-col gap-3 bg-[#1a1a1a]/50 border border-white/10 rounded-2xl p-4 md:p-5 mt-1">
+                      <div className="flex flex-col gap-3 bg-[#1a1a1a]/50 border border-orange-500/20 rounded-2xl p-4 md:p-5 mt-1">
                         <div className="flex items-center justify-between flex-wrap gap-2">
                           <div>
                             <h3 className="text-sm font-bold text-white tracking-tight flex items-center gap-2">
@@ -1981,7 +1981,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium transition-all cursor-pointer border ${
                                   isSelected
                                     ? 'dial-chip-active bg-amber-500/20 text-amber-300 border-amber-500/50 shadow-[0_0_10px_rgba(245,158,11,0.15)] font-semibold'
-                                    : 'bg-white/5 text-white/50 border-white/5 hover:bg-white/10 hover:text-white/80 hover:border-white/15'
+                                    : 'bg-white/5 text-white/50 border-orange-500/20 hover:bg-white/10 hover:text-white/80 hover:border-orange-500/30'
                                 }`}
                               >
                                 {isSelected ? <Check className="w-3.5 h-3.5 text-amber-400" /> : <Plus className="w-3.5 h-3.5 opacity-40" />}
@@ -1993,7 +1993,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                       </div>
 
                       {/* Customise Personas to Showcase */}
-                      <div className="flex flex-col gap-3 bg-[#1a1a1a]/50 border border-white/10 rounded-2xl p-4 md:p-5">
+                      <div className="flex flex-col gap-3 bg-[#1a1a1a]/50 border border-orange-500/20 rounded-2xl p-4 md:p-5">
                         <div className="flex items-center justify-between flex-wrap gap-2">
                           <div>
                             <h3 className="text-sm font-bold text-white tracking-tight flex items-center gap-2">
@@ -2026,7 +2026,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium transition-all cursor-pointer border ${
                                   isSelected
                                     ? 'dial-chip-active bg-orange-500/20 text-orange-300 border-orange-500/50 shadow-[0_0_10px_rgba(249,115,22,0.15)] font-semibold'
-                                    : 'bg-white/5 text-white/50 border-white/5 hover:bg-white/10 hover:text-white/80 hover:border-white/15'
+                                    : 'bg-white/5 text-white/50 border-orange-500/20 hover:bg-white/10 hover:text-white/80 hover:border-orange-500/30'
                                 }`}
                               >
                                 {isSelected ? <Check className="w-3.5 h-3.5 text-orange-400" /> : <Plus className="w-3.5 h-3.5 opacity-40" />}
@@ -2052,9 +2052,9 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                   <div className="grid grid-cols-2 gap-6 mt-4">
                     <div 
                       onClick={() => setCurrentTheme('midnight')}
-                      className={`flex flex-col rounded-2xl border p-2 cursor-pointer transition-all ${currentTheme === 'midnight' ? 'theme-card-active border-orange-500 bg-orange-500/10' : 'border-white/10 bg-[#0f0f0f] hover:border-white/30'}`}
+                      className={`flex flex-col rounded-2xl border p-2 cursor-pointer transition-all ${currentTheme === 'midnight' ? 'theme-card-active border-orange-500 bg-orange-500/10' : 'border-orange-500/20 bg-[#0f0f0f] hover:border-orange-500/40'}`}
                     >
-                      <div className="h-40 rounded-xl bg-black border border-white/10 mb-4 flex items-center justify-center overflow-hidden relative">
+                      <div className="h-40 rounded-xl bg-black border border-orange-500/20 mb-4 flex items-center justify-center overflow-hidden relative">
                          <div className="w-16 h-16 rounded-full bg-orange-500/20 flex items-center justify-center">
                            <LayoutTemplate className="w-8 h-8 text-orange-500" />
                          </div>
@@ -2067,9 +2067,9 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                     
                     <div 
                       onClick={() => setCurrentTheme('coffee')}
-                      className={`flex flex-col rounded-2xl border p-2 cursor-pointer transition-all ${currentTheme === 'coffee' ? 'theme-card-active border-orange-500 bg-orange-500/10' : 'border-white/10 bg-[#0f0f0f] hover:border-white/30'}`}
+                      className={`flex flex-col rounded-2xl border p-2 cursor-pointer transition-all ${currentTheme === 'coffee' ? 'theme-card-active border-orange-500 bg-orange-500/10' : 'border-orange-500/20 bg-[#0f0f0f] hover:border-orange-500/40'}`}
                     >
-                      <div className="h-40 rounded-xl bg-[#f4ece1] border border-white/10 mb-4 flex items-center justify-center overflow-hidden relative">
+                      <div className="h-40 rounded-xl bg-[#f4ece1] border border-orange-500/20 mb-4 flex items-center justify-center overflow-hidden relative">
                          <div className="w-16 h-16 rounded-full bg-[#8d6e63]/20 flex items-center justify-center">
                            <LayoutTemplate className="w-8 h-8 text-[#8d6e63]" />
                          </div>
@@ -2114,10 +2114,10 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                 </div>
                 
                 <div className="grid grid-cols-1 max-w-3xl gap-6 mt-4">
-                  <div className="bg-white/[0.02] border border-white/5 p-6 rounded-2xl shadow-sm">
+                  <div className="bg-white/[0.02] border border-orange-500/20 p-6 rounded-2xl shadow-sm">
                     <h3 className="text-lg font-bold text-white mb-4">General Preferences</h3>
                     <div className="flex flex-col gap-4">
-                      <div className="flex items-center justify-between p-4 rounded-xl bg-black/20 border border-white/5">
+                      <div className="flex items-center justify-between p-4 rounded-xl bg-black/20 border border-orange-500/20">
                         <div>
                           <div className="font-semibold text-white">Start on Boot</div>
                           <div className="text-sm text-white/50">Launch automatically on system startup.</div>
@@ -2126,7 +2126,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                           <div className="absolute right-1 top-1 w-4 h-4 bg-[#f4ece1] rounded-full shadow-md"></div>
                         </div>
                       </div>
-                      <div className="flex items-center justify-between p-4 rounded-xl bg-black/20 border border-white/5">
+                      <div className="flex items-center justify-between p-4 rounded-xl bg-black/20 border border-orange-500/20">
                         <div>
                           <div className="font-semibold text-white">Hardware Acceleration</div>
                           <div className="text-sm text-white/50">GPU-accelerated interface rendering.</div>
@@ -2153,7 +2153,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-4">
                   {/* Basic Plan */}
-                  <div className="bg-white/[0.02] border border-white/5 p-8 rounded-2xl shadow-sm flex flex-col">
+                  <div className="bg-white/[0.02] border border-orange-500/20 p-8 rounded-2xl shadow-sm flex flex-col">
                     <h3 className="text-xl font-bold text-white mb-2">Kitten</h3>
                     <div className="text-3xl font-extrabold text-white mb-6">Free</div>
                     <ul className="text-white/60 space-y-3 mb-8 flex-1">
@@ -2161,7 +2161,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                       <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-[#8d6e63]" /> Standard Voice Engine</li>
                       <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-[#8d6e63]" /> Community Support</li>
                     </ul>
-                    <button className="w-full py-3 rounded-xl border border-white/10 text-white hover:bg-white/5 transition-colors font-semibold">Current Plan</button>
+                    <button className="w-full py-3 rounded-xl border border-orange-500/20 text-white hover:bg-white/5 transition-colors font-semibold">Current Plan</button>
                   </div>
                   
                   {/* Pro Plan */}
@@ -2179,7 +2179,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                   </div>
 
                   {/* Enterprise Plan */}
-                  <div className="bg-white/[0.02] border border-white/5 p-8 rounded-2xl shadow-sm flex flex-col">
+                  <div className="bg-white/[0.02] border border-orange-500/20 p-8 rounded-2xl shadow-sm flex flex-col">
                     <h3 className="text-xl font-bold text-white mb-2">Panther</h3>
                     <div className="text-3xl font-extrabold text-white mb-6">$29<span className="text-lg text-white/50 font-medium">/mo</span></div>
                     <ul className="text-white/60 space-y-3 mb-8 flex-1">
@@ -2188,7 +2188,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                       <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-[#8d6e63]" /> Team Management</li>
                       <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-[#8d6e63]" /> API Access</li>
                     </ul>
-                    <button className="w-full py-3 rounded-xl border border-white/10 text-white hover:bg-white/5 transition-colors font-semibold">Contact Sales</button>
+                    <button className="w-full py-3 rounded-xl border border-orange-500/20 text-white hover:bg-white/5 transition-colors font-semibold">Contact Sales</button>
                   </div>
                 </div>
               </motion.div>
@@ -2196,7 +2196,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
 
             {activeTab === 'User Policy' && (
               <motion.div key="policy" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col gap-6 p-8 overflow-y-scroll ${glassPanel}`}>
-                <div className="px-2 shrink-0 border-b border-white/5 pb-6">
+                <div className="px-2 shrink-0 border-b border-orange-500/20 pb-6">
                   <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
                     <Shield className="text-[#8d6e63] w-8 h-8" />
                     User Policy & Privacy
@@ -2229,7 +2229,7 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
 
             {activeTab === 'Profile' && (
               <motion.div key="profile" variants={tabVariants} initial="initial" animate="animate" exit="exit" className={`absolute inset-4 flex flex-col gap-4 p-6 overflow-hidden ${glassPanel}`}>
-                <div className="px-2 shrink-0 border-b border-white/5 pb-4">
+                <div className="px-2 shrink-0 border-b border-orange-500/20 pb-4">
                   <h1 className="text-3xl font-bold text-white mb-1 flex items-center gap-3">
                     <User className="text-[#8d6e63] w-8 h-8" />
                     Profile
@@ -2245,19 +2245,19 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
                   <div className="text-white/50 font-medium tracking-widest uppercase text-xs mb-8">Lion Plan Member</div>
 
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full mb-auto shrink-0">
-                    <div className="bg-white/[0.02] border border-white/5 p-4 rounded-2xl flex flex-col items-center justify-center text-center shadow-sm hover:bg-white/[0.04] transition-colors">
+                    <div className="bg-white/[0.02] border border-orange-500/20 p-4 rounded-2xl flex flex-col items-center justify-center text-center shadow-sm hover:bg-white/[0.04] transition-colors">
                       <div className="text-2xl font-bold text-white mb-1">45.2k</div>
                       <div className="text-[10px] text-white/40 uppercase tracking-wider font-semibold">Words Spoken</div>
                     </div>
-                    <div className="bg-white/[0.02] border border-white/5 p-4 rounded-2xl flex flex-col items-center justify-center text-center shadow-sm hover:bg-white/[0.04] transition-colors">
+                    <div className="bg-white/[0.02] border border-orange-500/20 p-4 rounded-2xl flex flex-col items-center justify-center text-center shadow-sm hover:bg-white/[0.04] transition-colors">
                       <div className="text-2xl font-bold text-[#8d6e63] mb-1">16.5h</div>
                       <div className="text-[10px] text-white/40 uppercase tracking-wider font-semibold">Time Saved</div>
                     </div>
-                    <div className="bg-white/[0.02] border border-white/5 p-4 rounded-2xl flex flex-col items-center justify-center text-center shadow-sm hover:bg-white/[0.04] transition-colors">
+                    <div className="bg-white/[0.02] border border-orange-500/20 p-4 rounded-2xl flex flex-col items-center justify-center text-center shadow-sm hover:bg-white/[0.04] transition-colors">
                       <div className="text-2xl font-bold text-white mb-1">Formal</div>
                       <div className="text-[10px] text-white/40 uppercase tracking-wider font-semibold">Top Persona</div>
                     </div>
-                    <div className="bg-white/[0.02] border border-white/5 p-4 rounded-2xl flex flex-col items-center justify-center text-center shadow-sm hover:bg-white/[0.04] transition-colors">
+                    <div className="bg-white/[0.02] border border-orange-500/20 p-4 rounded-2xl flex flex-col items-center justify-center text-center shadow-sm hover:bg-white/[0.04] transition-colors">
                       <div className="text-2xl font-bold text-white mb-1">342</div>
                       <div className="text-[10px] text-white/40 uppercase tracking-wider font-semibold">Shortcuts Used</div>
                     </div>
@@ -2289,6 +2289,8 @@ export default function WhispurrApp({ mode, setMode = () => {} }: { mode?: strin
     </>
   );
 }
+
+
 
 
 
